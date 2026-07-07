@@ -1,17 +1,13 @@
 /// <reference types="astro/client" />
 /// <reference types="@cloudflare/workers-types" />
 
-// Bindings this app reads at the edge. Mirrors the check Worker's Env
-// (apps/worker/src/env.ts); kept in sync manually to avoid a cross-app import.
-interface RuntimeEnv {
-  DB: D1Database
-  STATUS_KV: KVNamespace
-}
-
-declare namespace App {
-  interface Locals {
-    runtime?: {
-      env?: Partial<RuntimeEnv>
-    }
+// Bindings for `import { env } from 'cloudflare:workers'` (Astro 7 removed
+// `Astro.locals.runtime`). `env` is typed by the global `Cloudflare.Env`
+// namespace, so augment that. STATUS_KV is optional because `astro dev` runs
+// without the binding — the single source of truth for the guard in data.ts.
+declare namespace Cloudflare {
+  interface Env {
+    DB: D1Database
+    STATUS_KV?: KVNamespace
   }
 }
