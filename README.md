@@ -1,0 +1,194 @@
+# status-please
+
+> An open-source, CDN-native **status page** generator — the modern successor to [upptime](https://github.com/upptime/upptime).
+
+`status-please` monitors your services, records their uptime as durable time-series
+data, and publishes a fast, good-looking status page to the edge. It keeps the parts
+of upptime that people love — config-as-YAML, zero servers to babysit, badges, a
+public JSON API — while fixing upptime's biggest structural weaknesses:
+
+- **No client-side rate limits.** upptime's page calls the GitHub API *from the
+  visitor's browser* (unauthenticated, 60 req/h/IP), so popular pages break with a
+  "rate limit exceeded" screen. `status-please` renders every byte at the edge from
+  its own store — the browser never talks to a third-party API.
+- **Reliable scheduling.** upptime rides GitHub Actions cron, which is best-effort
+  (a "every 5 min" job can slip to 15–60 min). `status-please` uses **Cloudflare
+  Cron Triggers**, which fire on time.
+- **A store that scales.** upptime treats git commit history as its database and
+  walks it through a rate-limited API. `status-please` uses **Cloudflare D1 + KV**,
+  purpose-built for time-series reads.
+- **A current, maintained frontend.** upptime's page is built on **Svelte 3 + Sapper**,
+  both end-of-life. `status-please` is **Astro + shadcn/ui**.
+
+---
+
+## Status
+
+🚧 **Early development.** This repository currently defines the architecture and the
+tech-stack decision. Code is being built out — see the [Roadmap](#roadmap).
+
+---
+
+## How it works
+
+`status-please` is deliberately split into three independent layers. Each can be
+understood, deployed, and replaced on its own.
+
+```
+        ┌──────────────────────────────────────────────────────────────┐
+        │  1. CHECK LAYER — Cloudflare Cron Worker                       │
+        │     • Cron Triggers ping every configured service on schedule  │
+        │     • Derives up / degraded / down from status + response time │
+        │     • Writes time-series to D1, current snapshot to KV         │
+        │     • On a status change: enqueue a notification event, and    │
+        │       purge the page/badge cache by tag (ctx.cache.purge)      │
+        └──────────┬────────────────┬─────────────────────┬────────────-┘
+                   │ writes         │ enqueues            │ purges on change
+                   ▼                ▼                     │
+        ┌───────────────────┐  ┌──────────────────────┐   │
+        │ D1 (time-series,  │  │ 2. NOTIFY LAYER —    │   │
+        │     incidents)    │  │    Queue consumer    │   │
+        │ KV (current       │  │  • Email, Slack,     │   │
+        │     snapshot)     │  │    webhook, RSS/Atom │   │
+        └─────────┬─────────┘  └──────────────────────┘   │
+                  │ reads at the edge                      │
+                  ▼                                        ▼
+        ┌──────────────────────────────────────────────────────────────┐
+        │  3. DISPLAY LAYER — Astro site on Cloudflare                   │
+        │     • Renders the page at the edge from D1/KV (no browser →    │
+        │       third-party API calls, so no client rate limits)         │
+        │     • Fronted by Workers Cache (tiered edge cache): renders    │
+        │       set Cache-Control + stale-while-revalidate, hits skip    │
+        │       the Worker + D1, concurrent requests collapse; the check │
+        │       layer purges by tag on change, so updates are near-      │
+        │       instant, not TTL-bound                                   │
+        │     • shadcn/ui via React islands for the interactive bits     │
+        │       (charts, time-range filters); everything else ships 0 JS │
+        │     • Emits shields.io-compatible badge JSON + a public API    │
+        └──────────────────────────────────────────────────────────────┘
+```
+
+Because the check and display layers live on Cloudflare — **not** on the
+infrastructure being monitored — your status page stays up even when your own
+services are down. That resilience is the whole point of a status page.
+
+---
+
+## Tech stack
+
+| Layer | Choice | Why |
+|---|---|---|
+| **Frontend** | [Astro](https://astro.build) | Static-first (ideal for a mostly-read page), ~0 KB JS by default, a Cloudflare first-party framework (acquired Jan 2026) with `workerd` dev/prod parity, and **native [Workers Cache](https://blog.cloudflare.com/workers-cache/) support**. |
+| **UI components** | [shadcn/ui](https://ui.shadcn.com) (React islands) + Tailwind CSS | Copy-in-your-repo components you own and can fork — perfect for OSS. Used natively via Astro's React islands; hydrated only where interactivity is needed. |
+| **Charts** | shadcn/ui charts (Recharts) | Response-time graphs, themed and dark-mode-ready out of the box. |
+| **Check scheduler** | Cloudflare **Cron Triggers** (Worker) | On-time execution, unlike GitHub Actions cron. |
+| **Data store** | Cloudflare **D1** (SQLite) + **KV** | D1 for time-series & incident history; KV for the current snapshot. |
+| **Edge cache** | Cloudflare **[Workers Cache](https://blog.cloudflare.com/workers-cache/)** | Tiered cache in front of the Astro Worker: `Cache-Control` + `stale-while-revalidate`, request collapsing, and **tag-based purge on status change** — near-instant updates without hammering D1. |
+| **Notifications** | Cloudflare Workers + Queues | Email / Slack / webhook / RSS on status change, decoupled from the UI. |
+| **Deploy target** | **Cloudflare** (primary) · Vercel (supported) | Astro adapters target both; Cloudflare is the native, batteries-included path. |
+| **Tooling** | Bun · Wrangler · TypeScript | Bun for install/scripts; Wrangler for Worker + D1 + KV. |
+
+The full rationale — including why Astro over SvelteKit and TanStack Start, and why
+a Cron Worker over GitHub Actions — is in
+[`docs/adr/0001-tech-stack.md`](docs/adr/0001-tech-stack.md).
+
+---
+
+## Design
+
+The UI follows the information architecture proven by
+[Statuspage.io](https://www.atlassian.com/software/statuspage) and the modern,
+static-first aesthetic of [Instatus](https://instatus.com):
+
+- **Overall-status banner** — one calm, unambiguous line ("All Systems Operational")
+  in a single color that rolls up the worst component state.
+- **Component rows** — one per service, grouped and collapsible, each with a status
+  pill: Operational / Degraded / Partial Outage / Major Outage / Maintenance.
+- **90-day uptime bars** — the signature timeline: one colored bar per day, hover for
+  date + uptime % + linked incidents, gray for no-data days. Adaptive intervals
+  (Instatus-style) let the same component render other windows.
+- **Incident timeline** — a reverse-chronological, date-grouped feed; each incident
+  threads timestamped updates through the
+  Investigating → Identified → Monitoring → Resolved lifecycle. Scheduled maintenance
+  is a distinct, forward-looking entry.
+- **One severity token system** — five states as CSS variables (light + dark, OKLCH),
+  driving the banner, pills, and bars from a single source of truth. Dark mode ships
+  by default. Color is paired with icon + text for accessibility.
+
+---
+
+## Configuration
+
+A single YAML file at your repo root is the only thing you edit — the same idea as
+upptime's `.upptimerc.yml`:
+
+```yaml
+# status.config.yml
+name: Acme Status
+sites:
+  - name: Website
+    url: https://example.com
+    check: http               # http | tcp | ssl
+    expectedStatusCodes: [200]
+    maxResponseTime: 2000      # ms → "degraded" above this
+  - name: API
+    url: https://api.example.com/health
+    check: http
+notifications:
+  - type: slack
+    webhook: $SLACK_WEBHOOK    # $SECRET is resolved from the environment
+  - type: email
+    to: ops@example.com
+theme:
+  logoUrl: /logo.svg
+  darkMode: true
+```
+
+---
+
+## Deployment
+
+`status-please` deploys to any Cloudflare account (Workers + D1 + KV + Pages). Vercel
+is also supported for the display layer via Astro's Vercel adapter.
+
+```bash
+# 1. Use this template / clone it
+# 2. Provision Cloudflare resources
+bunx wrangler d1 create status-please
+bunx wrangler kv namespace create STATUS_KV
+
+# 3. Configure your services in status.config.yml, then deploy
+bun install
+bun run deploy
+```
+
+Detailed setup will land with the first release — see the [Roadmap](#roadmap).
+
+---
+
+## Roadmap
+
+- [ ] **Check layer** — Cron Worker: HTTP/TCP/SSL checks, D1 schema, KV snapshot.
+- [ ] **Display layer** — Astro site, shadcn/ui component set, severity token system.
+- [ ] **Uptime bars & charts** — 90-day adaptive timeline, response-time graphs.
+- [ ] **Incidents** — lifecycle model + timeline UI + scheduled maintenance.
+- [ ] **Badges & public API** — shields.io-compatible JSON endpoints.
+- [ ] **Notify layer** — Slack + webhook, then email + RSS/Atom.
+- [ ] **Migration guide** — importing an existing `.upptimerc.yml`.
+- [ ] **Vercel adapter path** — documented alternative to Cloudflare.
+
+---
+
+## Prior art & inspiration
+
+- [upptime/upptime](https://github.com/upptime/upptime) — the serverless-monitoring
+  idea this project builds on.
+- [Statuspage.io](https://www.atlassian.com/software/statuspage) — the reference
+  information architecture.
+- [Instatus](https://instatus.com) — static-first delivery and modern design.
+
+---
+
+## License
+
+MIT
