@@ -1,9 +1,13 @@
-import type { DayStat } from './types'
+import type { DayStat, ResponsePoint } from './types'
 import { describe, expect, it } from 'bun:test'
-import { formatUptime, overallSeverity, toSeverity, windowUptime } from './types'
+import { averageResponse, formatUptime, overallSeverity, percentileResponse, toSeverity, windowUptime } from './types'
 
 function day(status: DayStat['status'], uptime: number): DayStat {
   return { date: '2026-01-01', status, uptime }
+}
+
+function points(...ms: number[]): ResponsePoint[] {
+  return ms.map(m => ({ at: '2026-01-01T00:00:00.000Z', ms: m }))
 }
 
 describe('toSeverity', () => {
@@ -54,5 +58,34 @@ describe('formatUptime', () => {
   it('collapses a rounded 100 to "100%"', () => {
     expect(formatUptime(1)).toBe('100%')
     expect(formatUptime(0.99999)).toBe('100%')
+  })
+})
+
+describe('averageResponse', () => {
+  it('rounds the mean of the samples', () => {
+    expect(averageResponse(points(100, 200, 301))).toBe(200)
+    expect(averageResponse(points(10, 15))).toBe(13)
+  })
+
+  it('returns 0 for an empty window', () => {
+    expect(averageResponse([])).toBe(0)
+  })
+})
+
+describe('percentileResponse', () => {
+  it('picks the nearest-rank value for a percentile', () => {
+    const window = points(50, 40, 30, 20, 10)
+    expect(percentileResponse(window, 0.95)).toBe(50)
+    expect(percentileResponse(window, 0.5)).toBe(30)
+  })
+
+  it('clamps p to the first/last sample at the extremes', () => {
+    const window = points(30, 10, 20)
+    expect(percentileResponse(window, 0)).toBe(10)
+    expect(percentileResponse(window, 1)).toBe(30)
+  })
+
+  it('returns 0 for an empty window', () => {
+    expect(percentileResponse([], 0.95)).toBe(0)
   })
 })

@@ -30,10 +30,7 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-re
       {/* Interactive (uptime tooltips): hydrates as a React island. */}
       <StatusList summary={summary} client:visible />
 
-      {/*
-        TODO(incidents): incident timeline (Investigating → Resolved).
-        TODO(charts): response-time graphs via `bunx shadcn@latest add chart`.
-      */}
+      {/* TODO(incidents): incident timeline (Investigating → Resolved). */}
 
       <footer class="mt-10 text-center text-xs text-muted-foreground">
         Powered by <a class="underline underline-offset-4" href="https://github.com/pleaseai/status-please">status-please</a>
