@@ -1,0 +1,19 @@
+bun.lock
+  s_9257f375c8468f::t_45ce893fcd335d 10-11,48,57,196,286,288,290,294,296,576-577,690,698,854,904,906,908,1194,1440,1570,1602-1605,1670-1676
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6ddd6b8ebee24294a944d47496d8599503e66a30",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
