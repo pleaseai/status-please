@@ -1,0 +1,7 @@
+{
+  // Build-only config: excludes tests so the emitted `dist/` carries no
+  // `*.test.js`. Type-checking (tsc --noEmit via tsconfig.json) still covers
+  // the test files.
+  "extends": "./tsconfig.json",
+  "exclude": ["src/**/*.test.ts"]
+}
