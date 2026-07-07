@@ -1,4 +1,5 @@
 export * from './check'
 export * from './config'
+export * from './incidents'
 export * from './notify'
 export * from './types'
