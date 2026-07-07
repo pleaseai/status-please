@@ -4,6 +4,10 @@
     "composite": false,
     "jsx": "react-jsx",
     "jsxImportSource": "react",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "types": ["@cloudflare/workers-types", "@astrojs/cloudflare"]
   },
   "include": [".astro/types.d.ts", "src/**/*"],

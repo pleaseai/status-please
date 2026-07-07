@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import cloudflare from '@astrojs/cloudflare'
 import react from '@astrojs/react'
 import tailwindcss from '@tailwindcss/vite'
@@ -12,5 +13,10 @@ export default defineConfig({
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+      },
+    },
   },
 })

@@ -1,51 +1,100 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* shadcn dark variant (class-based override for a future theme toggle). */
+@custom-variant dark (&:is(.dark, .dark *));
 
 /*
- * One severity token system drives the banner, badges, and uptime bars.
- * Five states, light + dark, in OKLCH. Change these and the whole page stays
- * coherent. Pair color with icon + text for accessibility.
+ * Map design tokens to Tailwind's theme so utilities like `bg-background`,
+ * `text-muted-foreground`, and `border-border` resolve, and so the shadcn/ui
+ * components theme from one source. Severity tokens drive the banner, badges,
+ * and uptime bars.
+ */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-status-operational: var(--status-operational);
+  --color-status-degraded: var(--status-degraded);
+  --color-status-partial: var(--status-partial);
+  --color-status-major: var(--status-major);
+  --color-status-maintenance: var(--status-maintenance);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/*
+ * One token set, both themes: `light-dark()` resolves against the element's
+ * computed `color-scheme`, so no duplicated dark block and native UI
+ * (scrollbars, form controls, canvas) adapts automatically. The `.dark` /
+ * `.light` classes just flip `color-scheme`, which re-resolves every token.
  */
 :root {
+  color-scheme: light dark;
+  --radius: 0.625rem;
+
+  --background: light-dark(oklch(1 0 0), oklch(0.145 0 0));
+  --foreground: light-dark(oklch(0.145 0 0), oklch(0.985 0 0));
+  --card: light-dark(oklch(1 0 0), oklch(0.205 0 0));
+  --card-foreground: light-dark(oklch(0.145 0 0), oklch(0.985 0 0));
+  --popover: light-dark(oklch(1 0 0), oklch(0.205 0 0));
+  --popover-foreground: light-dark(oklch(0.145 0 0), oklch(0.985 0 0));
+  --primary: light-dark(oklch(0.205 0 0), oklch(0.985 0 0));
+  --primary-foreground: light-dark(oklch(0.985 0 0), oklch(0.205 0 0));
+  --secondary: light-dark(oklch(0.97 0 0), oklch(0.269 0 0));
+  --secondary-foreground: light-dark(oklch(0.205 0 0), oklch(0.985 0 0));
+  --muted: light-dark(oklch(0.97 0 0), oklch(0.269 0 0));
+  --muted-foreground: light-dark(oklch(0.556 0 0), oklch(0.708 0 0));
+  --accent: light-dark(oklch(0.97 0 0), oklch(0.269 0 0));
+  --accent-foreground: light-dark(oklch(0.205 0 0), oklch(0.985 0 0));
+  --destructive: light-dark(oklch(0.577 0.245 27.325), oklch(0.704 0.191 22.216));
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: light-dark(oklch(0.922 0 0), oklch(1 0 0 / 10%));
+  --input: light-dark(oklch(0.922 0 0), oklch(1 0 0 / 15%));
+  --ring: light-dark(oklch(0.708 0 0), oklch(0.556 0 0));
+
+  /* Severity palette — kept vivid and stable across themes. */
   --status-operational: oklch(0.72 0.17 149); /* green  */
   --status-degraded: oklch(0.82 0.16 86); /* yellow */
   --status-partial: oklch(0.75 0.17 55); /* orange */
   --status-major: oklch(0.63 0.22 25); /* red    */
   --status-maintenance: oklch(0.65 0.15 250); /* blue   */
   --status-nodata: oklch(0.7 0 0); /* gray   */
-
-  --bg: oklch(0.99 0 0);
-  --fg: oklch(0.2 0 0);
-  --muted: oklch(0.55 0 0);
-  --card: oklch(1 0 0);
-  --border: oklch(0.92 0 0);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: oklch(0.17 0 0);
-    --fg: oklch(0.96 0 0);
-    --muted: oklch(0.65 0 0);
-    --card: oklch(0.21 0 0);
-    --border: oklch(0.28 0 0);
+.dark {
+  color-scheme: dark;
+}
+.light {
+  color-scheme: light;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
   }
-}
-
-:root[data-theme='dark'] {
-  --bg: oklch(0.17 0 0);
-  --fg: oklch(0.96 0 0);
-  --muted: oklch(0.65 0 0);
-  --card: oklch(0.21 0 0);
-  --border: oklch(0.28 0 0);
-}
-:root[data-theme='light'] {
-  --bg: oklch(0.99 0 0);
-  --fg: oklch(0.2 0 0);
-  --muted: oklch(0.55 0 0);
-  --card: oklch(1 0 0);
-  --border: oklch(0.92 0 0);
-}
-
-body {
-  background: var(--bg);
-  color: var(--fg);
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
 }

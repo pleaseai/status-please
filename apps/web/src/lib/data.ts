@@ -1,4 +1,5 @@
 import type { SiteSummary } from '@status-please/core'
+import { env } from 'cloudflare:workers'
 
 const SAMPLE: SiteSummary[] = [
   { slug: 'website', name: 'Website', status: 'up', responseTime: 142, uptimeDay: '100%', uptimeWeek: '99.98%', uptimeMonth: '99.95%' },
@@ -9,9 +10,11 @@ const SAMPLE: SiteSummary[] = [
 /**
  * Read the dashboard snapshot the check Worker writes to KV. Falls back to
  * sample data so `astro dev` renders without Cloudflare bindings.
+ *
+ * Bindings come from `cloudflare:workers` (Astro 7 removed `Astro.locals.runtime`).
  */
-export async function getSummary(locals: App.Locals): Promise<SiteSummary[]> {
-  const kv = locals.runtime?.env?.STATUS_KV
+export async function getSummary(): Promise<SiteSummary[]> {
+  const kv = (env as { STATUS_KV?: KVNamespace }).STATUS_KV
   if (kv) {
     const raw = await kv.get('summary')
     if (raw) {
