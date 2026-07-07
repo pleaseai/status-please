@@ -30,7 +30,12 @@ export async function purgeStatusCache(
     console.warn('purgeStatusCache: CF_API_TOKEN/CF_ZONE_ID unset; skipping cache purge')
     return
   }
-  const tags = [STATUS_PAGE_TAG, ...changedSlugs.map(siteTag)]
+  // Cloudflare caps tags per purge request. STATUS_PAGE_TAG is on every page
+  // response, so for a large change set purging it alone still busts everything —
+  // fall back to that rather than dropping tags past the limit.
+  const MAX_TAGS = 30
+  const siteTags = changedSlugs.map(siteTag)
+  const tags = siteTags.length + 1 > MAX_TAGS ? [STATUS_PAGE_TAG] : [STATUS_PAGE_TAG, ...siteTags]
   try {
     const res = await fetchImpl(
       `https://api.cloudflare.com/client/v4/zones/${env.CF_ZONE_ID}/purge_cache`,
@@ -44,7 +49,10 @@ export async function purgeStatusCache(
       },
     )
     if (!res.ok) {
-      console.error(`purgeStatusCache: purge failed (${res.status})`)
+      // The Cloudflare API returns a JSON error body (codes + messages) that is
+      // far more actionable on-call than the status code alone.
+      const body = await res.text().catch(() => '')
+      console.error(`purgeStatusCache: purge failed (${res.status})`, body)
     }
   }
   catch (err) {

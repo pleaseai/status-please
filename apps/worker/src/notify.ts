@@ -29,6 +29,16 @@ export async function dispatchNotifications(
   await Promise.allSettled(posts)
 }
 
+/** Scheme + host only — webhook URLs embed secrets (Slack path, `?token=`). */
+function redactUrl(url: string): string {
+  try {
+    return new URL(url).origin
+  }
+  catch {
+    return '<invalid url>'
+  }
+}
+
 async function postJson(fetchImpl: typeof fetch, url: string, body: unknown): Promise<void> {
   try {
     const res = await fetchImpl(url, {
@@ -37,10 +47,10 @@ async function postJson(fetchImpl: typeof fetch, url: string, body: unknown): Pr
       body: JSON.stringify(body),
     })
     if (!res.ok) {
-      console.error(`notify: POST ${url} failed (${res.status})`)
+      console.error(`notify: POST ${redactUrl(url)} failed (${res.status})`)
     }
   }
   catch (err) {
-    console.error(`notify: POST ${url} threw`, err)
+    console.error(`notify: POST ${redactUrl(url)} threw`, err)
   }
 }
