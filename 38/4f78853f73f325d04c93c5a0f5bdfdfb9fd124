@@ -1,0 +1,99 @@
+apps/web/src/lib/data.ts
+  s_46dab8147c5a41::t_0ff0bd7c7b5116 1-2
+  s_46dab8147c5a41::t_0595cdd71a5e9b 74-93
+  s_f73d1d8562bae3::t_ffa6c1328fa68b 72-73
+README.md
+  s_46dab8147c5a41::t_859a2cf5ce6e14 177,180-181,183-197
+  s_46dab8147c5a41::t_a0de1a2bd76eb3 182
+  s_6ce62affd1d6b0::t_f2c9b5a4a269a1 198
+apps/web/src/middleware.ts
+  s_46dab8147c5a41::t_54f2fdec7cdb5f 1
+  s_46dab8147c5a41::t_896a8b5a256378 2-37
+apps/web/src/pages/ja/index.astro
+  s_46dab8147c5a41::t_b9f1d4fbb955bf 3-5,8
+  s_46dab8147c5a41::t_06ef8079b61364 1-2,6-7
+apps/web/src/pages/ko/index.astro
+  s_46dab8147c5a41::t_06ef8079b61364 1-2,6-7
+  s_46dab8147c5a41::t_b9f1d4fbb955bf 3-5,8
+packages/core/src/incidents.ts
+  s_46dab8147c5a41::t_625eb08bfd8a9d 1,3
+  s_46dab8147c5a41::t_23ae10ddb53be4 73-76,78,84-104,106,110,114,117
+apps/web/src/components/StatusList.tsx
+  s_46dab8147c5a41::t_5cedc3aba514b9 79,85,90
+  s_46dab8147c5a41::t_155dacdf3a7e01 1-2,17-23,31,33-34,39
+  s_46dab8147c5a41::t_525dc8bffb47b8 103-104,109
+  s_46dab8147c5a41::t_5c1a808a8348cb 44
+  s_46dab8147c5a41::t_c6eb510a77783c 61-62,67
+apps/web/src/lib/page.ts
+  s_46dab8147c5a41::t_7d7200f58e78fb 1-29
+status.config.example.yml
+  s_46dab8147c5a41::t_5abaef7b65b15f 27-29
+  s_46dab8147c5a41::t_0f5eeaa32b688d 30
+packages/core/src/i18n.ts
+  s_46dab8147c5a41::t_d6b08351fdb783 1-285
+packages/core/src/config.ts
+  s_46dab8147c5a41::t_ea0279707d4b8e 3
+  s_46dab8147c5a41::t_bd852693abcb66 52-53,55
+apps/web/astro.config.ts
+  s_46dab8147c5a41::t_c82ce6a0ae77ca 20-27
+  s_46dab8147c5a41::t_7256153b267354 14-19
+apps/web/src/components/StatusPage.astro
+  s_46dab8147c5a41::t_4b4f5d57f8b9cb 3-4,11-14,17
+  s_46dab8147c5a41::t_fbec7d28fbc8c2 2,6-8,10,15-16,19-28,31,36,42,46,50-51,54-64,67-75
+apps/web/src/pages/zh/index.astro
+  s_46dab8147c5a41::t_06ef8079b61364 1-2,6-7
+  s_46dab8147c5a41::t_b9f1d4fbb955bf 3-5,8
+packages/core/src/incidents.test.ts
+  s_46dab8147c5a41::t_3f0f0310066bff 102-110
+apps/web/src/components/StatusBanner.tsx
+  s_46dab8147c5a41::t_216e4254969769 1-2,8-13,20-22
+packages/core/src/index.ts
+  s_46dab8147c5a41::t_6359163d4c9245 4
+apps/web/src/components/ResponseChart.tsx
+  s_46dab8147c5a41::t_08ad0b089a68e0 1,3,14-15,28,32,35-43,49
+  s_46dab8147c5a41::t_a87facb82860e6 91,94,99
+  s_46dab8147c5a41::t_b652dd83aa8dd5 58,63,67,72
+apps/web/src/components/IncidentList.tsx
+  s_46dab8147c5a41::t_69db4419afecaf 1-2,7-14,16-21
+  s_46dab8147c5a41::t_b51edf2f383065 31,37-38,48-49,52
+  s_46dab8147c5a41::t_200210d8de6969 71-72,80,89,96,100
+apps/web/src/components/UptimeTimeline.tsx
+  s_46dab8147c5a41::t_79dd80115bc626 1-2,5-9,18-19,26,29,33,36,43-44
+apps/web/src/pages/en/index.astro
+  s_46dab8147c5a41::t_06ef8079b61364 1-2,6-7
+  s_46dab8147c5a41::t_b9f1d4fbb955bf 3-5,8
+packages/core/src/i18n.test.ts
+  s_f73d1d8562bae3::t_f1ed04e3828ce0 1-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "384f78853f73f325d04c93c5a0f5bdfdfb9fd124",
+  "prompts": {},
+  "sessions": {
+    "s_46dab8147c5a41": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c7c1c0b-ecd8-494c-ab3b-aaac7f94fe40",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    },
+    "s_6ce62affd1d6b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f5cf577d-cf04-44e0-95ac-5f14dd5744e5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    },
+    "s_f73d1d8562bae3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "59cdec7b-45dc-4e19-876c-a222872843d5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
