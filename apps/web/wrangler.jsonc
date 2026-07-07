@@ -1,0 +1,32 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "status-please-web",
+  // `main` and `assets` are injected by the @astrojs/cloudflare adapter at
+  // build time; do not set them here (they would point at not-yet-built output).
+  "compatibility_date": "2026-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Workers Cache: a tiered edge cache in front of this Worker. Rendered pages
+  // set Cache-Control + stale-while-revalidate; hits skip the Worker and D1,
+  // and concurrent requests collapse. The check Worker purges by tag on a
+  // status change, so updates are near-instant.
+  // https://blog.cloudflare.com/workers-cache/
+  "cache": {
+    "enabled": true
+  },
+
+  // Same bindings as the check Worker — the page reads the snapshot/history.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "status-please",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "STATUS_KV",
+      "id": "REPLACE_WITH_KV_NAMESPACE_ID"
+    }
+  ]
+}

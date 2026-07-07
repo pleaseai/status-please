@@ -1,0 +1,8 @@
+{
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./apps/worker" },
+    { "path": "./apps/web" }
+  ],
+  "files": []
+}

@@ -1,0 +1,85 @@
+---
+import { overallSeverity, toSeverity } from '@status-please/core'
+import { getSummary } from '../lib/data'
+import '../styles/global.css'
+
+const summary = await getSummary(Astro.locals)
+const overall = overallSeverity(summary.map((s) => s.status))
+
+const BANNER: Record<string, { label: string, varName: string }> = {
+  operational: { label: 'All Systems Operational', varName: '--status-operational' },
+  degraded: { label: 'Degraded Performance', varName: '--status-degraded' },
+  partial_outage: { label: 'Partial System Outage', varName: '--status-partial' },
+  major_outage: { label: 'Major System Outage', varName: '--status-major' },
+  maintenance: { label: 'Under Maintenance', varName: '--status-maintenance' },
+}
+
+const STATUS_LABEL: Record<string, string> = {
+  operational: 'Operational',
+  degraded: 'Degraded',
+  partial_outage: 'Partial Outage',
+  major_outage: 'Major Outage',
+  maintenance: 'Maintenance',
+}
+
+const banner = BANNER[overall]!
+
+// Render at the edge, cache the result, and let Workers Cache serve subsequent
+// hits. The check Worker purges by tag on a status change (see wrangler.jsonc).
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=600')
+---
+
+<html lang="en" class="min-h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Status</title>
+  </head>
+  <body class="min-h-full">
+    <main class="mx-auto max-w-3xl px-4 py-10">
+      <!-- Overall status banner: one calm, unambiguous line -->
+      <section
+        class="mb-8 flex items-center gap-3 rounded-xl px-5 py-4"
+        style={`background: color-mix(in oklch, var(${banner.varName}) 14%, var(--card)); border: 1px solid color-mix(in oklch, var(${banner.varName}) 40%, var(--border));`}
+      >
+        <span class="inline-block size-3.5 rounded-full" style={`background: var(${banner.varName})`}></span>
+        <h1 class="text-2xl font-semibold tracking-tight">{banner.label}</h1>
+      </section>
+
+      <!-- Component rows -->
+      <section class="overflow-hidden rounded-xl" style="border: 1px solid var(--border); background: var(--card);">
+        {summary.map((site, i) => {
+          const severity = toSeverity(site.status)
+          const varName = BANNER[severity]!.varName
+          return (
+            <div
+              class="flex items-center justify-between px-5 py-4"
+              style={i > 0 ? 'border-top: 1px solid var(--border)' : ''}
+            >
+              <div class="flex items-center gap-3">
+                <span class="inline-block size-2.5 rounded-full" style={`background: var(${varName})`}></span>
+                <span class="font-medium">{site.name}</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <span class="text-sm" style="color: var(--muted)">{site.uptimeMonth} · 30d</span>
+                <span class="text-sm font-medium" style={`color: var(${varName})`}>
+                  {STATUS_LABEL[severity]}
+                </span>
+              </div>
+            </div>
+          )
+        })}
+      </section>
+
+      <!--
+        TODO(uptime-bars): 90-day adaptive bar timeline per component.
+        TODO(incidents): incident timeline (Investigating → Resolved).
+        TODO(shadcn): add shadcn/ui via React islands: `bunx shadcn@latest add card badge alert tooltip chart`.
+      -->
+
+      <footer class="mt-10 text-center text-xs" style="color: var(--muted)">
+        Powered by <a href="https://github.com/pleaseai/status-please">status-please</a>
+      </footer>
+    </main>
+  </body>
+</html>

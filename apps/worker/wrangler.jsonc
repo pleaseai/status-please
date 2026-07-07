@@ -1,0 +1,30 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "status-please-worker",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Run the check loop on a schedule. GitHub Actions cron is best-effort;
+  // Cloudflare Cron Triggers fire on time. Default: every 5 minutes.
+  "triggers": {
+    "crons": ["*/5 * * * *"]
+  },
+
+  // Time-series checks + incident history.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "status-please",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+    }
+  ],
+
+  // Current snapshot (the summary the status page reads at the edge) + config.
+  "kv_namespaces": [
+    {
+      "binding": "STATUS_KV",
+      "id": "REPLACE_WITH_KV_NAMESPACE_ID"
+    }
+  ]
+}

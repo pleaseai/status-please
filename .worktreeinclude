@@ -1,0 +1,17 @@
+# .worktreeinclude — gitignored files to copy into a new worktree (.gitignore syntax).
+# Only files that match AND are git-ignored are copied.
+# See Skill("standards:dev-tooling") → references/worktree-setup.md
+
+# Root env
+.env
+.env.local
+.env.*.local
+
+# Per-workspace env / Wrangler local secrets
+apps/*/.env
+apps/*/.dev.vars
+apps/*/.dev.vars.*
+packages/*/.env
+
+# Claude Code local settings (permissions, telemetry env)
+.claude/settings.local.json

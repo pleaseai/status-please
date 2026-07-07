@@ -117,10 +117,37 @@ static-first aesthetic of [Instatus](https://instatus.com):
 
 ---
 
+## Project layout
+
+A Bun-workspaces monorepo. The three runtime layers map to three workspaces, with
+the domain logic shared in `core`:
+
+```
+status-please/
+├── apps/
+│   ├── web/       # Astro status page (Cloudflare adapter + Workers Cache)
+│   └── worker/    # Cron Worker: checks + notifications (D1/KV, schema.sql)
+├── packages/
+│   └── core/      # shared config schema (zod), types, status derivation
+├── status.config.example.yml
+├── mise.toml      # pinned toolchain (node, bun)
+└── orca.yaml      # worktree setup
+```
+
+Local development:
+
+```bash
+mise install        # pinned node + bun
+bun install         # install workspaces
+bun run test        # core unit tests (bun:test)
+bun run dev         # Astro dev server (renders sample data without bindings)
+```
+
 ## Configuration
 
-A single YAML file at your repo root is the only thing you edit — the same idea as
-upptime's `.upptimerc.yml`:
+A single YAML file is the only thing you edit — the same idea as upptime's
+`.upptimerc.yml`. Copy [`status.config.example.yml`](./status.config.example.yml) to
+`status.config.yml`:
 
 ```yaml
 # status.config.yml
@@ -128,15 +155,15 @@ name: Acme Status
 sites:
   - name: Website
     url: https://example.com
-    check: http               # http | tcp | ssl
+    check: http # http | tcp | ssl
     expectedStatusCodes: [200]
-    maxResponseTime: 2000      # ms → "degraded" above this
+    maxResponseTime: 2000 # ms → "degraded" above this
   - name: API
     url: https://api.example.com/health
     check: http
 notifications:
   - type: slack
-    webhook: $SLACK_WEBHOOK    # $SECRET is resolved from the environment
+    webhook: $SLACK_WEBHOOK # $SECRET is resolved from the environment
   - type: email
     to: ops@example.com
 theme:

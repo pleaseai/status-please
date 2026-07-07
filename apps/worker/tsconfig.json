@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "types": ["@cloudflare/workers-types"],
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts"]
+}

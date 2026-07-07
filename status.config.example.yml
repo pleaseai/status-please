@@ -1,0 +1,24 @@
+# Copy to status.config.yml and edit. This single file is the only thing you
+# configure. Upload it to the Worker's KV "config" key at deploy time.
+
+name: Acme Status
+
+sites:
+  - name: Website
+    url: https://example.com
+    check: http # http | tcp | ssl
+    expectedStatusCodes: [200]
+    maxResponseTime: 2000 # ms; slower responses are marked "degraded"
+  - name: API
+    url: https://api.example.com/health
+    check: http
+
+notifications:
+  - type: slack
+    webhook: $SLACK_WEBHOOK # $SECRET is resolved from the environment
+  - type: email
+    to: ops@example.com
+
+theme:
+  logoUrl: /logo.svg
+  darkMode: true

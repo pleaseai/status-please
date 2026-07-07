@@ -1,0 +1,38 @@
+# mise.toml — pinned toolchain for status-please
+# Usage: `mise trust && mise install`
+# See Skill("standards:dev-tooling").
+
+[tools]
+node = "24"
+bun = "latest"
+
+[env]
+NODE_ENV = "development"
+
+[tasks.dev]
+description = "Run the Astro status page in dev"
+run = "bun run dev"
+
+[tasks.build]
+description = "Build all workspaces"
+run = "bun run build"
+
+[tasks.lint]
+description = "Lint"
+run = "bun run lint"
+
+[tasks.typecheck]
+description = "Type-check all workspaces"
+run = "bun run typecheck"
+
+[tasks.test]
+description = "Run tests"
+run = "bun run test"
+
+[tasks.check]
+description = "lint → typecheck → test"
+depends = [
+  "lint",
+  "typecheck",
+  "test"
+]

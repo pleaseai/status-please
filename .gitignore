@@ -8,6 +8,7 @@ dist/
 build/
 .output/
 .astro/
+*.tsbuildinfo
 
 # Cloudflare / Wrangler
 .wrangler/
@@ -42,3 +43,6 @@ coverage/
 # Misc
 .cache/
 tmp/
+
+# Tool caches
+.impeccable/

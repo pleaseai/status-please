@@ -1,0 +1,20 @@
+{
+  "name": "@status-please/worker",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "db:apply": "wrangler d1 execute status-please --file=./schema.sql"
+  },
+  "dependencies": {
+    "@status-please/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250101.0",
+    "wrangler": "^4"
+  }
+}
