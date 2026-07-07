@@ -7,8 +7,8 @@ import { cacheTags, STATUS_PAGE_TAG } from '@status-please/core'
  * Purge the edge cache by Cache-Tag when a status changes, so the page reflects
  * the new state immediately instead of waiting for its TTL.
  *
- * Cloudflare Workers expose no binding-level tag purge — purge-by-tag is an
- * Enterprise Cache feature driven through the REST API. This POSTs to
+ * Cloudflare Workers expose no binding-level tag purge — purge-by-tag is driven
+ * through the REST API (available on all Cloudflare plans since April 2025). This POSTs to
  * `/zones/{zone}/purge_cache` with `{ tags }`. It needs two secrets (see
  * env.ts / wrangler.jsonc):
  *   - `CF_API_TOKEN` — token with the "Cache Purge" permission

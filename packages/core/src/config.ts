@@ -23,8 +23,12 @@ export const siteSchema = z
     expectedStatusCodes: z.array(z.number().int()).default([200]),
     /** Response time above this (ms) marks the site `degraded` rather than `up`. */
     maxResponseTime: z.number().int().positive().default(5000),
-    /** Optional explicit slug; defaults to slugify(name). */
-    slug: z.string().optional(),
+    /**
+     * Optional explicit slug; defaults to slugify(name). Constrained to the
+     * same charset slugify emits so it's safe to embed in a `Cache-Tag` (no
+     * commas/whitespace, which would corrupt the header — see cache.ts).
+     */
+    slug: z.string().regex(/^[a-z0-9-]+$/, 'slug must be lowercase letters, digits, and hyphens').optional(),
   })
   .transform(site => ({ ...site, slug: site.slug ?? slugify(site.name) }))
 

@@ -36,8 +36,9 @@
   // add a `queues.producers`/`queues.consumers` binding here and a `queue`
   // handler in src/index.ts.
   //
-  // Cache purge (src/cache.ts): purge-by-Cache-Tag is an Enterprise Cache REST
-  // API feature, not a Worker binding. Provide these as secrets and the web app
+  // Cache purge (src/cache.ts): purge-by-Cache-Tag is a REST API feature (on all
+  // Cloudflare plans since Apr 2025), not a Worker binding. Provide these as
+  // secrets and the web app
   // must emit a matching `Cache-Tag` response header:
   //   wrangler secret put CF_API_TOKEN   # token with "Cache Purge" permission
   //   wrangler secret put CF_ZONE_ID     # zone serving the status page
