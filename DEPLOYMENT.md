@@ -120,7 +120,8 @@ settings to gate every deploy behind an approval.
   Cloudflare account, add a Custom Domain route to `apps/web/wrangler.jsonc` — Cloudflare
   auto-provisions the proxied DNS record and edge cert (issuance takes a few minutes):
 
-  ```jsonc
+  ```text
+  // in apps/web/wrangler.jsonc
   "routes": [{ "pattern": "demo.status.pleaseai.dev", "custom_domain": true }]
   ```
 
