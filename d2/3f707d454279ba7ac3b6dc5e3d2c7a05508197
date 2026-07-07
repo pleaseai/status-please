@@ -1,0 +1,23 @@
+eslint.config.ts
+  s_9257f375c8468f::t_e8f2957dabafd4 4
+apps/web/src/lib/data.ts
+  s_9257f375c8468f::t_b5ef5f8c20afe5 17
+.gitignore
+  s_9257f375c8468f::t_d056ceac39caa9 51-53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d23f707d454279ba7ac3b6dc5e3d2c7a05508197",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
