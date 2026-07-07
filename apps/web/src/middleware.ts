@@ -19,13 +19,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   // Precedence: remembered cookie → browser Accept-Language → config default.
-  // Only the bare `/` reaches here (one KV read for the config default, on an
-  // uncached redirect), so reading it eagerly is cheap.
-  const target = negotiateLocale(
-    context.cookies.get('locale')?.value,
-    context.preferredLocale,
-    await getLocale(),
-  )
+  // `getLocale()` (a KV read) stays lazy — consulted only when neither the
+  // cookie nor the negotiated browser locale decides — so the common redirect
+  // avoids the extra read and its failure point.
+  const target
+    = negotiateLocale(context.cookies.get('locale')?.value, context.preferredLocale)
+      ?? await getLocale()
 
   return new Response(null, {
     status: 302,

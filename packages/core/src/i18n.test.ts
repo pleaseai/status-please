@@ -88,12 +88,21 @@ describe('formatDay', () => {
   })
 
   it('does not throw on 3-segment non-numeric dates (regression guard)', () => {
-    // All three segments are present but NaN — the previous `=== undefined`
-    // guard let these through and Intl.DateTimeFormat.format() threw, crashing
-    // the SSR render. Must degrade to the raw string instead.
+    // All three segments are present but NaN — a naive guard let these through
+    // and Intl.DateTimeFormat.format() threw, crashing the SSR render. Must
+    // degrade to the raw string instead.
     expect(() => formatDay('20xx-07-05', 'en')).not.toThrow()
     expect(formatDay('20xx-07-05', 'en')).toBe('20xx-07-05')
     expect(formatDay('2026-ab-05', 'ja')).toBe('2026-ab-05')
+  })
+
+  it('rejects out-of-range parts instead of rendering a normalized date', () => {
+    // Date.UTC normalizes overflow: month 13 → next January, day 31 in Feb →
+    // early March. The round-trip guard must reject these rather than show a
+    // plausible-but-wrong date.
+    expect(formatDay('2026-13-05', 'en')).toBe('2026-13-05')
+    expect(formatDay('2026-02-31', 'en')).toBe('2026-02-31')
+    expect(formatDay('2026-00-10', 'en')).toBe('2026-00-10')
   })
 
   it('renders the same calendar day regardless of the host timezone (UTC)', () => {
@@ -111,23 +120,20 @@ describe('formatDay', () => {
 })
 
 describe('negotiateLocale', () => {
-  it('prefers a valid remembered cookie over everything else', () => {
-    expect(negotiateLocale('ko', 'ja-JP', 'en')).toBe('ko')
+  it('prefers a valid remembered cookie over the preferred locale', () => {
+    expect(negotiateLocale('ko', 'ja')).toBe('ko')
   })
 
-  it('ignores an invalid cookie and falls back to Accept-Language', () => {
-    expect(negotiateLocale('xx', 'ja-JP,ja;q=0.9', 'en')).toBe('ja')
-    expect(negotiateLocale(undefined, 'zh-CN', 'en')).toBe('zh')
+  it('ignores an invalid cookie and uses the preferred locale', () => {
+    expect(negotiateLocale('xx', 'ja')).toBe('ja')
+    expect(negotiateLocale(undefined, 'zh-CN')).toBe('zh')
   })
 
-  it('skips an unsupported Accept-Language and uses the deployment fallback', () => {
-    // 'fr' names no supported locale, so the deployment default ('ko') wins —
-    // not English. (The Astro middleware also passes `undefined` for these.)
-    expect(negotiateLocale(null, 'fr-FR', 'ko')).toBe('ko')
-  })
-
-  it('uses the fallback when neither cookie nor Accept-Language is present', () => {
-    expect(negotiateLocale(null, null, 'ko')).toBe('ko')
-    expect(negotiateLocale(undefined, undefined, 'ja')).toBe('ja')
+  it('returns null when neither signal names a supported locale', () => {
+    // The caller supplies the deployment fallback via `?? fallback`, keeping an
+    // async/KV fallback lazy — so an unmatched request yields null here.
+    expect(negotiateLocale(null, 'fr')).toBeNull()
+    expect(negotiateLocale(null, null)).toBeNull()
+    expect(negotiateLocale(undefined, undefined)).toBeNull()
   })
 })

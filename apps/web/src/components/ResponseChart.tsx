@@ -27,11 +27,11 @@ export function ResponseChart({
   data,
   locale,
   className,
-}: {
+}: Readonly<{
   data: ResponsePoint[]
   locale: Locale
   className?: string
-}) {
+}>) {
   const t = getDict(locale)
   // A single series keyed by `ms`. The color is a status token that already
   // adapts across light/dark via `light-dark()`, so the chart reads in both.

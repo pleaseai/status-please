@@ -285,18 +285,22 @@ export function getDict(locale: Locale): Dict {
 
 /**
  * Resolve the UI locale from the signals a request carries, in precedence
- * order: the visitor's remembered choice (`cookie`), then the browser's
- * `acceptLanguage`, then a `fallback` (the deployment default). A signal that
- * names no supported locale is skipped rather than forcing English — so an
- * unsupported browser language yields the deployment default, not `en`. Pure so
+ * order: the visitor's remembered choice (`cookie`), then their
+ * `preferredLocale`. Returns `null` when neither names a supported locale, so
+ * the caller supplies the final fallback via `?? fallback` — which lets an
+ * async/expensive fallback (e.g. a KV config read) stay lazy, evaluated only
+ * when neither signal decides.
+ *
+ * `preferredLocale` is expected to be an already-negotiated locale tag — Astro's
+ * `Astro.preferredLocale`, which resolves `Accept-Language` q-values against the
+ * configured locales — not a raw multi-range `Accept-Language` header. Pure so
  * it can be unit-tested independently of the Astro middleware.
  */
 export function negotiateLocale(
   cookie: string | null | undefined,
-  acceptLanguage: string | null | undefined,
-  fallback: Locale,
-): Locale {
-  return matchLocale(cookie) ?? matchLocale(acceptLanguage) ?? fallback
+  preferredLocale: string | null | undefined,
+): Locale | null {
+  return matchLocale(cookie) ?? matchLocale(preferredLocale)
 }
 
 /**
@@ -311,9 +315,12 @@ export function formatDay(iso: string, locale: Locale = DEFAULT_LOCALE): string 
     return iso
   }
   const date = new Date(Date.UTC(y, m - 1, d))
-  // Guard against non-numeric segments ("20xx-07-05" → NaN): an invalid Date
-  // makes Intl.DateTimeFormat.format() throw, which would crash the SSR render.
-  if (Number.isNaN(date.getTime())) {
+  // Reject malformed dates by requiring the parsed parts to round-trip. This
+  // catches both non-numeric segments ("20xx-07-05" → NaN date, which would make
+  // Intl.DateTimeFormat.format() throw and crash the SSR render) and out-of-range
+  // parts that Date.UTC silently normalizes ("2026-13-05" → 2027-01-05), which
+  // would otherwise render a plausible but wrong date.
+  if (date.getUTCFullYear() !== y || date.getUTCMonth() !== m - 1 || date.getUTCDate() !== d) {
     return iso
   }
   return new Intl.DateTimeFormat(locale, {

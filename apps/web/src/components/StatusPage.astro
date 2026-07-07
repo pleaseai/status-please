@@ -86,7 +86,7 @@ const localeHref = (l: string): string => new URL(`/${l}/`, Astro.site ?? Astro.
       for every visitor of this locale, so it's safe to cache in the HTML.
     */}
     <script is:inline define:vars={{ locale }}>
-      document.cookie = `locale=${locale};path=/;max-age=31536000;samesite=lax`
+      document.cookie = `locale=${locale};path=/;max-age=31536000;samesite=lax;secure`
     </script>
   </body>
 </html>

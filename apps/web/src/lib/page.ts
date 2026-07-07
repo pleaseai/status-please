@@ -15,8 +15,9 @@ export interface StatusPageData {
  * only honors `Astro.response.headers` set at the page level, before streaming.
  */
 export async function loadStatusPage(astro: AstroGlobal): Promise<StatusPageData> {
-  const summary = await getSummary()
-  const incidents = await getIncidents()
+  // Independent KV reads — fetch in parallel so a cache miss waits one round
+  // trip, not two in series.
+  const [summary, incidents] = await Promise.all([getSummary(), getIncidents()])
 
   // Render at the edge, cache the result, and let Workers Cache serve subsequent
   // hits. Each locale is a distinct URL, so caches never collide across languages.
