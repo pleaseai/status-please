@@ -1,0 +1,28 @@
+apps/web/package.json
+  s_9257f375c8468f::t_4a3d8fbf3cd197 11
+apps/worker/package.json
+  s_9257f375c8468f::t_0b5cc5fb8d492b 11-13
+DEPLOYMENT.md
+  s_9257f375c8468f::t_74d0184dde44ea 108-110
+.github/workflows/deploy.yml
+  s_9257f375c8468f::t_5b64fe920cade1 56-59
+  s_9257f375c8468f::t_b87aac9bdd58ba 21,26-28,33-35
+  s_9257f375c8468f::t_1d7063742b80c9 71,78,85,89,95,101
+  s_9257f375c8468f::t_52bc3c8abf9153 64-65,68,75-77,81-83,92-94,98-100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "49d53fc746d7a9955c0c26820cbf388bec86c5c7",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
