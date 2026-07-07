@@ -18,6 +18,16 @@ describe('parseConfig', () => {
   it('leaves notifications undefined when the block is absent', () => {
     expect(parseConfig(baseYaml).notifications).toBeUndefined()
   })
+
+  it('accepts a valid explicit slug', () => {
+    const config = parseConfig(`${baseYaml}    slug: my-api\n`)
+    expect(config.sites[0]?.slug).toBe('my-api')
+  })
+
+  it('rejects an explicit slug with Cache-Tag-unsafe characters', () => {
+    // A comma would split the Cache-Tag header into bogus tags.
+    expect(() => parseConfig(`${baseYaml}    slug: my,service\n`)).toThrow()
+  })
 })
 
 describe('notificationsSchema', () => {

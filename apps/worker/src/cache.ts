@@ -1,19 +1,14 @@
 import type { Env } from './env'
-
-/** Cache-Tag on every status-page response; purging it busts the whole page. */
-export const STATUS_PAGE_TAG = 'status-page'
-
-/** Cache-Tag for a single site, so one flip can purge just that site's assets. */
-export function siteTag(slug: string): string {
-  return `status-site-${slug}`
-}
+// Tag helpers live in core so the purge side (here) and the emit side
+// (apps/web's Cache-Tag header) share one definition and can't drift.
+import { cacheTags, STATUS_PAGE_TAG } from '@status-please/core'
 
 /**
  * Purge the edge cache by Cache-Tag when a status changes, so the page reflects
  * the new state immediately instead of waiting for its TTL.
  *
- * Cloudflare Workers expose no binding-level tag purge — purge-by-tag is an
- * Enterprise Cache feature driven through the REST API. This POSTs to
+ * Cloudflare Workers expose no binding-level tag purge — purge-by-tag is driven
+ * through the REST API (available on all Cloudflare plans since April 2025). This POSTs to
  * `/zones/{zone}/purge_cache` with `{ tags }`. It needs two secrets (see
  * env.ts / wrangler.jsonc):
  *   - `CF_API_TOKEN` — token with the "Cache Purge" permission
@@ -34,8 +29,8 @@ export async function purgeStatusCache(
   // response, so for a large change set purging it alone still busts everything —
   // fall back to that rather than dropping tags past the limit.
   const MAX_TAGS = 30
-  const siteTags = changedSlugs.map(siteTag)
-  const tags = siteTags.length + 1 > MAX_TAGS ? [STATUS_PAGE_TAG] : [STATUS_PAGE_TAG, ...siteTags]
+  const all = cacheTags(changedSlugs)
+  const tags = all.length > MAX_TAGS ? [STATUS_PAGE_TAG] : all
   try {
     const res = await fetchImpl(
       `https://api.cloudflare.com/client/v4/zones/${env.CF_ZONE_ID}/purge_cache`,

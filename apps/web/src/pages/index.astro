@@ -1,5 +1,5 @@
 ---
-import { overallSeverity } from '@status-please/core'
+import { cacheTagHeader, overallSeverity } from '@status-please/core'
 import { IncidentList } from '../components/IncidentList'
 import { StatusBanner } from '../components/StatusBanner'
 import { StatusList } from '../components/StatusList'
@@ -13,6 +13,9 @@ const incidents = await getIncidents()
 // Render at the edge, cache the result, and let Workers Cache serve subsequent
 // hits. The check Worker purges by tag on a status change (see wrangler.jsonc).
 Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=600')
+// Tag the cached response so the Worker's purge-by-tag (status-page + each
+// site) invalidates it the instant a status changes, not on TTL expiry.
+Astro.response.headers.set('Cache-Tag', cacheTagHeader(summary.map(s => s.slug)))
 ---
 
 <html lang="en" class="min-h-full">

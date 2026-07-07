@@ -194,6 +194,23 @@ bun install
 bun run deploy
 ```
 
+### Instant cache invalidation (optional)
+
+By default the page is edge-cached for `s-maxage=60`, so a status change shows up
+within a minute. For **near-instant** updates, the check Worker purges the edge
+cache by [Cache-Tag](https://developers.cloudflare.com/cache/how-to/purge-cache/purge-by-tags/)
+the moment a status flips. The page already emits a matching `Cache-Tag` response
+header (`status-page` + one `status-site-<slug>` per component); you just provide
+the Worker two secrets (purge-by-tag is [available on all Cloudflare plans](https://developers.cloudflare.com/changelog/post/2025-04-01-purge-for-all/) since April 2025):
+
+```bash
+bunx wrangler secret put CF_API_TOKEN   # API token with the "Cache Purge" permission
+bunx wrangler secret put CF_ZONE_ID     # the zone serving your status page
+```
+
+When these are unset the purge is skipped (logged, not fatal) and the page simply
+refreshes on its 60s TTL.
+
 Detailed setup will land with the first release — see the [Roadmap](#roadmap).
 
 ---
