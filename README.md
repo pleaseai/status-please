@@ -32,8 +32,12 @@ public JSON API — while fixing upptime's biggest structural weaknesses:
 
 ## Status
 
-🚧 **Early development.** This repository currently defines the architecture and the
-tech-stack decision. Code is being built out — see the [Roadmap](#roadmap).
+🚧 **Active development.** The core pipeline is live end-to-end — HTTP checks on
+Cloudflare Cron write to D1/KV, the Astro page renders 90-day uptime bars, response-time
+charts, and an incident timeline at the edge, and status changes fan out to Slack/webhooks
+while purging the edge cache. A [live demo](https://demo.status.pleaseai.dev) runs on
+Cloudflare. TCP/SSL checks, a public API + badges, and more notification channels are
+next — see the [Roadmap](#roadmap).
 
 ---
 
@@ -221,12 +225,21 @@ deploy — is in **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 
 ## Roadmap
 
-- [ ] **Check layer** — Cron Worker: HTTP/TCP/SSL checks, D1 schema, KV snapshot.
-- [ ] **Display layer** — Astro site, shadcn/ui component set, severity token system.
-- [ ] **Uptime bars & charts** — 90-day adaptive timeline, response-time graphs.
-- [ ] **Incidents** — lifecycle model + timeline UI + scheduled maintenance.
+**Shipped**
+
+- [x] **Check layer** — Cron Worker: HTTP checks, D1 time-series schema, KV snapshot.
+- [x] **Display layer** — Astro site, shadcn/ui component set, severity token system.
+- [x] **Uptime bars & charts** — 90-day adaptive timeline, per-component response-time graphs.
+- [x] **Incidents** — lifecycle model (Investigating → Identified → Monitoring → Resolved) + timeline UI.
+- [x] **Notify layer (part 1)** — Slack + generic webhook on status change, decoupled via Queues.
+- [x] **Edge cache** — `Cache-Tag` emit + purge-on-change loop between the check and display layers.
+
+**In progress / planned**
+
+- [ ] **TCP/SSL checks** — extend the Cron Worker beyond HTTP (config + schema already accept them).
+- [ ] **Scheduled maintenance** — distinct, forward-looking incident entries.
 - [ ] **Badges & public API** — shields.io-compatible JSON endpoints.
-- [ ] **Notify layer** — Slack + webhook, then email + RSS/Atom.
+- [ ] **Notify layer (part 2)** — email + RSS/Atom feeds.
 - [ ] **Migration guide** — importing an existing `.upptimerc.yml`.
 - [ ] **Vercel adapter path** — documented alternative to Cloudflare.
 
