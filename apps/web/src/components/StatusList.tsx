@@ -28,7 +28,7 @@ const STYLE = {
  * expandable response-time sparkline. Interactive (the breakdown tooltip and the
  * expand toggle), so it lives in the hydrated island.
  */
-function StatusRow({ site, locale, t }: { site: SiteSummary, locale: Locale, t: Dict }) {
+function StatusRow({ site, locale, t }: Readonly<{ site: SiteSummary, locale: Locale, t: Dict }>) {
   const [open, setOpen] = useState(false)
   const severity = toSeverity(site.status)
   const style = STYLE[severity]
@@ -100,7 +100,7 @@ function StatusRow({ site, locale, t }: { site: SiteSummary, locale: Locale, t: 
  * Per-component status cards. Interactive (uptime tooltips + expandable
  * response-time charts), so it hydrates as a React island.
  */
-export function StatusList({ summary, locale }: { summary: SiteSummary[], locale: Locale }) {
+export function StatusList({ summary, locale }: Readonly<{ summary: SiteSummary[], locale: Locale }>) {
   const t = getDict(locale)
   return (
     <TooltipProvider delay={100}>

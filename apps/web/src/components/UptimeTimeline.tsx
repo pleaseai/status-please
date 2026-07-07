@@ -15,7 +15,7 @@ const DAY_COLOR = {
  * timeline renders as static HTML. Bars flex to fill the width and shrink on
  * narrow viewports (adaptive), so the full window fits without a scrollbar.
  */
-export function UptimeTimeline({ history, locale }: { history: DayStat[], locale: Locale }) {
+export function UptimeTimeline({ history, locale }: Readonly<{ history: DayStat[], locale: Locale }>) {
   const t = getDict(locale)
   const uptime = formatUptime(windowUptime(history))
   return (
@@ -27,10 +27,12 @@ export function UptimeTimeline({ history, locale }: { history: DayStat[], locale
       >
         {history.map((d) => {
           const key = d.status ?? 'nodata'
+          // Only real (non-nodata) days carry an uptime figure in the tooltip.
+          const uptimeSuffix = d.status !== null ? ` · ${formatUptime(d.uptime)}` : ''
           return (
             <div
               key={d.date}
-              title={`${formatDay(d.date, locale)} — ${t.day[key]}${d.status !== null ? ` · ${formatUptime(d.uptime)}` : ''}`}
+              title={`${formatDay(d.date, locale)} — ${t.day[key]}${uptimeSuffix}`}
               className={cn(
                 'min-w-[2px] flex-1 rounded-[1px] transition-opacity hover:opacity-70',
                 DAY_COLOR[key],

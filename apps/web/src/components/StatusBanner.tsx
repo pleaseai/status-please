@@ -17,7 +17,7 @@ const META = {
  * component state. Static (no interactivity), so it renders to HTML with 0 JS.
  * Color is paired with an icon + text for color-blind accessibility.
  */
-export function StatusBanner({ severity, locale }: { severity: Severity, locale: Locale }) {
+export function StatusBanner({ severity, locale }: Readonly<{ severity: Severity, locale: Locale }>) {
   const { Icon, tint } = META[severity]
   const label = getDict(locale).banner[severity]
   return (

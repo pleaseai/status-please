@@ -28,7 +28,7 @@ function byRecency(a: Incident, b: Incident): number {
 }
 
 /** One incident card: title + severity badge, then its chronological updates. */
-function IncidentCard({ incident, locale, t }: { incident: Incident, locale: Locale, t: Dict }) {
+function IncidentCard({ incident, locale, t }: Readonly<{ incident: Incident, locale: Locale, t: Dict }>) {
   return (
     <Card>
       <CardHeader>
@@ -68,7 +68,7 @@ function IncidentCard({ incident, locale, t }: { incident: Incident, locale: Loc
  * order (state badge + body + relative time). Static — it renders to HTML with
  * 0 JS (relative times are computed at edge render). Calm empty state when none.
  */
-export function IncidentList({ incidents, locale }: { incidents: Incident[], locale: Locale }) {
+export function IncidentList({ incidents, locale }: Readonly<{ incidents: Incident[], locale: Locale }>) {
   const t = getDict(locale)
   const active = incidents.filter(isActive).sort(byRecency)
   const resolved = incidents.filter(i => !isActive(i)).sort(byRecency)
