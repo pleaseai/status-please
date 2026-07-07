@@ -166,11 +166,11 @@ sites:
   - name: API
     url: https://api.example.com/health
     check: http
-notifications:
-  - type: slack
-    webhook: $SLACK_WEBHOOK # $SECRET is resolved from the environment
-  - type: email
-    to: ops@example.com
+notifications: # all optional; keep the real Slack URL (a secret) in your KV config
+  slack:
+    webhookUrl: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX
+  webhooks:
+    - url: https://example.com/status-hook
 theme:
   logoUrl: /logo.svg
   darkMode: true
@@ -218,6 +218,13 @@ Detailed setup will land with the first release — see the [Roadmap](#roadmap).
 - [Statuspage.io](https://www.atlassian.com/software/statuspage) — the reference
   information architecture.
 - [Instatus](https://instatus.com) — static-first delivery and modern design.
+- [statping/statping](https://github.com/statping/statping) — a self-hosted,
+  single-binary status server (Go) with its own monitoring engine, notifiers,
+  and mobile app.
+- [OpenStatus](https://www.openstatus.dev) — open-source synthetic monitoring and
+  status pages, with a globally distributed checker for latency-aware probing.
+- [CachetHQ/Cachet](https://cachethq.io) — a long-standing open-source status page
+  system (PHP/Laravel) centered on incident and component management.
 
 ---
 

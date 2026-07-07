@@ -36,6 +36,7 @@
   --color-status-partial: var(--status-partial);
   --color-status-major: var(--status-major);
   --color-status-maintenance: var(--status-maintenance);
+  --color-status-nodata: var(--status-nodata);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

@@ -1,12 +1,14 @@
 ---
 import { overallSeverity } from '@status-please/core'
+import { IncidentList } from '../components/IncidentList'
 import { StatusBanner } from '../components/StatusBanner'
 import { StatusList } from '../components/StatusList'
-import { getSummary } from '../lib/data'
+import { getIncidents, getSummary } from '../lib/data'
 import '../styles/global.css'
 
 const summary = await getSummary()
 const overall = overallSeverity(summary.map(s => s.status))
+const incidents = await getIncidents()
 
 // Render at the edge, cache the result, and let Workers Cache serve subsequent
 // hits. The check Worker purges by tag on a status change (see wrangler.jsonc).
@@ -30,11 +32,11 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-re
       {/* Interactive (uptime tooltips): hydrates as a React island. */}
       <StatusList summary={summary} client:visible />
 
-      {/*
-        TODO(uptime-bars): 90-day adaptive bar timeline per component.
-        TODO(incidents): incident timeline (Investigating → Resolved).
-        TODO(charts): response-time graphs via `bunx shadcn@latest add chart`.
-      */}
+      {/* Static: relative times are computed at edge render, so 0 JS ships. */}
+      <section class="mt-10">
+        <h2 class="mb-4 text-sm font-medium tracking-wide text-muted-foreground uppercase">Incidents</h2>
+        <IncidentList incidents={incidents} />
+      </section>
 
       <footer class="mt-10 text-center text-xs text-muted-foreground">
         Powered by <a class="underline underline-offset-4" href="https://github.com/pleaseai/status-please">status-please</a>

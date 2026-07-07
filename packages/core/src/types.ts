@@ -23,6 +23,24 @@ export interface CheckResult {
   error?: string
 }
 
+/** One response-time sample, for the recent-latency sparkline. */
+export interface ResponsePoint {
+  /** ISO-8601 timestamp of the sample. */
+  at: string
+  /** Round-trip time in milliseconds. */
+  ms: number
+}
+
+/** One calendar day's rolled-up outcome, for the 90-day timeline. */
+export interface DayStat {
+  /** ISO date, `YYYY-MM-DD` (UTC). */
+  date: string
+  /** Worst status seen that day; `null` when no checks ran (no data). */
+  status: CheckStatus | null
+  /** Fraction of checks that were `up` (0..1). `1` for a no-data day. */
+  uptime: number
+}
+
 /** Aggregated current state for one site, served to the status page. */
 export interface SiteSummary {
   slug: string
@@ -33,6 +51,13 @@ export interface SiteSummary {
   uptimeDay: string
   uptimeWeek: string
   uptimeMonth: string
+  /** Per-day history, oldest → newest, up to 90 entries. */
+  history: DayStat[]
+  /**
+   * Recent response-time samples, oldest → newest. Optional so older KV
+   * snapshots (written before this field existed) stay valid.
+   */
+  responseHistory?: ResponsePoint[]
 }
 
 /** Map CheckStatus → the display severity used by the banner and badges. */
@@ -56,4 +81,47 @@ export function overallSeverity(statuses: CheckStatus[]): Severity {
     return 'degraded'
   }
   return 'operational'
+}
+
+/**
+ * Average uptime over a day-stat window, ignoring no-data days. Returns `1`
+ * when the window is empty or entirely no-data (nothing to report against).
+ */
+export function windowUptime(history: DayStat[]): number {
+  const days = history.filter(d => d.status !== null)
+  if (days.length === 0) {
+    return 1
+  }
+  return days.reduce((sum, d) => sum + d.uptime, 0) / days.length
+}
+
+/** Format an uptime ratio (0..1) as a display percentage, e.g. "99.98%". */
+export function formatUptime(ratio: number): string {
+  const pct = ratio * 100
+  // Avoid "100.00%" when a rounded value reaches 100.
+  return pct >= 99.995 ? '100%' : `${pct.toFixed(2)}%`
+}
+
+/** Mean response time (ms) over a sample window; `0` for an empty window. */
+export function averageResponse(points: ResponsePoint[]): number {
+  if (points.length === 0) {
+    return 0
+  }
+  const sum = points.reduce((total, p) => total + p.ms, 0)
+  return Math.round(sum / points.length)
+}
+
+/**
+ * The p-th percentile response time (ms) over a window, by nearest-rank. `p` is
+ * a fraction in 0..1 (e.g. `0.95` for p95). Returns `0` for an empty window.
+ */
+export function percentileResponse(points: ResponsePoint[], p: number): number {
+  if (points.length === 0) {
+    return 0
+  }
+  const sorted = points.map(pt => pt.ms).sort((a, b) => a - b)
+  const rank = Math.ceil(p * sorted.length)
+  const index = Math.min(Math.max(rank, 1), sorted.length) - 1
+  // `index` is clamped to a valid slot; `?? 0` only satisfies the type checker.
+  return sorted[index] ?? 0
 }
