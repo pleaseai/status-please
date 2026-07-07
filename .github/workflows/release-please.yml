@@ -32,8 +32,8 @@ jobs:
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: app-token
         with:
-          client-id: ${{ vars.RELEASE_BOT_CLIENT_ID }} # org Variable
-          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }} # org Secret
+          client-id: ${{ vars.RELEASE_GITHUB_APP_CLIENT_ID }} # org Variable (ALL)
+          private-key: ${{ secrets.RELEASE_GITHUB_APP_PRIVATE_KEY }} # org Secret (ALL)
           # Scope the minted token to only what release-please needs, instead of
           # the App's blanket installation permissions.
           permission-contents: write
