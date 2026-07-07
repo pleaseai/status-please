@@ -90,7 +90,7 @@ both. Configure once:
 
 ```bash
 # Secrets (sensitive):
-gh secret set CLOUDFLARE_API_TOKEN     # token with Workers/D1/KV edit + Cache Purge
+gh secret set CLOUDFLARE_API_TOKEN     # see token requirements below
 gh secret set CLOUDFLARE_ACCOUNT_ID
 
 # Variables (resource IDs — not sensitive):
@@ -102,14 +102,34 @@ Then run it from the **Actions** tab (or `gh workflow run deploy.yml`). The job 
 `production` GitHub Environment, so you can add required-reviewer protection in repo
 settings to gate every deploy behind an approval.
 
+> **Use a User API token, not an account-owned token.** Create it under **My Profile →
+> API Tokens** (the "Edit Cloudflare Workers" template covers Workers Scripts / D1 / KV
+> Edit). An *account-owned* token fails the D1 schema step with `Authentication error
+> [code: 10000]` — `wrangler d1 execute --remote` needs `User → Memberships → Read`, a
+> User-scoped permission that account-owned tokens cannot hold. Add **Cache Purge** for
+> §6, and if you serve a **custom domain** (§8) also add **Zone → Workers Routes: Edit**
+> and **Zone → DNS: Edit** for that zone.
+
 ## 8. After the first deploy
 
 - The cron runs every 5 minutes (`triggers.crons` in `apps/worker/wrangler.jsonc`); the
   page shows sample data until the first run writes the real `summary` — just wait for the
   first tick. (To force a run against production immediately, invoke the deployed Worker's
   scheduled handler from the Cloudflare dashboard's Cron Triggers → "Trigger" action.)
-- Point a custom domain at the `status-please-web` Worker via a route in its
-  `wrangler.jsonc` or the Cloudflare dashboard.
+- Point a custom domain at the `status-please-web` Worker. If the zone is in the same
+  Cloudflare account, add a Custom Domain route to `apps/web/wrangler.jsonc` — Cloudflare
+  auto-provisions the proxied DNS record and edge cert (issuance takes a few minutes):
+
+  ```jsonc
+  "routes": [{ "pattern": "demo.status.pleaseai.dev", "custom_domain": true }]
+  ```
+
+  Two caveats: (1) adding a route **disables the `*.workers.dev` URL** — add
+  `"workers_dev": true` alongside `routes` if you want to keep it as a fallback; (2) the
+  deploy token needs **Zone → Workers Routes: Edit** and **Zone → DNS: Edit** for that
+  zone, otherwise the deploy fails on `/zones/.../workers/routes` with `code: 10000`
+  (adding a brand-new domain uses the account API and can slip through without these, but
+  *changing/removing* one needs them).
 
 ## Troubleshooting
 
