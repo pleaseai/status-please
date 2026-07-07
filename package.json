@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.0.0",
   "private": true,
+  "packageManager": "bun@1.3.14",
   "description": "Open-source, CDN-native status page generator — a modern successor to upptime.",
   "license": "MIT",
   "repository": {
@@ -11,10 +12,10 @@
   },
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
-    "dev": "bun run --filter '@status-please/web' dev",
-    "build": "bun run --filter '*' build",
+    "dev": "turbo run dev",
+    "build": "turbo run build",
     "lint": "eslint .",
-    "typecheck": "bun run --filter '*' typecheck",
+    "typecheck": "turbo run typecheck",
     "test": "bun test",
     "deploy": "bun run --filter '@status-please/worker' deploy && bun run --filter '@status-please/web' deploy"
   },
@@ -22,6 +23,7 @@
     "@pleaseai/eslint-config": "^0.0.4",
     "@types/bun": "^1.3.14",
     "eslint": "^10.6.0",
+    "turbo": "^2.10.4",
     "typescript": "^6.0"
   }
 }
