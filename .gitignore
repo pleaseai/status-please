@@ -48,6 +48,9 @@ tmp/
 # Tool caches
 .impeccable/
 
+# Review tooling transient state (thread watcher snapshots)
+.please/state/
+
 # Local Claude Code config (not shared in this public repo)
 .claude/settings.json
 .claude/settings.local.json
