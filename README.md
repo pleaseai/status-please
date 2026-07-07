@@ -4,8 +4,11 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pleaseai_status-please&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pleaseai_status-please)
 [![codecov](https://codecov.io/gh/pleaseai/status-please/graph/badge.svg)](https://codecov.io/gh/pleaseai/status-please)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Live demo](https://img.shields.io/badge/live%20demo-demo.status.pleaseai.dev-brightgreen)](https://demo.status.pleaseai.dev)
 
 > An open-source, CDN-native **status page** generator — the modern successor to [upptime](https://github.com/upptime/upptime).
+
+🔗 **Live demo:** [demo.status.pleaseai.dev](https://demo.status.pleaseai.dev) — a status-please instance monitoring a few public services, running on Cloudflare.
 
 `status-please` monitors your services, records their uptime as durable time-series
 data, and publishes a fast, good-looking status page to the edge. It keeps the parts
