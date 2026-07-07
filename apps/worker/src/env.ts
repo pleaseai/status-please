@@ -20,4 +20,6 @@ export const KV_KEYS = {
   config: 'config',
   /** JSON array of SiteSummary — the whole dashboard in one read. */
   summary: 'summary',
+  /** JSON array of Incident — the incident timeline in one read. */
+  incidents: 'incidents',
 } as const
