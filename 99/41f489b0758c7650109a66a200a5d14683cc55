@@ -1,0 +1,30 @@
+sonar-project.properties
+  s_46dab8147c5a41::t_6a5326b335c5b6 18-23
+apps/web/src/components/IncidentList.tsx
+  s_46dab8147c5a41::t_86c46c4a8d16de 31
+  s_46dab8147c5a41::t_cbf27ffc7cbf84 71
+apps/web/src/components/UptimeTimeline.tsx
+  s_46dab8147c5a41::t_93410b6e61d63e 18
+  s_46dab8147c5a41::t_0e71c5f09f55ae 30-31,35
+apps/web/src/components/StatusList.tsx
+  s_46dab8147c5a41::t_a3e683864b263d 31
+  s_46dab8147c5a41::t_20360005344c9e 103
+apps/web/src/components/StatusBanner.tsx
+  s_46dab8147c5a41::t_57c42b1a0afdb7 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9941f489b0758c7650109a66a200a5d14683cc55",
+  "prompts": {},
+  "sessions": {
+    "s_46dab8147c5a41": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c7c1c0b-ecd8-494c-ab3b-aaac7f94fe40",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
