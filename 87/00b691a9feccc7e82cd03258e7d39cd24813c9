@@ -1,0 +1,19 @@
+DEPLOYMENT.md
+  s_6ce62affd1d6b0::t_158210f70e91a0 123-124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8700b691a9feccc7e82cd03258e7d39cd24813c9",
+  "prompts": {},
+  "sessions": {
+    "s_6ce62affd1d6b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f5cf577d-cf04-44e0-95ac-5f14dd5744e5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
