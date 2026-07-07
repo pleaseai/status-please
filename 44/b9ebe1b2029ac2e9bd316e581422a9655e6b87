@@ -1,0 +1,20 @@
+apps/web/wrangler.jsonc
+  s_6ce62affd1d6b0::t_aec95a72e9a4b0 9-11,13
+  s_6ce62affd1d6b0::t_33f927c0fb489f 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "44b9ebe1b2029ac2e9bd316e581422a9655e6b87",
+  "prompts": {},
+  "sessions": {
+    "s_6ce62affd1d6b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f5cf577d-cf04-44e0-95ac-5f14dd5744e5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
