@@ -1,5 +1,6 @@
 import { parse as parseYaml } from 'yaml'
 import { z } from 'zod'
+import { LOCALES } from './i18n'
 
 /** How a single service is checked. */
 export const checkKindSchema = z.enum(['http', 'tcp', 'ssl'])
@@ -48,8 +49,10 @@ export const themeSchema = z
   .object({
     logoUrl: z.string().optional(),
     darkMode: z.boolean().default(true),
+    /** UI language for the status page. Defaults to English. */
+    locale: z.enum(LOCALES).default('en'),
   })
-  .default({ darkMode: true })
+  .default({ darkMode: true, locale: 'en' })
 
 export const configSchema = z.object({
   name: z.string().min(1),

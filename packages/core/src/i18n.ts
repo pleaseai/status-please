@@ -1,0 +1,285 @@
+import type { IncidentState } from './incidents'
+import type { Severity } from './types'
+
+/**
+ * Supported UI locales. English is the source language; `zh`/`ja`/`ko` are the
+ * CJK translations. Regional variants (e.g. `zh-CN`, `en-US`) collapse to their
+ * base language via {@link resolveLocale}.
+ */
+export const LOCALES = ['en', 'zh', 'ja', 'ko'] as const
+export type Locale = (typeof LOCALES)[number]
+
+/** Fallback locale when none is configured or a value can't be resolved. */
+export const DEFAULT_LOCALE: Locale = 'en'
+
+/** Narrow an arbitrary value to a supported {@link Locale}. */
+export function isLocale(value: unknown): value is Locale {
+  return typeof value === 'string' && (LOCALES as readonly string[]).includes(value)
+}
+
+/**
+ * Normalize a locale-ish string (config value, `Accept-Language`, `?lang`) to a
+ * supported {@link Locale}, collapsing regional variants (`zh-CN`, `ja_JP`) to
+ * their base language and falling back to {@link DEFAULT_LOCALE}.
+ */
+export function resolveLocale(input: string | null | undefined): Locale {
+  if (!input) {
+    return DEFAULT_LOCALE
+  }
+  const base = input.toLowerCase().split(/[-_]/)[0] ?? ''
+  return isLocale(base) ? base : DEFAULT_LOCALE
+}
+
+/** The `day` bucket keys used by the 90-day uptime timeline. */
+export type DayKey = 'up' | 'degraded' | 'down' | 'nodata'
+
+/** The full set of translatable UI strings for one locale. */
+export interface Dict {
+  page: { title: string }
+  /** Roll-up banner headline, keyed by overall severity. */
+  banner: Record<Severity, string>
+  /** Short badge label, keyed by severity. */
+  severity: Record<Severity, string>
+  /** Incident lifecycle-state badge label. */
+  state: Record<IncidentState, string>
+  /** Per-day timeline bucket label. */
+  day: Record<DayKey, string>
+  incidents: { heading: string, recentlyResolved: string, none: string }
+  status: { responseTime: string }
+  chart: { avg: string, p95: string, responseTime: string, noData: string }
+  /** Unit suffix for response-time figures (kept as the symbol across locales). */
+  unit: { ms: string }
+  timeline: {
+    today: string
+    windowStart: (days: number) => string
+    ariaUptime: (uptime: string) => string
+  }
+  /** Uptime tooltip breakdown, e.g. "Today 100% · 7d 99.9% · …". */
+  breakdown: (parts: { day: string, week: string, month: string, quarter: string }) => string
+}
+
+const en: Dict = {
+  page: { title: 'Status' },
+  banner: {
+    operational: 'All Systems Operational',
+    degraded: 'Degraded Performance',
+    partial_outage: 'Partial System Outage',
+    major_outage: 'Major System Outage',
+    maintenance: 'Under Maintenance',
+  },
+  severity: {
+    operational: 'Operational',
+    degraded: 'Degraded',
+    partial_outage: 'Partial Outage',
+    major_outage: 'Major Outage',
+    maintenance: 'Maintenance',
+  },
+  state: {
+    investigating: 'Investigating',
+    identified: 'Identified',
+    monitoring: 'Monitoring',
+    resolved: 'Resolved',
+  },
+  day: {
+    up: 'Operational',
+    degraded: 'Degraded',
+    down: 'Outage',
+    nodata: 'No data',
+  },
+  incidents: {
+    heading: 'Incidents',
+    recentlyResolved: 'Recently resolved',
+    none: 'No incidents reported in the last 90 days.',
+  },
+  status: { responseTime: 'Response time' },
+  chart: {
+    avg: 'avg',
+    p95: 'p95',
+    responseTime: 'Response time',
+    noData: 'No response-time data yet.',
+  },
+  unit: { ms: 'ms' },
+  timeline: {
+    today: 'Today',
+    windowStart: days => `${days} days ago`,
+    ariaUptime: uptime => `90-day uptime history — ${uptime} uptime`,
+  },
+  breakdown: ({ day, week, month, quarter }) =>
+    `Today ${day} · 7d ${week} · 30d ${month} · 90d ${quarter}`,
+}
+
+const zh: Dict = {
+  page: { title: '服务状态' },
+  banner: {
+    operational: '所有系统正常',
+    degraded: '性能下降',
+    partial_outage: '部分系统故障',
+    major_outage: '重大系统故障',
+    maintenance: '维护中',
+  },
+  severity: {
+    operational: '正常',
+    degraded: '性能下降',
+    partial_outage: '部分故障',
+    major_outage: '重大故障',
+    maintenance: '维护',
+  },
+  state: {
+    investigating: '调查中',
+    identified: '已定位',
+    monitoring: '监控中',
+    resolved: '已解决',
+  },
+  day: {
+    up: '正常',
+    degraded: '性能下降',
+    down: '故障',
+    nodata: '无数据',
+  },
+  incidents: {
+    heading: '事件',
+    recentlyResolved: '最近已解决',
+    none: '过去 90 天内没有报告任何事件。',
+  },
+  status: { responseTime: '响应时间' },
+  chart: {
+    avg: '平均',
+    p95: 'p95',
+    responseTime: '响应时间',
+    noData: '暂无响应时间数据。',
+  },
+  unit: { ms: 'ms' },
+  timeline: {
+    today: '今日',
+    windowStart: days => `${days} 天前`,
+    ariaUptime: uptime => `90 天正常运行记录 — 正常运行率 ${uptime}`,
+  },
+  breakdown: ({ day, week, month, quarter }) =>
+    `今日 ${day} · 7天 ${week} · 30天 ${month} · 90天 ${quarter}`,
+}
+
+const ja: Dict = {
+  page: { title: 'ステータス' },
+  banner: {
+    operational: 'すべてのシステムが正常',
+    degraded: 'パフォーマンス低下',
+    partial_outage: '一部システム障害',
+    major_outage: '重大なシステム障害',
+    maintenance: 'メンテナンス中',
+  },
+  severity: {
+    operational: '正常',
+    degraded: '低下',
+    partial_outage: '一部障害',
+    major_outage: '重大障害',
+    maintenance: 'メンテナンス',
+  },
+  state: {
+    investigating: '調査中',
+    identified: '原因特定',
+    monitoring: '監視中',
+    resolved: '解決済み',
+  },
+  day: {
+    up: '正常',
+    degraded: '低下',
+    down: '障害',
+    nodata: 'データなし',
+  },
+  incidents: {
+    heading: 'インシデント',
+    recentlyResolved: '最近解決済み',
+    none: '過去90日間に報告されたインシデントはありません。',
+  },
+  status: { responseTime: '応答時間' },
+  chart: {
+    avg: '平均',
+    p95: 'p95',
+    responseTime: '応答時間',
+    noData: '応答時間のデータはまだありません。',
+  },
+  unit: { ms: 'ms' },
+  timeline: {
+    today: '今日',
+    windowStart: days => `${days}日前`,
+    ariaUptime: uptime => `90日間の稼働率履歴 — 稼働率 ${uptime}`,
+  },
+  breakdown: ({ day, week, month, quarter }) =>
+    `今日 ${day} · 7日 ${week} · 30日 ${month} · 90日 ${quarter}`,
+}
+
+const ko: Dict = {
+  page: { title: '상태' },
+  banner: {
+    operational: '모든 시스템 정상',
+    degraded: '성능 저하',
+    partial_outage: '부분 장애',
+    major_outage: '주요 장애',
+    maintenance: '점검 중',
+  },
+  severity: {
+    operational: '정상',
+    degraded: '성능 저하',
+    partial_outage: '부분 장애',
+    major_outage: '주요 장애',
+    maintenance: '점검',
+  },
+  state: {
+    investigating: '조사 중',
+    identified: '원인 파악',
+    monitoring: '모니터링',
+    resolved: '해결됨',
+  },
+  day: {
+    up: '정상',
+    degraded: '성능 저하',
+    down: '장애',
+    nodata: '데이터 없음',
+  },
+  incidents: {
+    heading: '인시던트',
+    recentlyResolved: '최근 해결됨',
+    none: '최근 90일간 보고된 인시던트가 없습니다.',
+  },
+  status: { responseTime: '응답 시간' },
+  chart: {
+    avg: '평균',
+    p95: 'p95',
+    responseTime: '응답 시간',
+    noData: '아직 응답 시간 데이터가 없습니다.',
+  },
+  unit: { ms: 'ms' },
+  timeline: {
+    today: '오늘',
+    windowStart: days => `${days}일 전`,
+    ariaUptime: uptime => `90일 가동률 기록 — 가동률 ${uptime}`,
+  },
+  breakdown: ({ day, week, month, quarter }) =>
+    `오늘 ${day} · 7일 ${week} · 30일 ${month} · 90일 ${quarter}`,
+}
+
+const DICTS: Record<Locale, Dict> = { en, zh, ja, ko }
+
+/** The translation dictionary for `locale` (falls back to English). */
+export function getDict(locale: Locale): Dict {
+  return DICTS[locale] ?? DICTS[DEFAULT_LOCALE]
+}
+
+/**
+ * Format an ISO date (`YYYY-MM-DD`, UTC) for `locale`, e.g. "Jul 5, 2026" /
+ * "2026年7月5日" / "2026년 7월 5일". Uses UTC so a day bucket reads the same
+ * regardless of the viewer's timezone.
+ */
+export function formatDay(iso: string, locale: Locale = DEFAULT_LOCALE): string {
+  const [y, m, d] = iso.split('-').map(Number)
+  if (y === undefined || m === undefined || d === undefined) {
+    return iso
+  }
+  const date = new Date(Date.UTC(y, m - 1, d))
+  return new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  }).format(date)
+}

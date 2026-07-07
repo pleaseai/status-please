@@ -1,6 +1,6 @@
-import type { ResponsePoint } from '@status-please/core'
+import type { Locale, ResponsePoint } from '@status-please/core'
 import type { ChartConfig } from '@/components/ui/chart'
-import { averageResponse, percentileResponse } from '@status-please/core'
+import { averageResponse, getDict, percentileResponse } from '@status-please/core'
 import { useId } from 'react'
 import { Area, AreaChart, XAxis, YAxis } from 'recharts'
 import {
@@ -10,18 +10,9 @@ import {
 } from '@/components/ui/chart'
 import { cn } from '@/lib/utils'
 
-// A single series keyed by `ms`. The color is a status token that already
-// adapts across light/dark via `light-dark()`, so the chart reads in both.
-const config = {
-  ms: {
-    label: 'Response time',
-    color: 'var(--status-maintenance)',
-  },
-} satisfies ChartConfig
-
 /** Format an ISO timestamp as a short local `HH:MM` for the tooltip header. */
-function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString([], {
+function formatTime(iso: string, locale: Locale): string {
+  return new Date(iso).toLocaleTimeString(locale, {
     hour: '2-digit',
     minute: '2-digit',
   })
@@ -34,17 +25,28 @@ function formatTime(iso: string): string {
  */
 export function ResponseChart({
   data,
+  locale,
   className,
 }: {
   data: ResponsePoint[]
+  locale: Locale
   className?: string
 }) {
+  const t = getDict(locale)
+  // A single series keyed by `ms`. The color is a status token that already
+  // adapts across light/dark via `light-dark()`, so the chart reads in both.
+  const config = {
+    ms: {
+      label: t.chart.responseTime,
+      color: 'var(--status-maintenance)',
+    },
+  } satisfies ChartConfig
   // useId() yields `:r0:`; colons are invalid in an SVG/XML id (NCName), so
   // strip them — matching the ChartContainer convention in chart.tsx.
   const fillId = `fill-${useId().replace(/:/g, '')}`
   if (data.length === 0) {
     return (
-      <p className="text-xs text-muted-foreground">No response-time data yet.</p>
+      <p className="text-xs text-muted-foreground">{t.chart.noData}</p>
     )
   }
   const avg = averageResponse(data)
@@ -53,21 +55,21 @@ export function ResponseChart({
     <div className={cn('space-y-2', className)}>
       <div className="flex items-center gap-4 text-xs tabular-nums text-muted-foreground">
         <span>
-          avg
+          {t.chart.avg}
           {' '}
           <span className="font-medium text-foreground">
             {avg}
             {' '}
-            ms
+            {t.unit.ms}
           </span>
         </span>
         <span>
-          p95
+          {t.chart.p95}
           {' '}
           <span className="font-medium text-foreground">
             {p95}
             {' '}
-            ms
+            {t.unit.ms}
           </span>
         </span>
       </div>
@@ -86,15 +88,15 @@ export function ResponseChart({
             content={(
               <ChartTooltipContent
                 nameKey="ms"
-                labelFormatter={label => formatTime(String(label))}
+                labelFormatter={label => formatTime(String(label), locale)}
                 formatter={value => (
                   <span className="text-muted-foreground">
-                    Response time
+                    {t.chart.responseTime}
                     {' '}
                     <span className="font-mono font-medium tabular-nums text-foreground">
                       {value}
                       {' '}
-                      ms
+                      {t.unit.ms}
                     </span>
                   </span>
                 )}

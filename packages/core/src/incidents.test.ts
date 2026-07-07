@@ -99,4 +99,13 @@ describe('relativeTime', () => {
   it('falls back to the raw string for an unparseable timestamp', () => {
     expect(relativeTime('not-a-date', now)).toBe('not-a-date')
   })
+
+  it('localizes non-English locales via Intl.RelativeTimeFormat', () => {
+    // Exact wording is ICU-provided; assert it differs from the English form and
+    // carries the localized number so a regression in wiring is caught.
+    expect(relativeTime('2026-01-01T23:45:00.000Z', now, 'ko')).toContain('15')
+    expect(relativeTime('2026-01-01T23:45:00.000Z', now, 'ko')).not.toBe('15m ago')
+    expect(relativeTime('2026-01-01T21:00:00.000Z', now, 'ja')).toContain('3')
+    expect(relativeTime('2026-01-01T21:00:00.000Z', now, 'ja')).not.toBe('3h ago')
+  })
 })

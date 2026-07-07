@@ -11,6 +11,20 @@ export default defineConfig({
   output: 'server',
   adapter: cloudflare(),
   integrations: [react()],
+  // URL-prefixed locales: /en/ /ja/ /ko/ /zh/, each a real page under
+  // src/pages/<locale>/ rendering the shared StatusPage component. Every locale
+  // is a distinct URL, so the edge cache never fragments on Accept-Language.
+  // The bare `/` is handled by src/middleware.ts, which negotiates the visitor's
+  // language (cookie → Accept-Language → config default) and redirects. Enabling
+  // i18n here is what powers `Astro.preferredLocale`/`Astro.currentLocale`.
+  i18n: {
+    locales: ['en', 'ja', 'ko', 'zh'],
+    defaultLocale: 'en',
+    routing: {
+      prefixDefaultLocale: true,
+      redirectToDefaultLocale: false,
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
     resolve: {

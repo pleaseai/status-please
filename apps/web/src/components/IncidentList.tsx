@@ -1,23 +1,24 @@
-import type { Incident, IncidentState, Severity } from '@status-please/core'
-import { isActive, orderedUpdates, relativeTime } from '@status-please/core'
+import type { Dict, Incident, IncidentState, Locale, Severity } from '@status-please/core'
+import { getDict, isActive, orderedUpdates, relativeTime } from '@status-please/core'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
-const SEVERITY = {
-  operational: { label: 'Operational', badge: 'border-status-operational/40 text-status-operational' },
-  degraded: { label: 'Degraded', badge: 'border-status-degraded/40 text-status-degraded' },
-  partial_outage: { label: 'Partial Outage', badge: 'border-status-partial/40 text-status-partial' },
-  major_outage: { label: 'Major Outage', badge: 'border-status-major/40 text-status-major' },
-  maintenance: { label: 'Maintenance', badge: 'border-status-maintenance/40 text-status-maintenance' },
-} satisfies Record<Severity, { label: string, badge: string }>
+// Status-token styling; label text comes from the locale dict.
+const SEVERITY_BADGE = {
+  operational: 'border-status-operational/40 text-status-operational',
+  degraded: 'border-status-degraded/40 text-status-degraded',
+  partial_outage: 'border-status-partial/40 text-status-partial',
+  major_outage: 'border-status-major/40 text-status-major',
+  maintenance: 'border-status-maintenance/40 text-status-maintenance',
+} satisfies Record<Severity, string>
 
-const STATE = {
-  investigating: { label: 'Investigating', badge: 'border-status-major/40 text-status-major' },
-  identified: { label: 'Identified', badge: 'border-status-partial/40 text-status-partial' },
-  monitoring: { label: 'Monitoring', badge: 'border-status-maintenance/40 text-status-maintenance' },
-  resolved: { label: 'Resolved', badge: 'border-status-operational/40 text-status-operational' },
-} satisfies Record<IncidentState, { label: string, badge: string }>
+const STATE_BADGE = {
+  investigating: 'border-status-major/40 text-status-major',
+  identified: 'border-status-partial/40 text-status-partial',
+  monitoring: 'border-status-maintenance/40 text-status-maintenance',
+  resolved: 'border-status-operational/40 text-status-operational',
+} satisfies Record<IncidentState, string>
 
 /** Sort incidents by recency: active ones by start, resolved ones by resolution. */
 function byRecency(a: Incident, b: Incident): number {
@@ -27,30 +28,28 @@ function byRecency(a: Incident, b: Incident): number {
 }
 
 /** One incident card: title + severity badge, then its chronological updates. */
-function IncidentCard({ incident }: { incident: Incident }) {
-  const sev = SEVERITY[incident.severity]
+function IncidentCard({ incident, locale, t }: { incident: Incident, locale: Locale, t: Dict }) {
   return (
     <Card>
       <CardHeader>
         <div className="flex items-start justify-between gap-3">
           <CardTitle>{incident.title}</CardTitle>
-          <Badge variant="outline" className={cn('shrink-0', sev.badge)}>
-            {sev.label}
+          <Badge variant="outline" className={cn('shrink-0', SEVERITY_BADGE[incident.severity])}>
+            {t.severity[incident.severity]}
           </Badge>
         </div>
       </CardHeader>
       <CardContent>
         <ol className="space-y-4 border-l border-border pl-4">
           {orderedUpdates(incident).map((u) => {
-            const state = STATE[u.state]
             return (
               <li key={u.id}>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className={state.badge}>
-                    {state.label}
+                  <Badge variant="outline" className={STATE_BADGE[u.state]}>
+                    {t.state[u.state]}
                   </Badge>
                   <time className="text-xs tabular-nums text-muted-foreground" dateTime={u.createdAt}>
-                    {relativeTime(u.createdAt)}
+                    {relativeTime(u.createdAt, undefined, locale)}
                   </time>
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">{u.body}</p>
@@ -69,7 +68,8 @@ function IncidentCard({ incident }: { incident: Incident }) {
  * order (state badge + body + relative time). Static — it renders to HTML with
  * 0 JS (relative times are computed at edge render). Calm empty state when none.
  */
-export function IncidentList({ incidents }: { incidents: Incident[] }) {
+export function IncidentList({ incidents, locale }: { incidents: Incident[], locale: Locale }) {
+  const t = getDict(locale)
   const active = incidents.filter(isActive).sort(byRecency)
   const resolved = incidents.filter(i => !isActive(i)).sort(byRecency)
 
@@ -77,7 +77,7 @@ export function IncidentList({ incidents }: { incidents: Incident[] }) {
     return (
       <Card>
         <CardContent className="py-6 text-center text-sm text-muted-foreground">
-          No incidents reported in the last 90 days.
+          {t.incidents.none}
         </CardContent>
       </Card>
     )
@@ -86,18 +86,18 @@ export function IncidentList({ incidents }: { incidents: Incident[] }) {
   return (
     <div className="space-y-4">
       {active.map(incident => (
-        <IncidentCard key={incident.id} incident={incident} />
+        <IncidentCard key={incident.id} incident={incident} locale={locale} t={t} />
       ))}
 
       {resolved.length > 0 && (
         <>
           {active.length > 0 && (
             <p className="pt-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              Recently resolved
+              {t.incidents.recentlyResolved}
             </p>
           )}
           {resolved.map(incident => (
-            <IncidentCard key={incident.id} incident={incident} />
+            <IncidentCard key={incident.id} incident={incident} locale={locale} t={t} />
           ))}
         </>
       )}
