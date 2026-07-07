@@ -211,7 +211,8 @@ bunx wrangler secret put CF_ZONE_ID     # the zone serving your status page
 When these are unset the purge is skipped (logged, not fatal) and the page simply
 refreshes on its 60s TTL.
 
-Detailed setup will land with the first release — see the [Roadmap](#roadmap).
+**Full runbook** — provisioning, config, secrets, and the manual GitHub Actions
+deploy — is in **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 
 ---
 

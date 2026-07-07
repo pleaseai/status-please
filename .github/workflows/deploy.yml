@@ -1,0 +1,101 @@
+name: Deploy
+
+# Manual only: production infrastructure (D1/KV) and Cloudflare credentials must
+# exist before this can do anything, so a maintainer runs it deliberately.
+on:
+  workflow_dispatch:
+
+# Least privilege — Wrangler authenticates with the API token, not the GITHUB_TOKEN.
+permissions:
+  contents: read
+
+# Never let two deploys race; cancel is off so an in-flight deploy finishes.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy worker + web to Cloudflare
+    runs-on: ubuntu-latest
+    timeout-minutes: 15 # bound the worst case — concurrency lock (cancel-in-progress:false) must not hang forever
+    environment: production # add protection rules (approvals) in repo settings
+    permissions:
+      contents: read
+    env:
+      # Resource IDs are not secret — set with `gh variable set`. The Cloudflare
+      # secrets are NOT job-level: they're scoped per-step (below) to only the
+      # steps that call Wrangler, so checkout/install/build never see them.
+      CF_D1_DATABASE_ID: ${{ vars.CF_D1_DATABASE_ID }}
+      CF_KV_NAMESPACE_ID: ${{ vars.CF_KV_NAMESPACE_ID }}
+    steps:
+      - name: Preflight — required secrets/variables present
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          missing=""
+          [ -n "$CLOUDFLARE_API_TOKEN" ] || missing="$missing CLOUDFLARE_API_TOKEN(secret)"
+          [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || missing="$missing CLOUDFLARE_ACCOUNT_ID(secret)"
+          [ -n "$CF_D1_DATABASE_ID" ] || missing="$missing CF_D1_DATABASE_ID(variable)"
+          [ -n "$CF_KV_NAMESPACE_ID" ] || missing="$missing CF_KV_NAMESPACE_ID(variable)"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing required config:$missing — see DEPLOYMENT.md"
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false # deploy auths via CLOUDFLARE_API_TOKEN, not git
+
+      - name: Set up mise (node + bun)
+        uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
+
+      - name: Install dependencies
+        # --ignore-scripts: don't run dependency lifecycle scripts on a deploy.
+        # Verified the build + wrangler bundling still work (Astro uses rolldown,
+        # esbuild/workerd resolve their platform binaries via optionalDependencies).
+        run: bun install --frozen-lockfile --ignore-scripts
+
+      - name: Inject account-specific resource IDs
+        # Idempotent: only rewrites the committed placeholders. A fork that
+        # commits real IDs is left untouched.
+        # `|` delimiter (not `/`) so a future ID shape containing `/` or `&`
+        # can't corrupt the substitution. Cloudflare IDs are hex+hyphen today.
+        run: |
+          for f in apps/worker/wrangler.jsonc apps/web/wrangler.jsonc; do
+            sed -i "s|REPLACE_WITH_D1_DATABASE_ID|$CF_D1_DATABASE_ID|g; s|REPLACE_WITH_KV_NAMESPACE_ID|$CF_KV_NAMESPACE_ID|g" "$f"
+          done
+
+      - name: Build (fail fast before touching production)
+        run: bun run build
+
+      - name: Apply D1 schema (idempotent — CREATE TABLE IF NOT EXISTS)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bun run --filter '@status-please/worker' db:apply:remote
+
+      - name: Upload config to KV
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ ! -f status.config.yml ]; then
+            echo "::error::status.config.yml not found. Create it from status.config.example.yml (see DEPLOYMENT.md)."
+            exit 1
+          fi
+          bun run --filter '@status-please/worker' kv:config
+
+      - name: Deploy check Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bun run --filter '@status-please/worker' deploy
+
+      - name: Deploy status page
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bun run --filter '@status-please/web' deploy:publish

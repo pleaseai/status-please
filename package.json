@@ -15,7 +15,8 @@
     "build": "bun run --filter '*' build",
     "lint": "eslint .",
     "typecheck": "bun run --filter '*' typecheck",
-    "test": "bun test"
+    "test": "bun test",
+    "deploy": "bun run --filter '@status-please/worker' deploy && bun run --filter '@status-please/web' deploy"
   },
   "devDependencies": {
     "@pleaseai/eslint-config": "^0.0.4",
