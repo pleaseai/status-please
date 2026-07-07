@@ -1,7 +1,9 @@
 import type { CheckResult, CheckStatus, DayStat, SiteSummary, StatusConfig } from '@status-please/core'
 import type { Env } from './env'
-import { checkSite, formatUptime, parseConfig, windowUptime } from '@status-please/core'
+import { buildStatusChangePayload, checkSite, formatUptime, parseConfig, windowUptime } from '@status-please/core'
+import { purgeStatusCache } from './cache'
 import { KV_KEYS } from './env'
+import { dispatchNotifications } from './notify'
 
 const HISTORY_DAYS = 90
 
@@ -34,10 +36,19 @@ export default {
     await writeSummary(env, config, results)
 
     if (changed.length > 0) {
-      // TODO(notify): enqueue notification events (Slack/webhook/email/RSS).
-      // TODO(cache): purge the page/badge cache by tag so updates are instant.
-      //   e.g. ctx.cache.purge({ tags: ['status-page', ...changed.map(c => c.slug)] })
-      ctx.waitUntil(Promise.resolve())
+      // Diff against the previous snapshot: `previous.get` is defined here
+      // because `changed` only keeps slugs whose prior status existed and moved.
+      const changes = changed.map(r => ({
+        slug: r.slug,
+        from: previous.get(r.slug) as CheckStatus,
+        to: r.status,
+      }))
+      const payload = buildStatusChangePayload(changes, new Date().toISOString())
+
+      // Notify subscribers and purge the edge cache by tag so the page reflects
+      // the new state immediately instead of waiting for its TTL.
+      ctx.waitUntil(dispatchNotifications(config.notifications, payload))
+      ctx.waitUntil(purgeStatusCache(env, changes.map(c => c.slug)))
     }
   },
 }

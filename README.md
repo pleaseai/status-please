@@ -166,11 +166,11 @@ sites:
   - name: API
     url: https://api.example.com/health
     check: http
-notifications:
-  - type: slack
-    webhook: $SLACK_WEBHOOK # $SECRET is resolved from the environment
-  - type: email
-    to: ops@example.com
+notifications: # all optional; keep the real Slack URL (a secret) in your KV config
+  slack:
+    webhookUrl: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX
+  webhooks:
+    - url: https://example.com/status-hook
 theme:
   logoUrl: /logo.svg
   darkMode: true

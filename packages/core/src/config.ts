@@ -30,12 +30,15 @@ export const siteSchema = z
 
 export type Site = z.infer<typeof siteSchema>
 
-export const notificationSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('slack'), webhook: z.string() }),
-  z.object({ type: z.literal('webhook'), url: z.string().url() }),
-  z.object({ type: z.literal('email'), to: z.string().email() }),
-])
-export type Notification = z.infer<typeof notificationSchema>
+/**
+ * Optional outbound notification targets. Every field is optional so existing
+ * configs without a `notifications` block keep parsing unchanged.
+ */
+export const notificationsSchema = z.object({
+  slack: z.object({ webhookUrl: z.string().url() }).optional(),
+  webhooks: z.array(z.object({ url: z.string().url() })).optional(),
+})
+export type Notifications = z.infer<typeof notificationsSchema>
 
 export const themeSchema = z
   .object({
@@ -47,7 +50,7 @@ export const themeSchema = z
 export const configSchema = z.object({
   name: z.string().min(1),
   sites: z.array(siteSchema).min(1),
-  notifications: z.array(notificationSchema).default([]),
+  notifications: notificationsSchema.optional(),
   theme: themeSchema,
 })
 
