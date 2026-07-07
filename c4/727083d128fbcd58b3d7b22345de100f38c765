@@ -1,0 +1,26 @@
+README.md
+  s_9257f375c8468f::t_4258f0ea33bd07 169-173
+status.config.example.yml
+  s_9257f375c8468f::t_0065ba9fad10d6 16-17,19-22
+apps/worker/src/notify.ts
+  s_9257f375c8468f::t_0d1fb5c6c94fbf 32-41,50,54
+apps/worker/src/cache.ts
+  s_9257f375c8468f::t_3b9bd6078aca6e 52-55
+  s_9257f375c8468f::t_3c3d26902d4bf9 33-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c4727083d128fbcd58b3d7b22345de100f38c765",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
