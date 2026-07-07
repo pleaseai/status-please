@@ -98,6 +98,9 @@ interface DayRow {
 async function readHistory(env: Env): Promise<Map<string, Map<string, DayStat>>> {
   const since = new Date()
   since.setUTCDate(since.getUTCDate() - (HISTORY_DAYS - 1))
+  since.setUTCHours(0, 0, 0, 0)
+  // Filter on the raw ISO `checked_at` (sargable via idx_checks_time) rather
+  // than `date(checked_at)`, which would wrap the column and skip the index.
   const rows = await env.DB.prepare(
     `SELECT slug,
             date(checked_at) AS day,
@@ -106,9 +109,9 @@ async function readHistory(env: Env): Promise<Map<string, Map<string, DayStat>>>
             SUM(status = 'down') AS down,
             COUNT(*) AS total
      FROM checks
-     WHERE date(checked_at) >= ?
+     WHERE checked_at >= ?
      GROUP BY slug, day`,
-  ).bind(since.toISOString().slice(0, 10)).all<DayRow>()
+  ).bind(since.toISOString()).all<DayRow>()
 
   const bySlug = new Map<string, Map<string, DayStat>>()
   for (const row of rows.results) {

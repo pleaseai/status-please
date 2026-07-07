@@ -37,7 +37,7 @@ export function UptimeTimeline({ history }: { history: DayStat[] }) {
           return (
             <div
               key={d.date}
-              title={`${formatDate(d.date)} — ${meta.label} · ${formatUptime(d.uptime)}`}
+              title={`${formatDate(d.date)} — ${meta.label}${d.status !== null ? ` · ${formatUptime(d.uptime)}` : ''}`}
               className={cn(
                 'min-w-[2px] flex-1 rounded-[1px] transition-opacity hover:opacity-70',
                 meta.color,

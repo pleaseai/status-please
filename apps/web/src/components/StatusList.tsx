@@ -30,6 +30,10 @@ export function StatusList({ summary }: { summary: SiteSummary[] }) {
       <Card className="gap-0 divide-y divide-border overflow-hidden py-0">
         {summary.map((site) => {
           const meta = SEVERITY[toSeverity(site.status)]
+          // Guard against stale KV snapshots written before `history` existed.
+          const history = site.history ?? []
+          const uptime90 = formatUptime(windowUptime(history))
+          const breakdown = `Today ${site.uptimeDay} · 7d ${site.uptimeWeek} · 30d ${site.uptimeMonth} · 90d ${uptime90}`
           return (
             <div key={site.slug} className="px-5 py-4">
               <div className="flex items-center justify-between">
@@ -47,21 +51,9 @@ export function StatusList({ summary }: { summary: SiteSummary[] }) {
                         />
                       )}
                     >
-                      {formatUptime(windowUptime(site.history))}
+                      {uptime90}
                     </TooltipTrigger>
-                    <TooltipContent>
-                      24h
-                      {' '}
-                      {site.uptimeDay}
-                      {' '}
-                      · 7d
-                      {' '}
-                      {site.uptimeWeek}
-                      {' '}
-                      · 30d
-                      {' '}
-                      {site.uptimeMonth}
-                    </TooltipContent>
+                    <TooltipContent>{breakdown}</TooltipContent>
                   </Tooltip>
                   <Badge variant="outline" className={meta.badge}>
                     {meta.label}
@@ -69,7 +61,7 @@ export function StatusList({ summary }: { summary: SiteSummary[] }) {
                 </div>
               </div>
               <div className="mt-3">
-                <UptimeTimeline history={site.history} />
+                <UptimeTimeline history={history} />
               </div>
             </div>
           )
