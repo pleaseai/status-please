@@ -39,7 +39,9 @@ export function ResponseChart({
   data: ResponsePoint[]
   className?: string
 }) {
-  const fillId = useId()
+  // useId() yields `:r0:`; colons are invalid in an SVG/XML id (NCName), so
+  // strip them — matching the ChartContainer convention in chart.tsx.
+  const fillId = `fill-${useId().replace(/:/g, '')}`
   if (data.length === 0) {
     return (
       <p className="text-xs text-muted-foreground">No response-time data yet.</p>

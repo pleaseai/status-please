@@ -70,6 +70,7 @@ function StatusRow({ site }: { site: SiteSummary }) {
             type="button"
             onClick={() => setOpen(o => !o)}
             aria-expanded={open}
+            aria-controls={`chart-${site.slug}`}
             className="flex items-center gap-1.5 rounded-sm text-xs tabular-nums text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
           >
             <ChevronRight className={cn('size-3.5 transition-transform', open && 'rotate-90')} />
@@ -83,7 +84,7 @@ function StatusRow({ site }: { site: SiteSummary }) {
             </span>
           </button>
           {open && (
-            <div className="mt-2">
+            <div id={`chart-${site.slug}`} className="mt-2">
               <ResponseChart data={responseHistory} />
             </div>
           )}
