@@ -1,0 +1,31 @@
+.gitignore
+  s_9257f375c8468f::t_5418900693dae5 1-44
+docs/adr/0001-tech-stack.md
+  s_9257f375c8468f::t_ca5a1048ce1c75 29
+  s_9257f375c8468f::t_5580866095e01f 129-130
+  s_9257f375c8468f::t_424ddcfb73377f 85-108
+  s_9257f375c8468f::t_8c781c6aa4c7cd 1-28,30-84,109-128,131-146
+LICENSE
+  s_9257f375c8468f::t_a626921f7e6c22 1-21
+README.md
+  s_9257f375c8468f::t_ba13e90e773fef 43-55,60-64
+  s_9257f375c8468f::t_eca81a3abdedd2 85-86
+  s_9257f375c8468f::t_fdb8a3b43c7f5a 81
+  s_9257f375c8468f::t_34a5b9cc464dd1 1-42,56-59,65-80,82-84,87-194
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "10f732e787d66d3212fbbf5202e185bd1d92c63b",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <amond@amond.net>"
+    }
+  }
+}
