@@ -1,4 +1,4 @@
-import type { CheckStatus, DayStat, SiteSummary } from '@status-please/core'
+import type { CheckStatus, DayStat, Incident, SiteSummary } from '@status-please/core'
 import { env } from 'cloudflare:workers'
 
 /**
@@ -49,4 +49,52 @@ export async function getSummary(): Promise<SiteSummary[]> {
     }
   }
   return SAMPLE
+}
+
+/** ISO timestamp `hours` before now — keeps sample incidents fresh for `astro dev`. */
+function hoursAgo(hours: number): string {
+  return new Date(Date.now() - hours * 3600_000).toISOString()
+}
+
+const SAMPLE_INCIDENTS: Incident[] = [
+  {
+    id: 2,
+    slug: 'api',
+    title: 'Elevated API error rates',
+    severity: 'degraded',
+    startedAt: hoursAgo(2),
+    resolvedAt: null,
+    updates: [
+      { id: 3, incidentId: 2, state: 'investigating', body: 'We are investigating a spike in 5xx responses on the API.', createdAt: hoursAgo(2) },
+      { id: 4, incidentId: 2, state: 'identified', body: 'A slow upstream dependency has been identified as the cause. A fix is being rolled out.', createdAt: hoursAgo(1) },
+    ],
+  },
+  {
+    id: 1,
+    slug: 'website',
+    title: 'Intermittent connection timeouts',
+    severity: 'major_outage',
+    startedAt: hoursAgo(52),
+    resolvedAt: hoursAgo(48),
+    updates: [
+      { id: 1, incidentId: 1, state: 'investigating', body: 'Some visitors are seeing connection timeouts loading the website.', createdAt: hoursAgo(52) },
+      { id: 2, incidentId: 1, state: 'monitoring', body: 'We restarted the affected edge nodes and are monitoring recovery.', createdAt: hoursAgo(50) },
+      { id: 5, incidentId: 1, state: 'resolved', body: 'Timeouts have cleared and traffic is fully healthy. The incident is resolved.', createdAt: hoursAgo(48) },
+    ],
+  },
+]
+
+/**
+ * Read the incident timeline the check Worker writes to KV. Falls back to sample
+ * incidents so `astro dev` renders a realistic timeline without Cloudflare bindings.
+ */
+export async function getIncidents(): Promise<Incident[]> {
+  const kv = env.STATUS_KV
+  if (kv) {
+    const raw = await kv.get('incidents')
+    if (raw) {
+      return JSON.parse(raw) as Incident[]
+    }
+  }
+  return SAMPLE_INCIDENTS
 }
