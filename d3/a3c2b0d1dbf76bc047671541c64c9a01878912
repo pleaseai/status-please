@@ -1,0 +1,65 @@
+eslint.config.ts
+  s_9257f375c8468f::t_035feacb470d7d 4
+apps/web/src/lib/data.ts
+  s_9257f375c8468f::t_a9369d16d8890c 2,13-14,16-17
+apps/web/src/components/ui/alert.tsx
+  s_9257f375c8468f::t_c8db9372767ed6 7,13,42,58,66-76
+  s_9257f375c8468f::t_3cc197d28e76ba 1-6,8-12,14-41,43-57,59-65
+apps/web/src/components/ui/badge.tsx
+  s_9257f375c8468f::t_c8db9372767ed6 1-2,8,12,14,16,18-21,33,35-49
+  s_9257f375c8468f::t_3cc197d28e76ba 3-7,9-11,13,15,17,22-32,34,50-52
+apps/web/src/components/ui/tooltip.tsx
+  s_9257f375c8468f::t_c8db9372767ed6 1,6,8,12,18,22,28-31,34-38,41-44,46,48-59
+  s_9257f375c8468f::t_3cc197d28e76ba 2-5,7,9-11,13-17,19-21,23-27,32-33,39-40,45,47,60-64
+apps/web/src/components/StatusList.tsx
+  s_9257f375c8468f::t_45beb6c0e60686 27-44
+  s_9257f375c8468f::t_48040894816212 47-51
+  s_9257f375c8468f::t_6dbc5272799ed8 1-26,45-46,52-64
+apps/web/src/env.d.ts
+  s_9257f375c8468f::t_f3240a9c8a3bc5 4-10
+apps/web/package.json
+  s_9257f375c8468f::t_c8db9372767ed6 14
+  s_9257f375c8468f::t_81042f1b54c249 16-21
+apps/web/src/lib/utils.ts
+  s_9257f375c8468f::t_c8db9372767ed6 5
+  s_9257f375c8468f::t_48040894816212 1-3
+  s_9257f375c8468f::t_611a649dd96e79 4,6-7
+apps/web/components.json
+  s_9257f375c8468f::t_31d523548ea760 1-2,4-13,15-20,25
+  s_9257f375c8468f::t_c8db9372767ed6 3,14,21-24
+apps/web/src/components/ui/card.tsx
+  s_9257f375c8468f::t_3cc197d28e76ba 1-4,10-12,14,16-27,29-39,44-75,77-85,90-103
+  s_9257f375c8468f::t_c8db9372767ed6 5-9,13,15,28,40-43,76,86-89
+apps/web/src/pages/index.astro
+  s_9257f375c8468f::t_61c774b80ecf93 2-4,9,20,25-28,30-31,33,36-37,39-40
+  s_9257f375c8468f::t_96f716da27aedb 8
+apps/web/tsconfig.json
+  s_9257f375c8468f::t_48040894816212 10
+  s_9257f375c8468f::t_00eec0bdce2bd1 7-9
+apps/web/astro.config.ts
+  s_9257f375c8468f::t_9c9ae3dc451d43 16-20
+  s_9257f375c8468f::t_a475f583cf9b7e 1
+apps/web/src/styles/global.css
+  s_9257f375c8468f::t_6dbe8dcf7e1c15 56-70,72-74
+  s_9257f375c8468f::t_2d6d7d2bf28636 2-44,47-50,53-55,71,75-76,85-86,88-89,92-99
+bun.lock
+  s_9257f375c8468f::t_981c40dc1d08da 18,21-25,143-144,151-154,301-308,703-704,1047-1048,1287-1288,1355-1356,1381-1382,1425-1426
+apps/web/src/components/StatusBanner.tsx
+  s_9257f375c8468f::t_d9a7734d2e2c9b 1-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d3a3c2b0d1dbf76bc047671541c64c9a01878912",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
