@@ -13,11 +13,13 @@ sites:
     url: https://api.example.com/health
     check: http
 
+# All optional. Keep the real Slack URL in the private config you upload to KV,
+# not in this committed example (the webhook URL is a secret).
 notifications:
-  - type: slack
-    webhook: $SLACK_WEBHOOK # $SECRET is resolved from the environment
-  - type: email
-    to: ops@example.com
+  slack:
+    webhookUrl: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX
+  webhooks:
+    - url: https://example.com/status-hook
 
 theme:
   logoUrl: /logo.svg
