@@ -13,6 +13,10 @@ CREATE TABLE IF NOT EXISTS checks (
 
 CREATE INDEX IF NOT EXISTS idx_checks_slug_time ON checks (slug, checked_at DESC);
 
+-- checked_at-first index so the 90-day history aggregate (a range scan across
+-- all slugs) is sargable and does not degrade as the table grows.
+CREATE INDEX IF NOT EXISTS idx_checks_time ON checks (checked_at);
+
 -- Incident lifecycle: Investigating → Identified → Monitoring → Resolved.
 CREATE TABLE IF NOT EXISTS incidents (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,

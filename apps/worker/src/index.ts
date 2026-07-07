@@ -1,7 +1,9 @@
-import type { CheckResult, SiteSummary, StatusConfig } from '@status-please/core'
+import type { CheckResult, CheckStatus, DayStat, SiteSummary, StatusConfig } from '@status-please/core'
 import type { Env } from './env'
-import { checkSite, parseConfig } from '@status-please/core'
+import { checkSite, formatUptime, parseConfig, windowUptime } from '@status-please/core'
 import { KV_KEYS } from './env'
+
+const HISTORY_DAYS = 90
 
 /**
  * Cron entrypoint. Runs on the schedule in wrangler.jsonc: check every site,
@@ -61,18 +63,75 @@ async function readSummary(env: Env): Promise<Map<string, string>> {
 /** Overwrite the snapshot the status page reads at the edge. */
 async function writeSummary(env: Env, config: StatusConfig, results: CheckResult[]): Promise<void> {
   const bySlug = new Map(results.map(r => [r.slug, r]))
+  const historyBySlug = await readHistory(env)
   const summary: SiteSummary[] = config.sites.map((site) => {
     const r = bySlug.get(site.slug)
+    const history = denseHistory(historyBySlug.get(site.slug))
     return {
       slug: site.slug,
       name: site.name,
       status: r?.status ?? 'down',
       responseTime: r?.responseTime ?? 0,
-      // TODO(uptime): compute trailing windows from the D1 `checks` table.
-      uptimeDay: '—',
-      uptimeWeek: '—',
-      uptimeMonth: '—',
+      // Trailing windows are the tail slices of the same 90-day history.
+      uptimeDay: formatUptime(windowUptime(history.slice(-1))),
+      uptimeWeek: formatUptime(windowUptime(history.slice(-7))),
+      uptimeMonth: formatUptime(windowUptime(history.slice(-30))),
+      history,
     }
   })
   await env.STATUS_KV.put(KV_KEYS.summary, JSON.stringify(summary))
+}
+
+interface DayRow {
+  slug: string
+  day: string
+  up: number
+  degraded: number
+  down: number
+  total: number
+}
+
+/**
+ * Aggregate the D1 `checks` table into one row per (slug, day) for the last
+ * {@link HISTORY_DAYS} days: the worst status of the day and its uptime ratio.
+ */
+async function readHistory(env: Env): Promise<Map<string, Map<string, DayStat>>> {
+  const since = new Date()
+  since.setUTCDate(since.getUTCDate() - (HISTORY_DAYS - 1))
+  since.setUTCHours(0, 0, 0, 0)
+  // Filter on the raw ISO `checked_at` (sargable via idx_checks_time) rather
+  // than `date(checked_at)`, which would wrap the column and skip the index.
+  const rows = await env.DB.prepare(
+    `SELECT slug,
+            date(checked_at) AS day,
+            SUM(status = 'up') AS up,
+            SUM(status = 'degraded') AS degraded,
+            SUM(status = 'down') AS down,
+            COUNT(*) AS total
+     FROM checks
+     WHERE checked_at >= ?
+     GROUP BY slug, day`,
+  ).bind(since.toISOString()).all<DayRow>()
+
+  const bySlug = new Map<string, Map<string, DayStat>>()
+  for (const row of rows.results) {
+    const status: CheckStatus = row.down > 0 ? 'down' : row.degraded > 0 ? 'degraded' : 'up'
+    const days = bySlug.get(row.slug) ?? new Map<string, DayStat>()
+    days.set(row.day, { date: row.day, status, uptime: row.total ? row.up / row.total : 1 })
+    bySlug.set(row.slug, days)
+  }
+  return bySlug
+}
+
+/** Expand sparse per-day rows into a dense 90-entry window (oldest → newest). */
+function denseHistory(days: Map<string, DayStat> | undefined): DayStat[] {
+  const out: DayStat[] = []
+  const today = new Date()
+  for (let i = HISTORY_DAYS - 1; i >= 0; i--) {
+    const d = new Date(today)
+    d.setUTCDate(d.getUTCDate() - i)
+    const date = d.toISOString().slice(0, 10)
+    out.push(days?.get(date) ?? { date, status: null, uptime: 1 })
+  }
+  return out
 }

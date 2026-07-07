@@ -23,6 +23,16 @@ export interface CheckResult {
   error?: string
 }
 
+/** One calendar day's rolled-up outcome, for the 90-day timeline. */
+export interface DayStat {
+  /** ISO date, `YYYY-MM-DD` (UTC). */
+  date: string
+  /** Worst status seen that day; `null` when no checks ran (no data). */
+  status: CheckStatus | null
+  /** Fraction of checks that were `up` (0..1). `1` for a no-data day. */
+  uptime: number
+}
+
 /** Aggregated current state for one site, served to the status page. */
 export interface SiteSummary {
   slug: string
@@ -33,6 +43,8 @@ export interface SiteSummary {
   uptimeDay: string
   uptimeWeek: string
   uptimeMonth: string
+  /** Per-day history, oldest → newest, up to 90 entries. */
+  history: DayStat[]
 }
 
 /** Map CheckStatus → the display severity used by the banner and badges. */
@@ -56,4 +68,23 @@ export function overallSeverity(statuses: CheckStatus[]): Severity {
     return 'degraded'
   }
   return 'operational'
+}
+
+/**
+ * Average uptime over a day-stat window, ignoring no-data days. Returns `1`
+ * when the window is empty or entirely no-data (nothing to report against).
+ */
+export function windowUptime(history: DayStat[]): number {
+  const days = history.filter(d => d.status !== null)
+  if (days.length === 0) {
+    return 1
+  }
+  return days.reduce((sum, d) => sum + d.uptime, 0) / days.length
+}
+
+/** Format an uptime ratio (0..1) as a display percentage, e.g. "99.98%". */
+export function formatUptime(ratio: number): string {
+  const pct = ratio * 100
+  // Avoid "100.00%" when a rounded value reaches 100.
+  return pct >= 99.995 ? '100%' : `${pct.toFixed(2)}%`
 }
