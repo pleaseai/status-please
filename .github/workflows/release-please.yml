@@ -22,6 +22,7 @@ jobs:
     permissions:
       contents: write # create tags/releases and the release PR's commits
       pull-requests: write # open/update the release PR
+      issues: write # release-please labels the release PR (labels go via the issues API)
     steps:
       # pleaseai org: run as the release-bot GitHub App, not GITHUB_TOKEN — the
       # default token can't trigger downstream CI on the release PR (GitHub
@@ -37,6 +38,7 @@ jobs:
           # the App's blanket installation permissions.
           permission-contents: write
           permission-pull-requests: write
+          permission-issues: write
 
       - name: Release please
         uses: googleapis/release-please-action@5c625bfb5d1ff62eadeeb3772007f7f66fdcf071 # v4.4.1
