@@ -1,0 +1,27 @@
+apps/worker/src/index.ts
+  s_9257f375c8468f::t_6d002a52d2a9bb 101-103,112,114
+apps/web/src/components/StatusList.tsx
+  s_9257f375c8468f::t_69a9dbbbe3c269 64
+  s_9257f375c8468f::t_71820e5a0ed6af 33-36
+  s_9257f375c8468f::t_bf15e27101f45a 54,56
+apps/web/src/components/UptimeTimeline.tsx
+  s_9257f375c8468f::t_3da10458fb01be 40
+apps/worker/schema.sql
+  s_9257f375c8468f::t_63056a95bb39e4 16-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1e9507cf7be0844874dd4a37cd69335288203fe2",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
