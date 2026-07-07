@@ -1,0 +1,23 @@
+packages/core/tsconfig.json
+  s_9257f375c8468f::t_877ccc68b127f2 8
+packages/core/package.json
+  s_9257f375c8468f::t_ced614aff373ce 10
+packages/core/tsconfig.build.json
+  s_9257f375c8468f::t_c2f5352b3edf3b 1-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "292c5278444b751a4f1565850a0d62e8442c3200",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
