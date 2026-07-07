@@ -1,0 +1,29 @@
+package.json
+  s_9257f375c8468f::t_d0dda6639e8af3 15-16,18
+  s_9257f375c8468f::t_2982cfc2b54871 26
+  s_9257f375c8468f::t_fbef4f60463d5d 6
+.gitignore
+  s_9257f375c8468f::t_cb567bc8771911 50
+packages/core/tsconfig.json
+  s_9257f375c8468f::t_b142faecc52110 8-9
+turbo.json
+  s_9257f375c8468f::t_303537926e16cf 1-17
+bun.lock
+  s_9257f375c8468f::t_f2715a7a949933 11,545-556,1447-1448
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4d3e684b624b24c89af0f9c678e4f6f25e2eb56f",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
