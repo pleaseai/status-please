@@ -1,0 +1,40 @@
+apps/worker/src/cache.ts
+  s_9257f375c8468f::t_76c90c59be1b29 1-53
+packages/core/src/config.test.ts
+  s_9257f375c8468f::t_3988dbf007a676 15
+  s_9257f375c8468f::t_bae355fd1725a4 1-14,16-67
+apps/worker/src/env.ts
+  s_9257f375c8468f::t_d05ee17357acb3 6-14
+apps/worker/src/index.ts
+  s_9257f375c8468f::t_d979da6be42254 39-51
+  s_9257f375c8468f::t_2eb1100c245544 3-4,6
+packages/core/src/index.ts
+  s_9257f375c8468f::t_88465096619490 3
+packages/core/src/notify.ts
+  s_9257f375c8468f::t_f9e6e2836a414a 1-66
+packages/core/src/notify.test.ts
+  s_9257f375c8468f::t_3f14a5b32aaabe 1-59
+apps/worker/wrangler.jsonc
+  s_9257f375c8468f::t_d2a654628fed99 30-44
+apps/worker/src/notify.ts
+  s_9257f375c8468f::t_e2eb5ae0661e5b 1-46
+packages/core/src/config.ts
+  s_9257f375c8468f::t_004154578f8c15 53
+  s_9257f375c8468f::t_4cbffddad5ab5c 33-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b07994f493e21dee391da0b16c12a106285921ef",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
