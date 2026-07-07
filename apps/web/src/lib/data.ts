@@ -85,8 +85,11 @@ export async function getLocale(): Promise<Locale> {
       try {
         return resolveLocale(parseConfig(raw).theme.locale)
       }
-      catch {
-        // Malformed config: fall back rather than fail the whole page render.
+      catch (err) {
+        // Malformed config: fall back rather than fail the whole page render,
+        // but log it (matching cache.ts/notify.ts) so the operator can debug
+        // why `/` isn't honoring their configured `theme.locale`.
+        console.warn('getLocale: malformed config in KV, falling back to default locale', err)
       }
     }
   }

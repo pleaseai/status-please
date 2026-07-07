@@ -1,7 +1,7 @@
 ---
 import type { Locale } from '@status-please/core'
 import type { StatusPageData } from '../lib/page'
-import { getDict, LOCALES } from '@status-please/core'
+import { DEFAULT_LOCALE, getDict, LOCALES } from '@status-please/core'
 import '../styles/global.css'
 import { IncidentList } from './IncidentList'
 import { StatusBanner } from './StatusBanner'
@@ -26,6 +26,11 @@ const LOCALE_NAMES: Record<Locale, string> = {
   ko: '한국어',
   zh: '中文',
 }
+
+// Absolute URLs for the per-locale <link rel="alternate"> tags. `Astro.site`
+// (if set in astro.config) is preferred; otherwise fall back to the request URL
+// so the origin is still correct.
+const localeHref = (l: string): string => new URL(`/${l}/`, Astro.site ?? Astro.url).href
 ---
 
 <html lang={locale} class="min-h-full">
@@ -34,6 +39,12 @@ const LOCALE_NAMES: Record<Locale, string> = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
     <title>{t.page.title}</title>
+    {/* Multilingual SEO: tell crawlers these four URLs are translations of each
+        other, with English as the x-default landing. */}
+    {LOCALES.map(l => (
+      <link rel="alternate" hreflang={l} href={localeHref(l)} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={localeHref(DEFAULT_LOCALE)} />
   </head>
   <body class="min-h-full">
     <main class="mx-auto max-w-3xl px-4 py-10">
@@ -52,11 +63,15 @@ const LOCALE_NAMES: Record<Locale, string> = {
       </section>
 
       <footer class="mt-10 space-y-3 text-center text-xs text-muted-foreground">
-        <nav class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1" aria-label="Language">
+        <nav class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1" aria-label={t.a11y.languageNav}>
           {LOCALES.map(l => (
             l === locale
               ? <span class="font-medium text-foreground" aria-current="true">{LOCALE_NAMES[l]}</span>
-              : <a class="underline underline-offset-4 hover:text-foreground" href={`/${l}/`} hreflang={l}>{LOCALE_NAMES[l]}</a>
+              : (
+                  // `lang={l}` so AT announces each endonym in its own language
+                  // (WCAG 3.1.2), since the link text differs from the page lang.
+                  <a class="underline underline-offset-4 hover:text-foreground" href={`/${l}/`} hreflang={l} lang={l}>{LOCALE_NAMES[l]}</a>
+                )
           ))}
         </nav>
         <p>

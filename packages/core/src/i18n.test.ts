@@ -1,5 +1,22 @@
 import { describe, expect, it } from 'bun:test'
-import { DEFAULT_LOCALE, formatDay, getDict, isLocale, LOCALES, resolveLocale } from './i18n'
+import { DEFAULT_LOCALE, formatDay, getDict, isLocale, LOCALES, matchLocale, negotiateLocale, resolveLocale } from './i18n'
+
+/** Recursively assert every string leaf of a Dict subtree is non-empty. */
+function expectNonEmptyStrings(value: unknown, path: string): void {
+  if (typeof value === 'string') {
+    if (value.length === 0) {
+      throw new Error(`empty translation string at ${path}`)
+    }
+    return
+  }
+  // Function-valued entries (windowStart/ariaUptime/breakdown) are exercised
+  // separately with sample arguments below.
+  if (value && typeof value === 'object') {
+    for (const [key, child] of Object.entries(value)) {
+      expectNonEmptyStrings(child, `${path}.${key}`)
+    }
+  }
+}
 
 describe('resolveLocale', () => {
   it('collapses regional variants to the base language', () => {
@@ -17,6 +34,17 @@ describe('resolveLocale', () => {
   })
 })
 
+describe('matchLocale', () => {
+  it('returns the supported locale for a matching tag, else null', () => {
+    expect(matchLocale('ja')).toBe('ja')
+    expect(matchLocale('zh-CN')).toBe('zh')
+    expect(matchLocale('fr')).toBeNull()
+    expect(matchLocale('')).toBeNull()
+    expect(matchLocale(null)).toBeNull()
+    expect(matchLocale(undefined)).toBeNull()
+  })
+})
+
 describe('isLocale', () => {
   it('accepts supported locales and rejects everything else', () => {
     expect(isLocale('en')).toBe(true)
@@ -30,12 +58,12 @@ describe('getDict', () => {
   it('provides a complete dictionary for every supported locale', () => {
     for (const locale of LOCALES) {
       const dict = getDict(locale)
-      expect(dict.banner.operational.length).toBeGreaterThan(0)
-      expect(dict.severity.major_outage.length).toBeGreaterThan(0)
-      expect(dict.state.investigating.length).toBeGreaterThan(0)
-      expect(dict.day.nodata.length).toBeGreaterThan(0)
-      expect(dict.incidents.none.length).toBeGreaterThan(0)
+      // Every string leaf (page.title, chart.*, unit.ms, etc.) must be non-empty
+      // — a translator shipping "" for any key is caught, not just spot-checks.
+      expectNonEmptyStrings(dict, locale)
+      // Function-valued entries must produce non-empty output.
       expect(dict.timeline.windowStart(90)).toContain('90')
+      expect(dict.timeline.ariaUptime('99%').length).toBeGreaterThan(0)
       expect(dict.breakdown({ day: '100%', week: '99%', month: '98%', quarter: '97%' })).toContain('100%')
     }
   })
@@ -57,5 +85,49 @@ describe('formatDay', () => {
 
   it('returns the raw input for a malformed date', () => {
     expect(formatDay('nope', 'en')).toBe('nope')
+  })
+
+  it('does not throw on 3-segment non-numeric dates (regression guard)', () => {
+    // All three segments are present but NaN — the previous `=== undefined`
+    // guard let these through and Intl.DateTimeFormat.format() threw, crashing
+    // the SSR render. Must degrade to the raw string instead.
+    expect(() => formatDay('20xx-07-05', 'en')).not.toThrow()
+    expect(formatDay('20xx-07-05', 'en')).toBe('20xx-07-05')
+    expect(formatDay('2026-ab-05', 'ja')).toBe('2026-ab-05')
+  })
+
+  it('renders the same calendar day regardless of the host timezone (UTC)', () => {
+    // Midnight UTC on Jul 5 is still Jul 4 in Los Angeles; the explicit
+    // timeZone: 'UTC' must keep the output stable across host timezones.
+    const original = process.env.TZ
+    try {
+      process.env.TZ = 'America/Los_Angeles'
+      expect(formatDay('2026-07-05', 'en')).toBe('Jul 5, 2026')
+    }
+    finally {
+      process.env.TZ = original
+    }
+  })
+})
+
+describe('negotiateLocale', () => {
+  it('prefers a valid remembered cookie over everything else', () => {
+    expect(negotiateLocale('ko', 'ja-JP', 'en')).toBe('ko')
+  })
+
+  it('ignores an invalid cookie and falls back to Accept-Language', () => {
+    expect(negotiateLocale('xx', 'ja-JP,ja;q=0.9', 'en')).toBe('ja')
+    expect(negotiateLocale(undefined, 'zh-CN', 'en')).toBe('zh')
+  })
+
+  it('skips an unsupported Accept-Language and uses the deployment fallback', () => {
+    // 'fr' names no supported locale, so the deployment default ('ko') wins —
+    // not English. (The Astro middleware also passes `undefined` for these.)
+    expect(negotiateLocale(null, 'fr-FR', 'ko')).toBe('ko')
+  })
+
+  it('uses the fallback when neither cookie nor Accept-Language is present', () => {
+    expect(negotiateLocale(null, null, 'ko')).toBe('ko')
+    expect(negotiateLocale(undefined, undefined, 'ja')).toBe('ja')
   })
 })

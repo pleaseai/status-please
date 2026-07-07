@@ -1,6 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import cloudflare from '@astrojs/cloudflare'
 import react from '@astrojs/react'
+import { DEFAULT_LOCALE, LOCALES } from '@status-please/core'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'astro/config'
 
@@ -17,9 +18,11 @@ export default defineConfig({
   // The bare `/` is handled by src/middleware.ts, which negotiates the visitor's
   // language (cookie → Accept-Language → config default) and redirects. Enabling
   // i18n here is what powers `Astro.preferredLocale`/`Astro.currentLocale`.
+  // Locales come from core's `LOCALES` so the routing set can't drift from the
+  // translation dictionaries / footer switcher.
   i18n: {
-    locales: ['en', 'ja', 'ko', 'zh'],
-    defaultLocale: 'en',
+    locales: [...LOCALES],
+    defaultLocale: DEFAULT_LOCALE,
     routing: {
       prefixDefaultLocale: true,
       redirectToDefaultLocale: false,

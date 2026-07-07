@@ -1,4 +1,4 @@
-import { isLocale, resolveLocale } from '@status-please/core'
+import { negotiateLocale } from '@status-please/core'
 import { defineMiddleware } from 'astro:middleware'
 import { getLocale } from './lib/data'
 
@@ -18,12 +18,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next()
   }
 
-  const remembered = context.cookies.get('locale')?.value
-  const target = isLocale(remembered)
-    ? remembered
-    : context.preferredLocale
-      ? resolveLocale(context.preferredLocale)
-      : await getLocale()
+  // Precedence: remembered cookie → browser Accept-Language → config default.
+  // Only the bare `/` reaches here (one KV read for the config default, on an
+  // uncached redirect), so reading it eagerly is cheap.
+  const target = negotiateLocale(
+    context.cookies.get('locale')?.value,
+    context.preferredLocale,
+    await getLocale(),
+  )
 
   return new Response(null, {
     status: 302,

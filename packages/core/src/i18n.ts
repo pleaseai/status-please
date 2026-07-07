@@ -18,16 +18,26 @@ export function isLocale(value: unknown): value is Locale {
 }
 
 /**
+ * The supported {@link Locale} a locale-ish string maps to, collapsing regional
+ * variants (`zh-CN`, `ja_JP`) to their base language — or `null` when it names
+ * no supported locale. Use this when "unsupported" must be handled distinctly
+ * from "defaulted"; use {@link resolveLocale} when a default is always wanted.
+ */
+export function matchLocale(input: string | null | undefined): Locale | null {
+  if (!input) {
+    return null
+  }
+  const base = input.toLowerCase().split(/[-_]/)[0] ?? ''
+  return isLocale(base) ? base : null
+}
+
+/**
  * Normalize a locale-ish string (config value, `Accept-Language`, `?lang`) to a
  * supported {@link Locale}, collapsing regional variants (`zh-CN`, `ja_JP`) to
  * their base language and falling back to {@link DEFAULT_LOCALE}.
  */
 export function resolveLocale(input: string | null | undefined): Locale {
-  if (!input) {
-    return DEFAULT_LOCALE
-  }
-  const base = input.toLowerCase().split(/[-_]/)[0] ?? ''
-  return isLocale(base) ? base : DEFAULT_LOCALE
+  return matchLocale(input) ?? DEFAULT_LOCALE
 }
 
 /** The `day` bucket keys used by the 90-day uptime timeline. */
@@ -36,6 +46,8 @@ export type DayKey = 'up' | 'degraded' | 'down' | 'nodata'
 /** The full set of translatable UI strings for one locale. */
 export interface Dict {
   page: { title: string }
+  /** Accessible names for UI chrome (not visible copy), e.g. the switcher nav. */
+  a11y: { languageNav: string }
   /** Roll-up banner headline, keyed by overall severity. */
   banner: Record<Severity, string>
   /** Short badge label, keyed by severity. */
@@ -60,6 +72,7 @@ export interface Dict {
 
 const en: Dict = {
   page: { title: 'Status' },
+  a11y: { languageNav: 'Language' },
   banner: {
     operational: 'All Systems Operational',
     degraded: 'Degraded Performance',
@@ -110,6 +123,7 @@ const en: Dict = {
 
 const zh: Dict = {
   page: { title: '服务状态' },
+  a11y: { languageNav: '语言' },
   banner: {
     operational: '所有系统正常',
     degraded: '性能下降',
@@ -160,6 +174,7 @@ const zh: Dict = {
 
 const ja: Dict = {
   page: { title: 'ステータス' },
+  a11y: { languageNav: '言語' },
   banner: {
     operational: 'すべてのシステムが正常',
     degraded: 'パフォーマンス低下',
@@ -210,6 +225,7 @@ const ja: Dict = {
 
 const ko: Dict = {
   page: { title: '상태' },
+  a11y: { languageNav: '언어' },
   banner: {
     operational: '모든 시스템 정상',
     degraded: '성능 저하',
@@ -260,15 +276,34 @@ const ko: Dict = {
 
 const DICTS: Record<Locale, Dict> = { en, zh, ja, ko }
 
-/** The translation dictionary for `locale` (falls back to English). */
+/** The translation dictionary for `locale`. */
 export function getDict(locale: Locale): Dict {
+  // `DICTS` is a fully-populated `Record<Locale, Dict>`, so the index is always
+  // present — the `??` is defense-in-depth, not compiler-required.
   return DICTS[locale] ?? DICTS[DEFAULT_LOCALE]
+}
+
+/**
+ * Resolve the UI locale from the signals a request carries, in precedence
+ * order: the visitor's remembered choice (`cookie`), then the browser's
+ * `acceptLanguage`, then a `fallback` (the deployment default). A signal that
+ * names no supported locale is skipped rather than forcing English — so an
+ * unsupported browser language yields the deployment default, not `en`. Pure so
+ * it can be unit-tested independently of the Astro middleware.
+ */
+export function negotiateLocale(
+  cookie: string | null | undefined,
+  acceptLanguage: string | null | undefined,
+  fallback: Locale,
+): Locale {
+  return matchLocale(cookie) ?? matchLocale(acceptLanguage) ?? fallback
 }
 
 /**
  * Format an ISO date (`YYYY-MM-DD`, UTC) for `locale`, e.g. "Jul 5, 2026" /
  * "2026年7月5日" / "2026년 7월 5일". Uses UTC so a day bucket reads the same
- * regardless of the viewer's timezone.
+ * regardless of the viewer's timezone. Degrades to the raw input on a malformed
+ * date rather than throwing (the caller renders untrusted KV-sourced dates).
  */
 export function formatDay(iso: string, locale: Locale = DEFAULT_LOCALE): string {
   const [y, m, d] = iso.split('-').map(Number)
@@ -276,6 +311,11 @@ export function formatDay(iso: string, locale: Locale = DEFAULT_LOCALE): string 
     return iso
   }
   const date = new Date(Date.UTC(y, m - 1, d))
+  // Guard against non-numeric segments ("20xx-07-05" → NaN): an invalid Date
+  // makes Intl.DateTimeFormat.format() throw, which would crash the SSR render.
+  if (Number.isNaN(date.getTime())) {
+    return iso
+  }
   return new Intl.DateTimeFormat(locale, {
     year: 'numeric',
     month: 'short',
