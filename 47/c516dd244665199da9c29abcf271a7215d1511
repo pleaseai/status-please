@@ -1,0 +1,27 @@
+docs/adr/0001-tech-stack.md
+  s_9257f375c8468f::t_8266a4fedc36c9 45
+  s_9257f375c8468f::t_fd0c45855992ff 104-107
+apps/web/package.json
+  s_9257f375c8468f::t_e9634ed5988e01 15,19-20
+README.md
+  s_9257f375c8468f::t_06a145a207ee81 86
+  s_9257f375c8468f::t_e544eea3e3e67c 81
+bun.lock
+  s_9257f375c8468f::t_1d81262638fb6e 19,23-24,63,65,67-89,93,97,143-160,203-204,207-208,359-360,365-366,377-406,521-522,537-538,623-624,639,775,1225-1226,1271,1275-1276,1405,1493-1494,1515-1516,1589-1590
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "47c516dd244665199da9c29abcf271a7215d1511",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
