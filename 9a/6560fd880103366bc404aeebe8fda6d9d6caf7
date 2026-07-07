@@ -1,0 +1,44 @@
+apps/web/src/pages/api/badge/[slug].json.ts
+  s_6e5906bcaa5e78::t_08fcc6ae48ea9f 1-19
+packages/core/src/badge.test.ts
+  s_6e5906bcaa5e78::t_e25014ac6bec34 1-116,118-119,121-142
+  s_6e5906bcaa5e78::t_76e26af06ea3bc 117,120
+README.md
+  s_6e5906bcaa5e78::t_9f2995a5a8e23c 188-227
+  s_6e5906bcaa5e78::t_465001e64ecfb7 276
+packages/core/src/badge.ts
+  s_6e5906bcaa5e78::t_34c75983ed74cc 1-169
+packages/core/src/index.ts
+  s_6e5906bcaa5e78::t_f015bbf23f04b3 1
+apps/web/src/pages/api/status.json.ts
+  s_6e5906bcaa5e78::t_b717b5d49dee37 1-29
+apps/web/src/lib/data.ts
+  s_6e5906bcaa5e78::t_83ab02d4cfea47 73-78
+apps/web/src/pages/api/status/[slug].json.ts
+  s_6e5906bcaa5e78::t_e073d5f1e60420 1-18
+apps/web/src/pages/api/badge.json.ts
+  s_6e5906bcaa5e78::t_d92a8f6397b1e3 1-15
+apps/web/src/lib/api.ts
+  s_6e5906bcaa5e78::t_8963b26465c09a 1-43
+apps/web/src/pages/api/badge/[slug]/response-time.json.ts
+  s_6e5906bcaa5e78::t_d010ae91ed18b6 1-19
+apps/web/src/pages/api/badge/[slug]/uptime.json.ts
+  s_6e5906bcaa5e78::t_144a3261d21e7e 2
+  s_6e5906bcaa5e78::t_894102349a79af 1,3-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9a6560fd880103366bc404aeebe8fda6d9d6caf7",
+  "prompts": {},
+  "sessions": {
+    "s_6e5906bcaa5e78": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d7470503-c8c3-47a5-9ff4-7bffd7ad1534",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
