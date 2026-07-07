@@ -1,0 +1,26 @@
+DEPLOYMENT.md
+  s_9257f375c8468f::t_7161dccea9ea15 1-120
+.github/workflows/deploy.yml
+  s_9257f375c8468f::t_1827512a8a0aa1 1-45,48-85
+  s_9257f375c8468f::t_064c279ef43146 46-47
+package.json
+  s_9257f375c8468f::t_f12e13090ea8bb 18-19
+README.md
+  s_9257f375c8468f::t_8fd44cae5662e1 214-215
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "07159d6cc7d099803dc54254a4ed92d23c1e281e",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
