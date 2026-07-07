@@ -1,0 +1,117 @@
+apps/worker/schema.sql
+  s_9257f375c8468f::t_3e71b1127d14f6 1-32
+apps/worker/wrangler.jsonc
+  s_9257f375c8468f::t_67658292518ca0 1-30
+apps/web/src/styles/global.css
+  s_9257f375c8468f::t_796ea0f1ff59d0 1-51
+README.md
+  s_9257f375c8468f::t_da100af2a63cc7 158,160,166
+  s_9257f375c8468f::t_ea9ca1d14b78f6 120-145,148-150
+apps/web/src/lib/data.ts
+  s_9257f375c8468f::t_5f319618ce4294 1-2,9-16,20-22
+  s_9257f375c8468f::t_984e3ddfd4bbb0 17,19
+  s_9257f375c8468f::t_1b1052f32129b0 3-8,18
+package.json
+  s_9257f375c8468f::t_e829c2224d3412 22
+  s_9257f375c8468f::t_7f0b3da5cd8005 1-2,4-20,24-26
+  s_9257f375c8468f::t_da100af2a63cc7 3
+  s_9257f375c8468f::t_90137b838c4494 21,23
+packages/core/package.json
+  s_9257f375c8468f::t_bfba5f4a4de7b0 1-2,4-17
+  s_9257f375c8468f::t_da100af2a63cc7 3
+status.config.example.yml
+  s_9257f375c8468f::t_bd8dbaf005d4b1 1-24
+packages/core/src/check.test.ts
+  s_9257f375c8468f::t_42ba2d57c519b7 1-42
+apps/worker/src/env.ts
+  s_9257f375c8468f::t_6641415d041c69 1-14
+tsconfig.base.json
+  s_9257f375c8468f::t_da100af2a63cc7 4,6,9,13,15-18
+  s_9257f375c8468f::t_bd83e5b3214187 1-3,5,7-8,10-12,14,19-20
+apps/worker/tsconfig.json
+  s_9257f375c8468f::t_da100af2a63cc7 4,6
+  s_9257f375c8468f::t_758e75a5eb7091 1-3,5,7-9
+packages/core/src/check.ts
+  s_9257f375c8468f::t_21a9dface1647d 1-3,7-16,23-34,36-65
+  s_9257f375c8468f::t_5c0e4bd2502795 18,21
+  s_9257f375c8468f::t_2fa301f9d704bd 35
+  s_9257f375c8468f::t_442aa9a3b4bedf 4-6
+  s_9257f375c8468f::t_78385f6fc2a078 17,19-20,22
+apps/worker/package.json
+  s_9257f375c8468f::t_da100af2a63cc7 3
+  s_9257f375c8468f::t_e6245f8543e582 1-2,4-20
+bunfig.toml
+  s_9257f375c8468f::t_75be6f9090a8fe 1-2
+apps/web/wrangler.jsonc
+  s_9257f375c8468f::t_2777c364cf2fd0 1-3,6-32
+  s_9257f375c8468f::t_e91fdc1aadf704 4-5
+apps/web/src/env.d.ts
+  s_9257f375c8468f::t_9a80d5bdd4617f 4-9,14
+  s_9257f375c8468f::t_670a4bac55ca39 1-3,10-13,15-17
+.gitignore
+  s_9257f375c8468f::t_9221cdc17ff3fa 11
+  s_9257f375c8468f::t_ccdee502b6f3bf 46-48
+packages/core/tsconfig.json
+  s_9257f375c8468f::t_03666cdcccb579 5-6
+  s_9257f375c8468f::t_5749f90cfe0123 1-3,7-9
+  s_9257f375c8468f::t_da100af2a63cc7 4
+packages/core/src/types.ts
+  s_9257f375c8468f::t_da100af2a63cc7 5-10
+  s_9257f375c8468f::t_7aac633b4817a0 52,54-55,57
+  s_9257f375c8468f::t_2e10c626a26e0f 1-4,11-51,58-59
+  s_9257f375c8468f::t_1e79a657727743 53,56
+orca.yaml
+  s_9257f375c8468f::t_6515b9fd867a3c 1-11
+apps/worker/src/index.ts
+  s_9257f375c8468f::t_9bafe266c999bb 1-15,17-19,21-29,31-44,48-53,57,59-62,64-78
+  s_9257f375c8468f::t_09085ca7cc5d44 45,47
+  s_9257f375c8468f::t_c41b53a4c53414 55
+  s_9257f375c8468f::t_cecb50320fddc8 46
+  s_9257f375c8468f::t_da100af2a63cc7 16,20,30,58,63
+  s_9257f375c8468f::t_1223963b315735 54,56
+tsconfig.json
+  s_9257f375c8468f::t_566625273e3810 1-5,8
+  s_9257f375c8468f::t_da100af2a63cc7 6-7
+apps/web/src/pages/index.astro
+  s_9257f375c8468f::t_5f39a146583d5b 45-46
+  s_9257f375c8468f::t_e21c6c393c2db5 1-44,47-85
+.worktreeinclude
+  s_9257f375c8468f::t_94b47253c6e024 1-17
+mise.toml
+  s_9257f375c8468f::t_b249bb1483ce3c 1-33
+  s_9257f375c8468f::t_da100af2a63cc7 34-38
+eslint.config.ts
+  s_9257f375c8468f::t_9b78dbd8efd6ea 1-3,5
+  s_9257f375c8468f::t_e86642162d488a 4
+packages/core/src/config.ts
+  s_9257f375c8468f::t_c62699ed3c10ea 1-28,30-59
+  s_9257f375c8468f::t_da100af2a63cc7 29
+apps/web/tsconfig.json
+  s_9257f375c8468f::t_4a97f7b3bd3d1e 1-3,5-6,8-11
+  s_9257f375c8468f::t_da100af2a63cc7 4,7
+apps/web/package.json
+  s_9257f375c8468f::t_0d54e2115a4011 1-2,4-28
+  s_9257f375c8468f::t_da100af2a63cc7 3
+apps/web/astro.config.ts
+  s_9257f375c8468f::t_4192760d6205ca 1-16
+bun.lock
+  s_9257f375c8468f::t_d8ce93d93281b9 1-1508
+packages/core/src/index.ts
+  s_9257f375c8468f::t_985fe8602c346e 1-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b1203f9e18fb276c016f106da6edeaf7c046ec3b",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
