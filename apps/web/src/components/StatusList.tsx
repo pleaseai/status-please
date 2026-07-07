@@ -37,9 +37,12 @@ export function StatusList({ summary }: { summary: SiteSummary[] }) {
               <div className="flex items-center gap-3">
                 <Tooltip>
                   <TooltipTrigger
-                    render={
-                      <span className="cursor-default text-sm tabular-nums text-muted-foreground" />
-                    }
+                    render={(
+                      <span
+                        tabIndex={0}
+                        className="cursor-default rounded-sm text-sm tabular-nums text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      />
+                    )}
                   >
                     {site.uptimeMonth}
                   </TooltipTrigger>

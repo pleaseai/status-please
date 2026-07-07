@@ -14,7 +14,7 @@ const SAMPLE: SiteSummary[] = [
  * Bindings come from `cloudflare:workers` (Astro 7 removed `Astro.locals.runtime`).
  */
 export async function getSummary(): Promise<SiteSummary[]> {
-  const kv = (env as typeof env & { STATUS_KV?: KVNamespace }).STATUS_KV
+  const kv = env.STATUS_KV
   if (kv) {
     const raw = await kv.get('summary')
     if (raw) {
