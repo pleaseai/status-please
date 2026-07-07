@@ -78,12 +78,12 @@ services are down. That resilience is the whole point of a status page.
 
 | Layer | Choice | Why |
 |---|---|---|
-| **Frontend** | [Astro](https://astro.build) | Static-first (ideal for a mostly-read page), ~0 KB JS by default, a Cloudflare first-party framework (acquired Jan 2026) with `workerd` dev/prod parity, and **native [Workers Cache](https://blog.cloudflare.com/workers-cache/) support**. |
+| **Frontend** | [Astro 7](https://astro.build/blog/astro-7/) | Static-first (ideal for a mostly-read page), ~0 KB JS by default, a Cloudflare first-party framework (acquired Jan 2026) with `workerd` dev/prod parity, a Rust compiler (15–61% faster builds), and a stable **`Astro.cache` route-caching API** plus an experimental `cacheCloudflare()` provider for [Workers Cache](https://blog.cloudflare.com/workers-cache/). |
 | **UI components** | [shadcn/ui](https://ui.shadcn.com) (React islands) + Tailwind CSS | Copy-in-your-repo components you own and can fork — perfect for OSS. Used natively via Astro's React islands; hydrated only where interactivity is needed. |
 | **Charts** | shadcn/ui charts (Recharts) | Response-time graphs, themed and dark-mode-ready out of the box. |
 | **Check scheduler** | Cloudflare **Cron Triggers** (Worker) | On-time execution, unlike GitHub Actions cron. |
 | **Data store** | Cloudflare **D1** (SQLite) + **KV** | D1 for time-series & incident history; KV for the current snapshot. |
-| **Edge cache** | Cloudflare **[Workers Cache](https://blog.cloudflare.com/workers-cache/)** | Tiered cache in front of the Astro Worker: `Cache-Control` + `stale-while-revalidate`, request collapsing, and **tag-based purge on status change** — near-instant updates without hammering D1. |
+| **Edge cache** | Cloudflare **[Workers Cache](https://blog.cloudflare.com/workers-cache/)** | Tiered cache in front of the Astro Worker: `Cache-Control` + `stale-while-revalidate`, request collapsing, and **tag-based purge on status change** — near-instant updates without hammering D1. Today via `Cache-Control` headers; Astro 7's `Astro.cache` / `cacheCloudflare()` is the forward path. |
 | **Notifications** | Cloudflare Workers + Queues | Email / Slack / webhook / RSS on status change, decoupled from the UI. |
 | **Deploy target** | **Cloudflare** (primary) · Vercel (supported) | Astro adapters target both; Cloudflare is the native, batteries-included path. |
 | **Tooling** | Bun · Wrangler · TypeScript | Bun for install/scripts; Wrangler for Worker + D1 + KV. |

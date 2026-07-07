@@ -42,7 +42,7 @@ interactivity**, not a full client-side app framework.
 | Client payload | lowest (islands) | small (Svelte compiler) | heaviest (full React hydration, no islands) |
 | shadcn/ui | **native** via React islands | shadcn-**svelte** (unofficial port only) | **native** (canonical React) |
 | Cloudflare deploy | **first-party** (Cloudflare acquired Astro, Jan 2026; `workerd` dev/prod parity) | first-party adapter | works, least-proven edge story |
-| Maturity (2026) | mature; Astro 6 | most mature/stable | v1.0 since Mar 2026, youngest |
+| Maturity (2026) | mature; Astro 7 | most mature/stable | v1.0 since Mar 2026, youngest |
 
 **Why Astro wins for us:**
 
@@ -101,7 +101,10 @@ for three reasons:
   separate-redeploy pipeline latency.
 - **Native Astro support.** Astro supports Workers Cache first-class (per Cloudflare's
   announcement), so this is a configuration concern, not a custom caching layer — another
-  point reinforcing the Astro choice.
+  point reinforcing the Astro choice. **Astro 7** (released 2026, now our pinned version)
+  adds a stable `Astro.cache` route-caching API and an experimental `cacheCloudflare()`
+  provider for Workers Cache; we use `Cache-Control` headers today and adopt `Astro.cache`
+  as it stabilizes.
 
 This narrows KV's role to the **current snapshot** (the check Worker's fast state);
 edge caching of rendered output is Workers Cache's job, not KV's.

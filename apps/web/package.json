@@ -12,12 +12,12 @@
   },
   "dependencies": {
     "@status-please/core": "workspace:*",
-    "astro": "^6"
+    "astro": "^7"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9",
-    "@astrojs/cloudflare": "^13",
-    "@astrojs/react": "^5",
+    "@astrojs/cloudflare": "^14",
+    "@astrojs/react": "^6",
     "@tailwindcss/vite": "^4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
