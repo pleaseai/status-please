@@ -8,7 +8,9 @@
     "deploy": "wrangler deploy",
     "build": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
-    "db:apply": "wrangler d1 execute status-please --file=./schema.sql"
+    "db:apply": "wrangler d1 execute status-please --file=./schema.sql",
+    "db:apply:remote": "wrangler d1 execute status-please --remote --file=./schema.sql --yes",
+    "kv:config": "wrangler kv key put config --binding=STATUS_KV --path=../../status.config.yml --remote"
   },
   "dependencies": {
     "@status-please/core": "workspace:*"

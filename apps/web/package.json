@@ -8,6 +8,7 @@
     "build": "astro build",
     "preview": "wrangler dev ./dist/_worker.js/index.js",
     "deploy": "astro build && wrangler deploy",
+    "deploy:publish": "wrangler deploy",
     "typecheck": "astro check"
   },
   "dependencies": {

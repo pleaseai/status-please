@@ -105,8 +105,9 @@ settings to gate every deploy behind an approval.
 ## 8. After the first deploy
 
 - The cron runs every 5 minutes (`triggers.crons` in `apps/worker/wrangler.jsonc`); the
-  page shows sample data until the first run writes the real `summary`. Trigger it early
-  with `bunx wrangler dev --test-scheduled` locally, or just wait.
+  page shows sample data until the first run writes the real `summary` — just wait for the
+  first tick. (To force a run against production immediately, invoke the deployed Worker's
+  scheduled handler from the Cloudflare dashboard's Cron Triggers → "Trigger" action.)
 - Point a custom domain at the `status-please-web` Worker via a route in its
   `wrangler.jsonc` or the Cloudflare dashboard.
 

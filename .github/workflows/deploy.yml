@@ -18,18 +18,21 @@ jobs:
   deploy:
     name: Deploy worker + web to Cloudflare
     runs-on: ubuntu-latest
+    timeout-minutes: 15 # bound the worst case — concurrency lock (cancel-in-progress:false) must not hang forever
     environment: production # add protection rules (approvals) in repo settings
     permissions:
       contents: read
     env:
-      # Secrets: set with `gh secret set`. Wrangler reads these from the env.
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      # Variables (not secret — resource IDs): set with `gh variable set`.
+      # Resource IDs are not secret — set with `gh variable set`. The Cloudflare
+      # secrets are NOT job-level: they're scoped per-step (below) to only the
+      # steps that call Wrangler, so checkout/install/build never see them.
       CF_D1_DATABASE_ID: ${{ vars.CF_D1_DATABASE_ID }}
       CF_KV_NAMESPACE_ID: ${{ vars.CF_KV_NAMESPACE_ID }}
     steps:
       - name: Preflight — required secrets/variables present
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           missing=""
           [ -n "$CLOUDFLARE_API_TOKEN" ] || missing="$missing CLOUDFLARE_API_TOKEN(secret)"
@@ -50,36 +53,49 @@ jobs:
         uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        # --ignore-scripts: don't run dependency lifecycle scripts on a deploy.
+        # Verified the build + wrangler bundling still work (Astro uses rolldown,
+        # esbuild/workerd resolve their platform binaries via optionalDependencies).
+        run: bun install --frozen-lockfile --ignore-scripts
 
       - name: Inject account-specific resource IDs
         # Idempotent: only rewrites the committed placeholders. A fork that
         # commits real IDs is left untouched.
+        # `|` delimiter (not `/`) so a future ID shape containing `/` or `&`
+        # can't corrupt the substitution. Cloudflare IDs are hex+hyphen today.
         run: |
           for f in apps/worker/wrangler.jsonc apps/web/wrangler.jsonc; do
-            sed -i "s/REPLACE_WITH_D1_DATABASE_ID/$CF_D1_DATABASE_ID/g; s/REPLACE_WITH_KV_NAMESPACE_ID/$CF_KV_NAMESPACE_ID/g" "$f"
+            sed -i "s|REPLACE_WITH_D1_DATABASE_ID|$CF_D1_DATABASE_ID|g; s|REPLACE_WITH_KV_NAMESPACE_ID|$CF_KV_NAMESPACE_ID|g" "$f"
           done
 
-      - name: Build
+      - name: Build (fail fast before touching production)
         run: bun run build
 
       - name: Apply D1 schema (idempotent — CREATE TABLE IF NOT EXISTS)
-        working-directory: apps/worker
-        run: bunx wrangler d1 execute status-please --remote --file=./schema.sql --yes
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bun run --filter '@status-please/worker' db:apply:remote
 
       - name: Upload config to KV
-        working-directory: apps/worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          if [ ! -f ../../status.config.yml ]; then
+          if [ ! -f status.config.yml ]; then
             echo "::error::status.config.yml not found. Create it from status.config.example.yml (see DEPLOYMENT.md)."
             exit 1
           fi
-          bunx wrangler kv key put config --binding=STATUS_KV --path=../../status.config.yml --remote
+          bun run --filter '@status-please/worker' kv:config
 
       - name: Deploy check Worker
-        working-directory: apps/worker
-        run: bunx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bun run --filter '@status-please/worker' deploy
 
       - name: Deploy status page
-        working-directory: apps/web
-        run: bunx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bun run --filter '@status-please/web' deploy:publish
