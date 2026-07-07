@@ -30,6 +30,11 @@ describe('orderedUpdates', () => {
     // Original array order is preserved (non-mutating).
     expect(updates.map(u => u.id)).toEqual([2, 1, 3])
   })
+
+  it('returns [] when a KV record is missing updates (no crash)', () => {
+    const broken = { ...incident([]), updates: undefined } as unknown as Incident
+    expect(orderedUpdates(broken)).toEqual([])
+  })
 })
 
 describe('latestUpdate', () => {
@@ -89,5 +94,9 @@ describe('relativeTime', () => {
     expect(relativeTime('2026-01-01T23:45:00.000Z', now)).toBe('15m ago')
     expect(relativeTime('2026-01-01T21:00:00.000Z', now)).toBe('3h ago')
     expect(relativeTime('2025-12-30T00:00:00.000Z', now)).toBe('3d ago')
+  })
+
+  it('falls back to the raw string for an unparseable timestamp', () => {
+    expect(relativeTime('not-a-date', now)).toBe('not-a-date')
   })
 })

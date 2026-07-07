@@ -38,7 +38,9 @@ export interface Incident {
 
 /** An incident's updates in chronological order (oldest → newest), non-mutating. */
 export function orderedUpdates(incident: Incident): IncidentUpdate[] {
-  return [...incident.updates].sort(
+  // Defensive against a KV payload missing `updates` (only type-asserted, not
+  // validated) — a bad record must not crash the SSR render.
+  return [...(incident.updates ?? [])].sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
   )
 }
@@ -70,7 +72,11 @@ export function isActive(incident: Incident): boolean {
  * `now` is injectable so callers and tests stay deterministic.
  */
 export function relativeTime(iso: string, now: number = Date.now()): string {
-  const diffSec = Math.floor((now - new Date(iso).getTime()) / 1000)
+  const ts = new Date(iso).getTime()
+  if (Number.isNaN(ts)) {
+    return iso
+  }
+  const diffSec = Math.floor((now - ts) / 1000)
   if (diffSec < 60) {
     return 'just now'
   }
