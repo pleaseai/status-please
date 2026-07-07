@@ -1,0 +1,31 @@
+.github/ISSUE_TEMPLATE/bug_report.md
+  s_9257f375c8468f::t_cdc9e090764377 1-32
+.github/ISSUE_TEMPLATE/config.yml
+  s_9257f375c8468f::t_5f1b66b0e9ad5d 1-8
+.github/PULL_REQUEST_TEMPLATE.md
+  s_9257f375c8468f::t_eb2bb5c8afc4e9 1-17
+CONTRIBUTING.md
+  s_9257f375c8468f::t_64d7bde2588ec9 1-43
+SECURITY.md
+  s_9257f375c8468f::t_5fe930e835b4dc 1-39
+.github/ISSUE_TEMPLATE/feature_request.md
+  s_9257f375c8468f::t_6c9d8914180e0a 1-22
+CODE_OF_CONDUCT.md
+  s_9257f375c8468f::t_55885a31bc9493 1-132
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f8cbf1f7e5c3d0e105edcf2177f7a008a52bdce6",
+  "prompts": {},
+  "sessions": {
+    "s_9257f375c8468f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0816965c-0757-495e-beb0-8e0aed4dc7b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
