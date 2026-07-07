@@ -70,6 +70,12 @@ export async function getSummary(): Promise<SiteSummary[]> {
   return SAMPLE
 }
 
+/** Find one site in the snapshot by slug, or `undefined` if it isn't tracked. */
+export async function getSite(slug: string): Promise<SiteSummary | undefined> {
+  const summary = await getSummary()
+  return summary.find(s => s.slug === slug)
+}
+
 /** ISO timestamp `hours` before now — keeps sample incidents fresh for `astro dev`. */
 function hoursAgo(hours: number): string {
   return new Date(Date.now() - hours * 3600_000).toISOString()
