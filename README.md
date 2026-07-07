@@ -218,6 +218,13 @@ Detailed setup will land with the first release — see the [Roadmap](#roadmap).
 - [Statuspage.io](https://www.atlassian.com/software/statuspage) — the reference
   information architecture.
 - [Instatus](https://instatus.com) — static-first delivery and modern design.
+- [statping/statping](https://github.com/statping/statping) — a self-hosted,
+  single-binary status server (Go) with its own monitoring engine, notifiers,
+  and mobile app.
+- [OpenStatus](https://www.openstatus.dev) — open-source synthetic monitoring and
+  status pages, with a globally distributed checker for latency-aware probing.
+- [CachetHQ/Cachet](https://cachethq.io) — a long-standing open-source status page
+  system (PHP/Laravel) centered on incident and component management.
 
 ---
 
