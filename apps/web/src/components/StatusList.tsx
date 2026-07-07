@@ -1,5 +1,5 @@
 import type { SiteSummary } from '@status-please/core'
-import { toSeverity } from '@status-please/core'
+import { formatUptime, toSeverity, windowUptime } from '@status-please/core'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import {
@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import { UptimeTimeline } from './UptimeTimeline'
 
 const SEVERITY = {
   operational: { label: 'Operational', dot: 'bg-status-operational', badge: 'border-status-operational/40 text-status-operational' },
@@ -19,8 +20,9 @@ const SEVERITY = {
 } as const
 
 /**
- * Component rows for the status page. Interactive (uptime tooltips), so it
- * hydrates as a React island; the rest of the page stays static.
+ * Per-component status cards: name + rolled-up badge, a 90-day uptime timeline,
+ * and the 90-day uptime figure (hover for the 24h/7d/30d breakdown). Interactive
+ * (the breakdown tooltip), so it hydrates as a React island.
  */
 export function StatusList({ summary }: { summary: SiteSummary[] }) {
   return (
@@ -29,34 +31,45 @@ export function StatusList({ summary }: { summary: SiteSummary[] }) {
         {summary.map((site) => {
           const meta = SEVERITY[toSeverity(site.status)]
           return (
-            <div key={site.slug} className="flex items-center justify-between px-5 py-4">
-              <div className="flex items-center gap-3">
-                <span className={cn('inline-block size-2.5 rounded-full', meta.dot)} />
-                <span className="font-medium">{site.name}</span>
+            <div key={site.slug} className="px-5 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className={cn('inline-block size-2.5 rounded-full', meta.dot)} />
+                  <span className="font-medium">{site.name}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={(
+                        <span
+                          tabIndex={0}
+                          className="cursor-default rounded-sm text-sm tabular-nums text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        />
+                      )}
+                    >
+                      {formatUptime(windowUptime(site.history))}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      24h
+                      {' '}
+                      {site.uptimeDay}
+                      {' '}
+                      · 7d
+                      {' '}
+                      {site.uptimeWeek}
+                      {' '}
+                      · 30d
+                      {' '}
+                      {site.uptimeMonth}
+                    </TooltipContent>
+                  </Tooltip>
+                  <Badge variant="outline" className={meta.badge}>
+                    {meta.label}
+                  </Badge>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Tooltip>
-                  <TooltipTrigger
-                    render={(
-                      <span
-                        tabIndex={0}
-                        className="cursor-default rounded-sm text-sm tabular-nums text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      />
-                    )}
-                  >
-                    {site.uptimeMonth}
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    30-day uptime · avg
-                    {' '}
-                    {site.responseTime}
-                    {' '}
-                    ms
-                  </TooltipContent>
-                </Tooltip>
-                <Badge variant="outline" className={meta.badge}>
-                  {meta.label}
-                </Badge>
+              <div className="mt-3">
+                <UptimeTimeline history={site.history} />
               </div>
             </div>
           )
