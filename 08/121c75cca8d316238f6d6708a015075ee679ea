@@ -1,0 +1,23 @@
+.claude/agent-memory/review-review-silent-failure-hunter/i18n_feature_2026_07.md
+  s_46dab8147c5a41::t_5cd35816b7ffa4 1-17
+.claude/agent-memory/review-review-silent-failure-hunter/project_error_conventions.md
+  s_46dab8147c5a41::t_70b9a3088776a3 1-19
+.claude/agent-memory/review-review-silent-failure-hunter/MEMORY.md
+  s_46dab8147c5a41::t_2538bf3a90347d 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "08121c75cca8d316238f6d6708a015075ee679ea",
+  "prompts": {},
+  "sessions": {
+    "s_46dab8147c5a41": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c7c1c0b-ecd8-494c-ab3b-aaac7f94fe40",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
