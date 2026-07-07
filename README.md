@@ -1,5 +1,10 @@
 # status-please
 
+[![CI](https://github.com/pleaseai/status-please/actions/workflows/ci.yml/badge.svg)](https://github.com/pleaseai/status-please/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pleaseai_status-please&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pleaseai_status-please)
+[![codecov](https://codecov.io/gh/pleaseai/status-please/branch/main/graph/badge.svg)](https://codecov.io/gh/pleaseai/status-please)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+
 > An open-source, CDN-native **status page** generator — the modern successor to [upptime](https://github.com/upptime/upptime).
 
 `status-please` monitors your services, records their uptime as durable time-series
