@@ -14,7 +14,7 @@
     "dev": "bun run --filter '@status-please/web' dev",
     "build": "bun run --filter '*' build",
     "lint": "eslint .",
-    "typecheck": "tsc --build",
+    "typecheck": "bun run --filter '*' typecheck",
     "test": "bun test"
   },
   "devDependencies": {

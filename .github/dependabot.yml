@@ -1,0 +1,19 @@
+version: 2
+updates:
+  # Keep SHA-pinned GitHub Actions fresh (Dependabot updates the pin + comment).
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
+
+  # npm/bun dependencies across the monorepo.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      dependencies:
+        patterns: ['*']
