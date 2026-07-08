@@ -30,6 +30,26 @@ describe('parseConfig', () => {
   })
 })
 
+describe('theme.locale', () => {
+  it('defaults to en when theme is absent', () => {
+    expect(parseConfig(baseYaml).theme.locale).toBe('en')
+  })
+
+  it('defaults to en when theme is present without a locale', () => {
+    const config = parseConfig(`${baseYaml}\ntheme:\n  darkMode: false\n`)
+    expect(config.theme.locale).toBe('en')
+  })
+
+  it('accepts a supported locale', () => {
+    const config = parseConfig(`${baseYaml}\ntheme:\n  locale: ko\n`)
+    expect(config.theme.locale).toBe('ko')
+  })
+
+  it('rejects an unsupported locale', () => {
+    expect(() => parseConfig(`${baseYaml}\ntheme:\n  locale: fr\n`)).toThrow()
+  })
+})
+
 describe('notificationsSchema', () => {
   it('accepts a valid slack webhook and generic webhooks', () => {
     const parsed = notificationsSchema.parse({

@@ -1,5 +1,5 @@
-import type { SiteSummary } from '@status-please/core'
-import { formatUptime, toSeverity, windowUptime } from '@status-please/core'
+import type { Dict, Locale, SiteSummary } from '@status-please/core'
+import { formatUptime, getDict, toSeverity, windowUptime } from '@status-please/core'
 import { ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
@@ -14,12 +14,13 @@ import { cn } from '@/lib/utils'
 import { ResponseChart } from './ResponseChart'
 import { UptimeTimeline } from './UptimeTimeline'
 
-const SEVERITY = {
-  operational: { label: 'Operational', dot: 'bg-status-operational', badge: 'border-status-operational/40 text-status-operational' },
-  degraded: { label: 'Degraded', dot: 'bg-status-degraded', badge: 'border-status-degraded/40 text-status-degraded' },
-  partial_outage: { label: 'Partial Outage', dot: 'bg-status-partial', badge: 'border-status-partial/40 text-status-partial' },
-  major_outage: { label: 'Major Outage', dot: 'bg-status-major', badge: 'border-status-major/40 text-status-major' },
-  maintenance: { label: 'Maintenance', dot: 'bg-status-maintenance', badge: 'border-status-maintenance/40 text-status-maintenance' },
+// Status-token styling per severity; the label text comes from the locale dict.
+const STYLE = {
+  operational: { dot: 'bg-status-operational', badge: 'border-status-operational/40 text-status-operational' },
+  degraded: { dot: 'bg-status-degraded', badge: 'border-status-degraded/40 text-status-degraded' },
+  partial_outage: { dot: 'bg-status-partial', badge: 'border-status-partial/40 text-status-partial' },
+  major_outage: { dot: 'bg-status-major', badge: 'border-status-major/40 text-status-major' },
+  maintenance: { dot: 'bg-status-maintenance', badge: 'border-status-maintenance/40 text-status-maintenance' },
 } as const
 
 /**
@@ -27,19 +28,20 @@ const SEVERITY = {
  * expandable response-time sparkline. Interactive (the breakdown tooltip and the
  * expand toggle), so it lives in the hydrated island.
  */
-function StatusRow({ site }: { site: SiteSummary }) {
+function StatusRow({ site, locale, t }: Readonly<{ site: SiteSummary, locale: Locale, t: Dict }>) {
   const [open, setOpen] = useState(false)
-  const meta = SEVERITY[toSeverity(site.status)]
+  const severity = toSeverity(site.status)
+  const style = STYLE[severity]
   // Guard against stale KV snapshots written before these fields existed.
   const history = site.history ?? []
   const responseHistory = site.responseHistory ?? []
   const uptime90 = formatUptime(windowUptime(history))
-  const breakdown = `Today ${site.uptimeDay} · 7d ${site.uptimeWeek} · 30d ${site.uptimeMonth} · 90d ${uptime90}`
+  const breakdown = t.breakdown({ day: site.uptimeDay, week: site.uptimeWeek, month: site.uptimeMonth, quarter: uptime90 })
   return (
     <div className="px-5 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className={cn('inline-block size-2.5 rounded-full', meta.dot)} />
+          <span className={cn('inline-block size-2.5 rounded-full', style.dot)} />
           <span className="font-medium">{site.name}</span>
         </div>
         <div className="flex items-center gap-3">
@@ -56,13 +58,13 @@ function StatusRow({ site }: { site: SiteSummary }) {
             </TooltipTrigger>
             <TooltipContent>{breakdown}</TooltipContent>
           </Tooltip>
-          <Badge variant="outline" className={meta.badge}>
-            {meta.label}
+          <Badge variant="outline" className={style.badge}>
+            {t.severity[severity]}
           </Badge>
         </div>
       </div>
       <div className="mt-3">
-        <UptimeTimeline history={history} />
+        <UptimeTimeline history={history} locale={locale} />
       </div>
       {responseHistory.length > 0 && (
         <div className="mt-3">
@@ -74,18 +76,18 @@ function StatusRow({ site }: { site: SiteSummary }) {
             className="flex items-center gap-1.5 rounded-sm text-xs tabular-nums text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
           >
             <ChevronRight className={cn('size-3.5 transition-transform', open && 'rotate-90')} />
-            <span>Response time</span>
+            <span>{t.status.responseTime}</span>
             <span>
               ·
               {' '}
               {site.responseTime}
               {' '}
-              ms
+              {t.unit.ms}
             </span>
           </button>
           {open && (
             <div id={`chart-${site.slug}`} className="mt-2">
-              <ResponseChart data={responseHistory} />
+              <ResponseChart data={responseHistory} locale={locale} />
             </div>
           )}
         </div>
@@ -98,12 +100,13 @@ function StatusRow({ site }: { site: SiteSummary }) {
  * Per-component status cards. Interactive (uptime tooltips + expandable
  * response-time charts), so it hydrates as a React island.
  */
-export function StatusList({ summary }: { summary: SiteSummary[] }) {
+export function StatusList({ summary, locale }: Readonly<{ summary: SiteSummary[], locale: Locale }>) {
+  const t = getDict(locale)
   return (
     <TooltipProvider delay={100}>
       <Card className="gap-0 divide-y divide-border overflow-hidden py-0">
         {summary.map(site => (
-          <StatusRow key={site.slug} site={site} />
+          <StatusRow key={site.slug} site={site} locale={locale} t={t} />
         ))}
       </Card>
     </TooltipProvider>

@@ -99,4 +99,27 @@ describe('relativeTime', () => {
   it('falls back to the raw string for an unparseable timestamp', () => {
     expect(relativeTime('not-a-date', now)).toBe('not-a-date')
   })
+
+  it('localizes non-English locales via Intl.RelativeTimeFormat', () => {
+    // Exact wording is ICU-provided; assert it differs from the English form and
+    // carries the localized number so a regression in wiring is caught.
+    expect(relativeTime('2026-01-01T23:45:00.000Z', now, 'ko')).toContain('15')
+    expect(relativeTime('2026-01-01T23:45:00.000Z', now, 'ko')).not.toBe('15m ago')
+    expect(relativeTime('2026-01-01T21:00:00.000Z', now, 'ja')).toContain('3')
+    expect(relativeTime('2026-01-01T21:00:00.000Z', now, 'ja')).not.toBe('3h ago')
+    // zh + the day bucket — a locale/bucket combination not otherwise exercised.
+    expect(relativeTime('2025-12-30T00:00:00.000Z', now, 'zh')).toContain('3')
+    expect(relativeTime('2025-12-30T00:00:00.000Z', now, 'zh')).not.toBe('3d ago')
+  })
+
+  it('localizes the "just now" (sub-minute) bucket for non-English locales', () => {
+    // The `rtf.format(0, 'second')` branch — never covered by the English path,
+    // which returns the literal "just now".
+    const ko = relativeTime('2026-01-01T23:59:30.000Z', now, 'ko')
+    expect(ko).not.toBe('just now')
+    expect(ko.length).toBeGreaterThan(0)
+    const zh = relativeTime('2026-01-01T23:59:30.000Z', now, 'zh')
+    expect(zh).not.toBe('just now')
+    expect(zh.length).toBeGreaterThan(0)
+  })
 })

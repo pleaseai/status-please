@@ -1,4 +1,5 @@
-import type { CheckStatus, DayStat, Incident, ResponsePoint, SiteSummary } from '@status-please/core'
+import type { CheckStatus, DayStat, Incident, Locale, ResponsePoint, SiteSummary } from '@status-please/core'
+import { DEFAULT_LOCALE, parseConfig, resolveLocale } from '@status-please/core'
 import { env } from 'cloudflare:workers'
 
 /**
@@ -74,6 +75,31 @@ export async function getSummary(): Promise<SiteSummary[]> {
 export async function getSite(slug: string): Promise<SiteSummary | undefined> {
   const summary = await getSummary()
   return summary.find(s => s.slug === slug)
+}
+
+/**
+ * Resolve the status page's UI locale from the `config` YAML in KV (the same
+ * document the check Worker reads). Falls back to the default locale so `astro
+ * dev` renders without Cloudflare bindings, and never throws — a malformed
+ * config degrades to English rather than breaking the render.
+ */
+export async function getLocale(): Promise<Locale> {
+  const kv = env.STATUS_KV
+  if (kv) {
+    const raw = await kv.get('config')
+    if (raw) {
+      try {
+        return resolveLocale(parseConfig(raw).theme.locale)
+      }
+      catch (err) {
+        // Malformed config: fall back rather than fail the whole page render,
+        // but log it (matching cache.ts/notify.ts) so the operator can debug
+        // why `/` isn't honoring their configured `theme.locale`.
+        console.warn('getLocale: malformed config in KV, falling back to default locale', err)
+      }
+    }
+  }
+  return DEFAULT_LOCALE
 }
 
 /** ISO timestamp `hours` before now — keeps sample incidents fresh for `astro dev`. */

@@ -24,3 +24,7 @@ notifications:
 theme:
   logoUrl: /logo.svg
   darkMode: true
+  # Fallback UI language, used only when a visitor's browser language isn't one
+  # of the supported locales (en | zh | ja | ko). Visitors are otherwise served
+  # /en/ /ja/ /ko/ /zh/ based on Accept-Language. Defaults to en.
+  locale: en
