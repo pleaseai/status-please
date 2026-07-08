@@ -9,7 +9,7 @@
 [![Live demo](https://img.shields.io/badge/live%20demo-demo.statusbeam.dev-brightgreen)](https://demo.statusbeam.dev)
 [![Deploy on Cloudflare](https://img.shields.io/badge/deploy%20on-Cloudflare-F38020?logo=cloudflare&logoColor=white)](./DEPLOYMENT.md)
 
-> An open-source, CDN-native **status page** generator — the modern successor to [upptime](https://github.com/upptime/upptime).
+> An open-source, CDN-native **status page** generator — a modern take on [upptime](https://github.com/upptime/upptime).
 
 🔗 **Live demo:** [demo.statusbeam.dev](https://demo.statusbeam.dev) — a StatusBeam instance monitoring a few public services, running on Cloudflare.
 

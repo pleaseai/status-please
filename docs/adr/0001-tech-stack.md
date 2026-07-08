@@ -7,7 +7,7 @@
 ## Context
 
 StatusBeam is an open-source status page generator, conceived as a modern
-successor to [upptime](https://github.com/upptime/upptime). We need to choose a
+take on [upptime](https://github.com/upptime/upptime). We need to choose a
 **frontend framework**, a **check/scheduling mechanism**, a **data store**, and a
 **deploy target**. Two hard requirements shaped the decision:
 
