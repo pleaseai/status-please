@@ -1,0 +1,29 @@
+.claude/agent-memory/review-review-code-reviewer/statuspage-provider-label-gap.md
+  s_9b8500adb1b171::t_85bd8ab728212b 1-34
+.claude/agent-memory/review-review-code-reviewer/MEMORY.md
+  s_984df4a422abe4::t_56933269106d61 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a8503a59579b589862d98097d64932da66df2e7a",
+  "prompts": {},
+  "sessions": {
+    "s_984df4a422abe4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a57dacee-b99d-47ef-be17-6a159feb5833",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    },
+    "s_9b8500adb1b171": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12907e56-a839-44bf-aefa-c83c91f461e6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
