@@ -73,6 +73,16 @@
         "zod": "^4.4.3",
       },
     },
+    "packages/create-statusbeam": {
+      "name": "create-statusbeam",
+      "version": "0.0.0",
+      "bin": {
+        "create-statusbeam": "./dist/index.js",
+      },
+      "devDependencies": {
+        "@types/node": "^24",
+      },
+    },
   },
   "packages": {
     "@altano/repository-tools": ["@altano/repository-tools@2.0.3", "", {}, "sha512-cSR/ZYDF6Wp9OeAJMyLYYN1GenAAhV17W+w38ELP+3c5Ltsy9jkkCymi33nz/qnXyef3n6Fbr1h2yt3dvUN5sQ=="],
@@ -734,6 +744,8 @@
     "cookie-es": ["cookie-es@1.2.3", "", {}, "sha512-lXVyvUvrNXblMqzIRrxHb57UUVmqsSWlxqt3XIjCkUP0wDAf6uicO6KMbEgYrMNtEvWgWHwe42CKxPu9MYAnWw=="],
 
     "core-js-compat": ["core-js-compat@3.49.0", "", { "dependencies": { "browserslist": "^4.28.1" } }, "sha512-VQXt1jr9cBz03b331DFDCCP90b3fanciLkgiOoy8SBHy06gNf+vQ1A3WFLqG7I8TipYIKeYK9wxd0tUrvHcOZA=="],
+
+    "create-statusbeam": ["create-statusbeam@workspace:packages/create-statusbeam"],
 
     "cross-spawn": ["cross-spawn@7.0.6", "", { "dependencies": { "path-key": "^3.1.0", "shebang-command": "^2.0.0", "which": "^2.0.1" } }, "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA=="],
 

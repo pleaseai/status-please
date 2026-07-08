@@ -1,0 +1,55 @@
+name: Deploy
+
+# Deploys your StatusBeam status page to Cloudflare via the statusbeam CLI.
+# Runs on push to main and on demand. Provision + first deploy is done locally
+# with `statusbeam setup`; this keeps it deployed on every change.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+# Least privilege — wrangler authenticates with the API token, not GITHUB_TOKEN.
+permissions:
+  contents: read
+
+# Never let two deploys race; cancel is off so an in-flight deploy finishes.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Cloudflare
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production # add required-reviewer protection in repo settings to gate deploys
+    steps:
+      - name: Preflight — required secrets present
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          missing=""
+          [ -n "$CLOUDFLARE_API_TOKEN" ] || missing="$missing CLOUDFLARE_API_TOKEN"
+          [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || missing="$missing CLOUDFLARE_ACCOUNT_ID"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing required secrets:$missing — set them in repo settings."
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up mise (node + bun)
+        uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bunx statusbeam deploy

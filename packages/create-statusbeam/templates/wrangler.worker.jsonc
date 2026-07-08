@@ -1,0 +1,39 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "statusbeam-worker",
+
+  // The check Worker's code lives in the installed @statusbeam/worker package;
+  // wrangler bundles it at deploy. Don't edit — updates arrive via `bun update`.
+  "main": "./node_modules/@statusbeam/worker/src/index.ts",
+
+  "compatibility_date": "2026-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Run the check loop on a schedule. `statusbeam setup` writes your answer here;
+  // Cloudflare Cron Triggers fire on time. Default: every 5 minutes.
+  "triggers": {
+    "crons": ["*/5 * * * *"]
+  },
+
+  // Time-series checks + incident history. `statusbeam setup` fills the id in.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "statusbeam",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+    }
+  ],
+
+  // Current snapshot the status page reads, plus the config document.
+  "kv_namespaces": [
+    {
+      "binding": "STATUS_KV",
+      "id": "REPLACE_WITH_KV_NAMESPACE_ID"
+    }
+  ]
+
+  // Optional cache-purge secrets (instant status updates) are set on this Worker:
+  //   wrangler secret put CF_API_TOKEN --config wrangler.worker.jsonc
+  //   wrangler secret put CF_ZONE_ID   --config wrangler.worker.jsonc
+  // When unset, a status change still shows within the 60s edge TTL.
+}
