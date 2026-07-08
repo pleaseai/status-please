@@ -1,0 +1,34 @@
+packages/cli/src/lib/wrangler.ts
+  s_4e4d323763b7b6::t_2bb217d2a0b3ac 57-64,72-79
+  s_4e4d323763b7b6::t_cff6eac7d7f563 39-47
+.github/workflows/publish.yml
+  s_4e4d323763b7b6::t_3e9c805508e6f7 56-60
+packages/cli/src/lib/apply-config.ts
+  s_4e4d323763b7b6::t_89554b2912fbd5 120-124,127-138
+packages/create-statusbeam/templates/.github/workflows/deploy.yml
+  s_7d99b8933a1dff::t_1401216b714838 49-51,57-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8731dee36feddeb7bf52c9eaf0e6e03c3875eadc",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    },
+    "s_7d99b8933a1dff": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-aa9838334d5762ab5",
+        "model": "unknown"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
