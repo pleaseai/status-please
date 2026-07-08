@@ -42,15 +42,15 @@ jobs:
           persist-credentials: false
 
       - name: Set up bun
-        uses: oven-sh/setup-bun@735343b667d3e6a283f6904235642b1a3a1072c4 # v2.0.2
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
         with:
           bun-version: latest
-
-      - name: Set up node (npm CLI for provenance publish)
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version: 24
-          registry-url: https://registry.npmjs.org
+          # This workflow is release-triggered and publishes to npm; a poisoned
+          # cache could taint the tarball, so disable caching (zizmor cache-poisoning).
+          # node + npm (used for the provenance publish) come from the runner's
+          # preinstalled toolchain — no actions/setup-node, which would re-introduce
+          # a cache-capable action into the publish path.
+          no-cache: true
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -72,5 +72,9 @@ jobs:
           if [ -z "$tarball" ]; then
             echo "::error::no tarball produced by bun pm pack"; exit 1
           fi
+          # Configure the npm registry auth (setup-node's registry-url did this
+          # before it was dropped). Provenance still works: it keys off the
+          # id-token: write OIDC + the GitHub Actions env, not setup-node.
+          npm config set //registry.npmjs.org/:_authToken "$NODE_AUTH_TOKEN"
           # npm (not bun) publish: only npm emits the provenance attestation.
           npm publish "$tarball" --provenance --access public
