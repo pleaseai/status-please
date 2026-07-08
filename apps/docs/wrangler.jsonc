@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "statusbeam-docs",
+  "compatibility_date": "2026-07-01",
+
+  // Static-assets-only Worker: the Starlight build in ./dist is served directly
+  // from Cloudflare's edge, with no Worker script (`main`). llms.txt, the
+  // `.md.txt` endpoints, and the copied `.md` files are all plain static files
+  // in dist, so they are served as-is.
+  // https://developers.cloudflare.com/workers/static-assets/
+  "assets": {
+    "directory": "./dist",
+    // Docs URLs are extensionless (/getting-started/quick-start). Let the edge
+    // resolve them to the prerendered .html without a redirect.
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+
+  // Custom domain: Cloudflare provisions the proxied DNS record + edge cert
+  // automatically (the statusbeam.dev zone lives in this account). Also reachable
+  // at the *.workers.dev URL. Change or remove for your own deployment.
+  "routes": [{ "pattern": "docs.statusbeam.dev", "custom_domain": true }]
+}

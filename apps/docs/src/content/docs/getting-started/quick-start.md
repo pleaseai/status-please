@@ -1,0 +1,56 @@
+---
+title: Quick Start
+description: Clone StatusBeam, install the toolchain, and run the status page locally.
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+This gets a StatusBeam page running on your machine. To publish it to the edge,
+follow [Deploy to Cloudflare](/guides/deployment/) afterwards.
+
+## Prerequisites
+
+- [mise](https://mise.jdx.dev/) (manages the pinned Node + Bun toolchain)
+- A Cloudflare account (only needed when you deploy)
+
+## Steps
+
+<Steps>
+
+1. **Clone the repository.**
+
+   ```bash
+   git clone https://github.com/pleaseai/statusbeam.git
+   cd statusbeam
+   ```
+
+2. **Install the toolchain and dependencies.**
+
+   ```bash
+   mise trust && mise install
+   bun install
+   ```
+
+3. **Create your config.** Copy the example and edit the services you want to
+   monitor (see [Configuration](/guides/configuration/)).
+
+   ```bash
+   cp status.config.example.yml status.config.yml
+   ```
+
+4. **Run the dev servers.**
+
+   ```bash
+   bun run dev
+   ```
+
+   This starts the Turborepo `dev` pipeline — the Astro status page and the
+   check Worker in watch mode.
+
+</Steps>
+
+## What's next
+
+Your page renders from local data. When you're ready to publish, provision D1 +
+KV and deploy the Worker and site to Cloudflare — see
+[Deploy to Cloudflare](/guides/deployment/).
