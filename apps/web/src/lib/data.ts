@@ -71,6 +71,13 @@ export async function getSummary(): Promise<SiteSummary[]> {
   return SAMPLE
 }
 
+// A missing `config` key is a steady-state deploy misconfiguration, so
+// `getLocale()` (invoked on every bare-`/` request) would log it on every hit.
+// Warn once per Worker isolate instead — enough to surface the problem without
+// flooding the logs. (The catch below logs unconditionally: a thrown KV/parse
+// error is exceptional, not steady-state, so each occurrence is worth a line.)
+let warnedNoConfigKey = false
+
 /**
  * Resolve the status page's UI locale from the `config` YAML in KV (the same
  * document the check Worker reads). Falls back to the default locale so `astro
@@ -89,9 +96,12 @@ export async function getLocale(): Promise<Locale> {
         return resolveLocale(parseConfig(raw).theme.locale)
       }
       // KV is bound but has no `config` key — the deploy step never uploaded it
-      // (or the key name is wrong). Warn so the misconfiguration is debuggable,
-      // instead of silently serving the default locale.
-      console.warn('getLocale: no `config` key in KV, falling back to default locale')
+      // (or the key name is wrong). Warn (once per isolate) so the
+      // misconfiguration is debuggable, instead of silently serving the default.
+      if (!warnedNoConfigKey) {
+        warnedNoConfigKey = true
+        console.warn('getLocale: no `config` key in KV, falling back to default locale')
+      }
     }
     catch (err) {
       // KV read failure or malformed config: fall back rather than fail the
