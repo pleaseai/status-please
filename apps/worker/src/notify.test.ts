@@ -197,6 +197,21 @@ describe('consumeNotificationBatch (queue consumer)', () => {
     expect(outcomes).toEqual(['retry'])
   })
 
+  it('swallows a post-delivery ack failure without retrying (no duplicate POST)', async () => {
+    const { impl } = fakeFetch(() => ({ ok: true, status: 200 }))
+    let retried = false
+    const batch = {
+      messages: [{
+        body: { url: 'https://example.com/ok', body: payload },
+        ack: () => { throw new Error('already settled') },
+        retry: () => { retried = true },
+      }],
+    } as unknown as MessageBatch<NotificationMessage>
+    // Delivery succeeded, so a failing ack must not escalate to a retry.
+    await expect(consumeNotificationBatch(batch, impl)).resolves.toBeUndefined()
+    expect(retried).toBe(false)
+  })
+
   it('settles each message independently within a batch', async () => {
     const { impl } = fakeFetch(url =>
       url.includes('/bad') ? { ok: false, status: 500 } : { ok: true, status: 200 },

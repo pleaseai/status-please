@@ -126,7 +126,15 @@ export async function consumeNotificationBatch(
         message.retry()
         return
       }
-      message.ack()
+      try {
+        message.ack()
+      }
+      catch (err) {
+        // Delivery already succeeded; a failed ack must not crash the batch or
+        // trigger a retry (that would re-POST a delivered notification). Log in
+        // the file's `notify:` style and let Queues auto-settle the message.
+        console.error(`notify: ack failed after successful delivery`, err)
+      }
     }),
   )
 }
