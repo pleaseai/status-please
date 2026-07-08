@@ -110,15 +110,21 @@ export function parseUptimePercent(display: string): number {
   return Number.isFinite(pct) ? pct / 100 : 1
 }
 
-/** The trailing uptime display string a `SiteSummary` holds for `period`. */
+/**
+ * The trailing uptime display string a `SiteSummary` holds for `period`.
+ * `getSummary()` trusts KV's JSON via a type assertion rather than runtime
+ * validation, so a stale or malformed snapshot can carry a missing field
+ * despite the type saying `string` — falls back to `'n/a'` so the badge JSON
+ * still has a `message`, instead of shields.io getting an omitted field.
+ */
 function uptimeDisplay(site: SiteSummary, period: UptimePeriod): string {
   switch (period) {
     case 'day':
-      return site.uptimeDay
+      return site.uptimeDay ?? 'n/a'
     case 'week':
-      return site.uptimeWeek
+      return site.uptimeWeek ?? 'n/a'
     case 'month':
-      return site.uptimeMonth
+      return site.uptimeMonth ?? 'n/a'
   }
 }
 
@@ -140,9 +146,7 @@ export function overallBadge(summary: SiteSummary[]): ShieldsEndpoint {
   const severity = overallSeverity(summary.map(s => s.status))
   const message = severity === 'operational'
     ? 'operational'
-    : severity === 'major_outage'
-      ? 'major outage'
-      : severity.replace(/_/g, ' ')
+    : severity.replace(/_/g, ' ')
   // Color keys off the worst site's raw status so severityColor's mapping is reused.
   const worst = summary.find(s => s.status === 'down')
     ?? summary.find(s => s.status === 'degraded')

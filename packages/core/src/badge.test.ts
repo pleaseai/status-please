@@ -128,6 +128,11 @@ describe('uptimeBadge', () => {
     expect(uptimeBadge(s, 'day').color).toBe('brightgreen')
     expect(uptimeBadge(s, 'week').color).toBe('yellow')
   })
+
+  it('falls back to "n/a" for a snapshot missing the field (KV bypasses the type check)', () => {
+    const s = site({ uptimeMonth: undefined as unknown as string })
+    expect(uptimeBadge(s, 'month').message).toBe('n/a')
+  })
 })
 
 describe('responseBadge', () => {
