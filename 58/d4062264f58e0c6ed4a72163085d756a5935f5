@@ -1,0 +1,24 @@
+sonar-project.properties
+  s_4e4d323763b7b6::t_c0f00afefc0b28 29-36
+packages/cli/src/lib/apply-config.test.ts
+  s_4e4d323763b7b6::t_f6d70ab8e26b2f 96-99,102-111
+  s_4e4d323763b7b6::t_5a9fa4af844331 100-101
+codecov.yml
+  s_4e4d323763b7b6::t_35044914094d54 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "58d4062264f58e0c6ed4a72163085d756a5935f5",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
