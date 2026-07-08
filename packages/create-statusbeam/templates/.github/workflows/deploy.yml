@@ -46,10 +46,14 @@ jobs:
         uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        # --ignore-scripts: don't run dependency lifecycle scripts on a deploy
+        # (supply-chain hardening). The statusbeam CLI + wrangler bundling still work.
+        run: bun install --frozen-lockfile --ignore-scripts
 
       - name: Deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: bunx statusbeam deploy
+        # `bun run deploy` runs the local, lockfile-pinned @statusbeam/cli (the
+        # package.json "deploy" script) — not a floating `bunx` registry fetch.
+        run: bun run deploy

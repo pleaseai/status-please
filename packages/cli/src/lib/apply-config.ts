@@ -117,9 +117,23 @@ export async function edit(path: string, fn: (s: string) => string): Promise<boo
   return false
 }
 
-/** Read a single string value out of a JSONC file by key (tolerant of comments). */
+/**
+ * Read a single string value out of a JSONC file by key. Scans line by line and
+ * skips whole-line comments so a commented-out `// "database_name": "old"` can't
+ * shadow the real value (the templates ship such commented examples).
+ */
 export async function readJsoncString(path: string, key: string): Promise<string | undefined> {
   const s = await readFile(path, 'utf8')
-  const m = s.match(new RegExp(`"${esc(key)}"\\s*:\\s*"([^"]*)"`))
-  return m?.[1]
+  const re = new RegExp(`"${esc(key)}"\\s*:\\s*"([^"]*)"`)
+  for (const line of s.split(/\r?\n/)) {
+    const trimmed = line.trim()
+    if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) {
+      continue
+    }
+    const m = trimmed.match(re)
+    if (m) {
+      return m[1]
+    }
+  }
+  return undefined
 }

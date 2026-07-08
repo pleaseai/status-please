@@ -53,7 +53,11 @@ jobs:
           no-cache: true
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        # --ignore-scripts: a release-triggered publish must not run arbitrary
+        # dependency lifecycle scripts (supply-chain hardening). The build below
+        # still works — esbuild/workerd resolve their platform binaries via
+        # optionalDependencies, not postinstall.
+        run: bun install --frozen-lockfile --ignore-scripts
 
       - name: Build
         # Builds the workspace so core/cli/create-statusbeam emit their dist/.

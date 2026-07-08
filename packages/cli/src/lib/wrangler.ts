@@ -36,7 +36,15 @@ export async function lookupD1(w: Wrangler, name: string): Promise<string | unde
   if (!text) {
     return undefined
   }
-  const list = JSON.parse(text) as Array<{ name?: string, uuid?: string, id?: string }>
+  // wrangler can print a warning/error banner instead of JSON (expired session,
+  // network); surface that as a clear error rather than a raw SyntaxError.
+  let list: Array<{ name?: string, uuid?: string, id?: string }>
+  try {
+    list = JSON.parse(text)
+  }
+  catch {
+    throw new Error(`could not parse the D1 list from wrangler (expected JSON). Output:\n${text}`)
+  }
   const db = Array.isArray(list) ? list.find(x => x.name === name) : undefined
   return db ? (db.uuid ?? db.id ?? undefined) : undefined
 }
@@ -46,7 +54,14 @@ export async function createD1(w: Wrangler, name: string): Promise<void> {
   await run(cmd, a)
 }
 
-/** KV namespace id whose title ends with `STATUS_KV`, or undefined. */
+/**
+ * KV namespace id for the `STATUS_KV` binding, or undefined. `createKv` runs
+ * `kv namespace create STATUS_KV` with no --env/--preview, so wrangler titles the
+ * namespace exactly `STATUS_KV` (title = `${env}${binding}${preview}`, see
+ * wrangler's kv-namespace-create handler) — not `${workerName}-STATUS_KV`. Match
+ * the title exactly so an unrelated namespace like `MY_STATUS_KV` can't be picked
+ * up. Throws on a non-JSON wrangler response rather than crashing on parse.
+ */
 export async function lookupKv(w: Wrangler): Promise<string | undefined> {
   const [cmd, a] = args(w, ['kv', 'namespace', 'list', '--json'])
   const res = await capture(cmd, a)
@@ -54,8 +69,14 @@ export async function lookupKv(w: Wrangler): Promise<string | undefined> {
   if (!text) {
     return undefined
   }
-  const list = JSON.parse(text) as Array<{ id?: string, title?: string }>
-  const ns = Array.isArray(list) ? list.find(x => String(x.title ?? '').endsWith('STATUS_KV')) : undefined
+  let list: Array<{ id?: string, title?: string }>
+  try {
+    list = JSON.parse(text)
+  }
+  catch {
+    throw new Error(`could not parse the KV namespace list from wrangler (expected JSON). Output:\n${text}`)
+  }
+  const ns = Array.isArray(list) ? list.find(x => x.title === 'STATUS_KV') : undefined
   return ns?.id
 }
 
