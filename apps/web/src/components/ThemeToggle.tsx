@@ -63,7 +63,13 @@ export function ThemeToggle({ locale }: Readonly<{ locale: Locale }>) {
   const [theme, setTheme] = useState<Theme>('system')
 
   useEffect(() => {
-    setTheme(readStoredTheme())
+    // Re-apply to <html> too, not just state: normally the anti-FOUC inline
+    // script already set the class, but if it was suppressed (strict CSP with no
+    // 'unsafe-inline', an extension) the island still hydrates — so applyTheme
+    // here keeps the DOM class, icon, and label in sync regardless.
+    const stored = readStoredTheme()
+    applyTheme(stored)
+    setTheme(stored)
   }, [])
 
   const cycle = (): void => {
