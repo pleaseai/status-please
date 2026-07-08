@@ -274,4 +274,26 @@ describe('checkSite (incidentio)', () => {
     expect(result.status).toBe('down')
     expect(result.error).toBe('incident.io API returned 503')
   })
+
+  it('labels a missing component with the incident.io provider', async () => {
+    const missing = siteSchema.parse({
+      name: 'incident.io API',
+      url: 'https://status.incident.io',
+      check: 'incidentio',
+      component: 'Nonexistent Service',
+    })
+    const result = await checkSite(missing, { fetchImpl: statuspageResponse(claudeSummary), now: () => 0 })
+    expect(result.status).toBe('down')
+    expect(result.code).toBe(200)
+    expect(result.error).toBe('incident.io component not found: Nonexistent Service')
+  })
+
+  it('labels a validation failure with the incident.io provider', async () => {
+    const result = await checkSite(pageSite, {
+      fetchImpl: statuspageResponse({ status: 'oops', components: 'nope' }),
+      now: () => 0,
+    })
+    expect(result.status).toBe('down')
+    expect(result.error).toMatch(/^incident\.io summary\.json failed validation:/)
+  })
 })

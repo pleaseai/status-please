@@ -148,9 +148,11 @@ export function statuspageSummaryUrl(url: string): string {
  * or case-insensitive name) the single component's status wins; otherwise the
  * page's overall `indicator` is used. Unknown status strings map to `degraded`
  * (something is off, but not clearly an outage). Throws when a named component
- * isn't present so the caller records it as `down` with a clear error.
+ * isn't present so the caller records it as `down` with a clear error; the
+ * `provider` label keeps that message consistent with the other two error
+ * strings in {@link checkStatuspage} (e.g. `incident.io` vs `Statuspage`).
  */
-export function deriveStatuspageStatus(summary: StatuspageSummary, component?: string): CheckStatus {
+export function deriveStatuspageStatus(summary: StatuspageSummary, component?: string, provider = 'Statuspage'): CheckStatus {
   if (component !== undefined) {
     const trimmed = component.trim()
     const target = trimmed.toLowerCase()
@@ -158,7 +160,7 @@ export function deriveStatuspageStatus(summary: StatuspageSummary, component?: s
       c => c.id === trimmed || c.name?.trim().toLowerCase() === target,
     )
     if (!match) {
-      throw new Error(`Statuspage component not found: ${component}`)
+      throw new Error(`${provider} component not found: ${component}`)
     }
     return STATUSPAGE_COMPONENT_STATUS[match.status ?? ''] ?? 'degraded'
   }
@@ -217,7 +219,7 @@ async function checkStatuspage(site: Site, fetchImpl: FetchLike, now: () => numb
     }
     return {
       slug: site.slug,
-      status: deriveStatuspageStatus(parsed.data, site.component),
+      status: deriveStatuspageStatus(parsed.data, site.component, provider),
       code: res.status,
       responseTime,
       checkedAt,

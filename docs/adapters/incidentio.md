@@ -67,8 +67,9 @@ Identical to the Statuspage adapter, because the payload is identical. See
 [**Failure & edge behavior**](./statuspage.md#failure--edge-behavior) in the
 Statuspage guide for the full indicator/component tables and the `code: 0` vs.
 `code: 200` distinction. The one difference: error messages name the provider
-you configured — `incident.io API returned 503` and
-`incident.io summary.json failed validation: …`.
+you configured — `incident.io API returned 503`,
+`incident.io summary.json failed validation: …`, and
+`incident.io component not found: <name>`.
 
 ## Notes & limitations
 
