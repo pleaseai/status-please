@@ -29,6 +29,7 @@ SKIP_DEPLOY=0
 
 for arg in "$@"; do
   case "$arg" in
+    --) ;;  # bare separator (e.g. from `bash scripts/setup.sh -- --yes`) — ignore
     -y|--yes) ASSUME_YES=1 ;;
     --skip-deploy) SKIP_DEPLOY=1 ;;
     -h|--help)
@@ -93,12 +94,18 @@ ok "bun + Cloudflare auth ready"
 # --- 1. provision D1 + KV (idempotent) -------------------------------------
 step "Provisioning D1 + KV"
 
+# Distinguish "wrangler call failed" from "resource not found":
+#   - capture only stdout (the JSON); a non-zero wrangler exit (expired auth,
+#     network, API error) makes the function return non-zero so the caller can
+#     abort, instead of the failure being masked and misread as "not found"
+#     (which would take the wrong create-a-duplicate branch).
+#   - a successful-but-empty/unparseable result → empty stdout, exit 0 → the
+#     caller's `-n` check drives the create path. The JSON.parse is still guarded
+#     so a surprising payload can't dump a Bun stack trace.
 lookup_d1() {
-  # Guard the JSON parse: a failed/empty `wr d1 list` yields "" here, and an
-  # unguarded JSON.parse("") would dump a Bun stack trace to stderr. Treat any
-  # parse/empty case as "not found" (empty stdout) — the caller's `-n` check
-  # then drives the create-or-die path.
-  wr d1 list --json 2>/dev/null | DB_NAME="$DB_NAME" bun -e '
+  local json
+  json="$(wr d1 list --json 2>/dev/null)" || return 1
+  printf '%s' "$json" | DB_NAME="$DB_NAME" bun -e '
     try {
       const text = (await Bun.stdin.text()).trim();
       if (!text) process.exit(0);
@@ -109,7 +116,9 @@ lookup_d1() {
   '
 }
 lookup_kv() {
-  wr kv namespace list --json 2>/dev/null | bun -e '
+  local json
+  json="$(wr kv namespace list --json 2>/dev/null)" || return 1
+  printf '%s' "$json" | bun -e '
     try {
       const text = (await Bun.stdin.text()).trim();
       if (!text) process.exit(0);
@@ -120,21 +129,23 @@ lookup_kv() {
   '
 }
 
-D1_ID="$(lookup_d1 || true)"
+AUTH_HINT="check your Cloudflare auth ('bunx wrangler login' or CLOUDFLARE_API_TOKEN) and retry"
+
+D1_ID="$(lookup_d1)" || die "Could not query D1 (wrangler d1 list failed) — $AUTH_HINT."
 if [ -z "$D1_ID" ]; then
   info "Creating D1 database '$DB_NAME'…"; wr d1 create "$DB_NAME" >/dev/null
-  D1_ID="$(lookup_d1 || true)"
+  D1_ID="$(lookup_d1)" || die "Could not query D1 after create — $AUTH_HINT."
 else
   info "D1 '$DB_NAME' already exists — reusing."
 fi
 [ -n "$D1_ID" ] || die "Could not determine the D1 database id."
 ok "D1 database_id: $D1_ID"
 
-KV_ID="$(lookup_kv || true)"
+KV_ID="$(lookup_kv)" || die "Could not query KV (wrangler kv namespace list failed) — $AUTH_HINT."
 if [ -z "$KV_ID" ]; then
   info "Creating KV namespace 'STATUS_KV'…"
   wr kv namespace create STATUS_KV --config apps/worker/wrangler.jsonc >/dev/null
-  KV_ID="$(lookup_kv || true)"
+  KV_ID="$(lookup_kv)" || die "Could not query KV after create — $AUTH_HINT."
 else
   info "KV namespace 'STATUS_KV' already exists — reusing."
 fi
@@ -168,9 +179,11 @@ else
   if [ -n "$PAGE_NAME" ]; then
     PAGE_NAME="$PAGE_NAME" bun -e '
       let s = await Bun.file("status.config.yml").text();
-      // Replacer function, not a string: a "$" in the name (e.g. "A$AP Status")
-      // would otherwise be read as a $-pattern by String.replace.
-      s = s.replace(/^name:.*$/m, () => "name: " + process.env.PAGE_NAME);
+      // JSON.stringify → a double-quoted YAML scalar, so a name containing ":",
+      // "#", a leading "@", or quotes stays valid YAML. Passing it via a
+      // replacer function (not a string) also keeps a "$" from being read as a
+      // $-pattern by String.replace.
+      s = s.replace(/^name:.*$/m, () => "name: " + JSON.stringify(process.env.PAGE_NAME));
       await Bun.write("status.config.yml", s);
     '
   fi

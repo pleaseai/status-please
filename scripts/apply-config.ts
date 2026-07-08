@@ -113,10 +113,12 @@ function setCron(s: string): string {
   // Replace the single expression inside "crons": [ "..." ].
   const re = /("crons"\s*:\s*\[\s*)"[^"]*"(\s*\])/
   if (!re.test(s)) {
-    // Non-fatal (the committed default cron still works), but warn so a silently
-    // dropped schedule doesn't look applied.
-    console.warn(`  warning: could not set the cron expression in ${WORKER}; edit it by hand`)
-    return s
+    // Fail loud, like setNetworking: silently returning the input would let
+    // setup.sh report success while the user's chosen schedule was dropped.
+    throw new Error(
+      `could not set the cron expression in ${WORKER} ("crons" array not found in `
+      + `the expected shape). Edit it by hand, then re-run.`,
+    )
   }
   return s.replace(re, (_m, p1, p2) => `${p1}${JSON.stringify(cron)}${p2}`)
 }
