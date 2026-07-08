@@ -144,7 +144,7 @@ settings to gate every deploy behind an approval.
 
   ```text
   // in apps/web/wrangler.jsonc
-  "routes": [{ "pattern": "demo.status.pleaseai.dev", "custom_domain": true }]
+  "routes": [{ "pattern": "demo.statusbeam.dev", "custom_domain": true }]
   ```
 
   Two caveats: (1) adding a route **disables the `*.workers.dev` URL** — add
