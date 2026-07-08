@@ -1,5 +1,6 @@
 import type { Site } from './config'
 import type { CheckResult, CheckStatus } from './types'
+import { z } from 'zod'
 
 /** Minimal fetch signature so callers (and tests) can pass any compatible impl. */
 export type FetchLike = (url: string, init?: RequestInit) => Promise<Response>
@@ -91,11 +92,31 @@ const STATUSPAGE_INDICATOR_STATUS: Record<string, CheckStatus> = {
   maintenance: 'degraded',
 }
 
-/** The slice of an Atlassian Statuspage `summary.json` payload we rely on. */
-export interface StatuspageSummary {
-  status?: { indicator?: string, description?: string }
-  components?: Array<{ id?: string, name?: string, status?: string }>
-}
+/**
+ * The slice of an Atlassian Statuspage `summary.json` payload we rely on.
+ * Validated at the boundary rather than trusting a bare type assertion, so a
+ * response of the wrong shape (a proxy error page, an API version change, a
+ * non-object body) is caught and reported instead of read as a real payload.
+ */
+export const statuspageSummarySchema = z.object({
+  status: z
+    .object({
+      indicator: z.string().optional(),
+      description: z.string().optional(),
+    })
+    .optional(),
+  components: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        name: z.string().optional(),
+        status: z.string().optional(),
+      }),
+    )
+    .optional(),
+})
+
+export type StatuspageSummary = z.infer<typeof statuspageSummarySchema>
 
 /**
  * Resolve the `summary.json` API URL for a configured Statuspage `url`. A bare
@@ -176,13 +197,16 @@ async function checkStatuspage(site: Site, fetchImpl: FetchLike, now: () => numb
   // and collapsing it to `code: 0` would make a persistent misconfiguration
   // look like transient flakiness in the persisted history.
   try {
-    const summary = (await res.json()) as StatuspageSummary
-    if (typeof summary !== 'object' || summary === null) {
-      return { slug: site.slug, status: 'down', code: res.status, responseTime, checkedAt, error: 'Statuspage summary.json was not a JSON object' }
+    // Validate the shape at the boundary instead of trusting a type assertion.
+    // safeParse also rejects non-objects (null, arrays), so a wrong-shaped body
+    // is reported rather than silently graded.
+    const parsed = statuspageSummarySchema.safeParse(await res.json())
+    if (!parsed.success) {
+      return { slug: site.slug, status: 'down', code: res.status, responseTime, checkedAt, error: `Statuspage summary.json failed validation: ${parsed.error.message}` }
     }
     return {
       slug: site.slug,
-      status: deriveStatuspageStatus(summary, site.component),
+      status: deriveStatuspageStatus(parsed.data, site.component),
       code: res.status,
       responseTime,
       checkedAt,

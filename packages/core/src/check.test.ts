@@ -174,7 +174,19 @@ describe('checkSite (statuspage)', () => {
     })
     expect(result.status).toBe('down')
     expect(result.code).toBe(200)
-    expect(result.error).toMatch(/not a JSON object/)
+    expect(result.error).toMatch(/failed validation/)
+  })
+
+  it('reports down when the body has the wrong shape', async () => {
+    // Valid JSON, but `status` is a string where an object is expected — the
+    // schema rejects it instead of grading a malformed payload.
+    const result = await checkSite(pageSite, {
+      fetchImpl: statuspageResponse({ status: 'oops', components: 'nope' }),
+      now: () => 0,
+    })
+    expect(result.status).toBe('down')
+    expect(result.code).toBe(200)
+    expect(result.error).toMatch(/failed validation/)
   })
 
   it('fetches the derived summary.json endpoint', async () => {
