@@ -1,0 +1,32 @@
+apps/docs/wrangler.jsonc
+  s_83eae01e3dc3cd::t_fcf877d0206c06 6-12,14-19
+apps/docs/astro.config.ts
+  s_83eae01e3dc3cd::t_69a21d5d0ec427 17-25
+apps/docs/.claude/skills/run-docs/SKILL.md
+  s_83eae01e3dc3cd::t_752e367c15c748 81,84-87
+  s_83eae01e3dc3cd::t_372b2d76954822 10-12
+apps/docs/package.json
+  s_83eae01e3dc3cd::t_4fae183623f650 9-11
+apps/docs/src/content/docs/guides/deployment.mdx
+  s_83eae01e3dc3cd::t_6debf01dfc50bd 52-53,59-65,67-71
+apps/docs/public/_headers
+  s_83eae01e3dc3cd::t_4d35e0a895fa58 1-9
+.github/workflows/deploy-docs.yml
+  s_83eae01e3dc3cd::t_698db3897fae57 3-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4bc27f97ff540d1bea8c30e2f87f7396560221d8",
+  "prompts": {},
+  "sessions": {
+    "s_83eae01e3dc3cd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "13d1274d-85c9-4181-a1ca-6c56e23178b6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
