@@ -1,0 +1,36 @@
+.claude/agent-memory/review-review-silent-failure-hunter/MEMORY.md
+  s_6e5906bcaa5e78::t_66feabb0cb2a4d 1
+apps/web/src/lib/api.ts
+  s_6e5906bcaa5e78::t_832af4282bd222 23
+  s_6e5906bcaa5e78::t_cdf0a4a4ba4258 40
+.claude/agent-memory/review-review-type-design-analyzer/status-please-badge-conventions.md
+  s_6e5906bcaa5e78::t_9f9329564a5a8d 1-45
+.claude/agent-memory/review-review-documentation-analyzer/MEMORY.md
+  s_6e5906bcaa5e78::t_fd08e38f46e097 1-3
+.claude/agent-memory/review-review-documentation-analyzer/project_badge_api_docs.md
+  s_6e5906bcaa5e78::t_5190e90748c21c 1-46
+.claude/agent-memory/review-review-silent-failure-hunter/status_please_conventions.md
+  s_6e5906bcaa5e78::t_9d1ab2e1ee2a3a 1-50
+.claude/agent-memory/review-review-type-design-analyzer/MEMORY.md
+  s_6e5906bcaa5e78::t_556a02fb9c475d 1-3
+packages/core/src/badge.ts
+  s_6e5906bcaa5e78::t_3223cdd33e332c 64
+  s_6e5906bcaa5e78::t_8e005098c4aa58 84
+  s_6e5906bcaa5e78::t_ba6ea3c9051285 24-31,33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6958aa84b781937eecec96aaa94395063165b324",
+  "prompts": {},
+  "sessions": {
+    "s_6e5906bcaa5e78": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d7470503-c8c3-47a5-9ff4-7bffd7ad1534",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
