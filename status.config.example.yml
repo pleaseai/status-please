@@ -25,6 +25,9 @@ sites:
     url: https://status.claude.com
     check: statuspage
     component: Claude API (api.anthropic.com)
+  # Tip: statuspage sites can also update in real time via inbound webhooks
+  # (POST /webhooks/statuspage/<slug>), with cron as the backstop. Set a
+  # WEBHOOK_SECRET on the Worker — see docs/adapters/statuspage.md.
 
 # All optional. Keep the real Slack URL in the private config you upload to KV,
 # not in this committed example (the webhook URL is a secret).

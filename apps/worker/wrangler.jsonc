@@ -11,6 +11,16 @@
     "crons": ["*/5 * * * *"]
   },
 
+  // The Worker also serves a `fetch` handler for inbound Atlassian Statuspage
+  // subscriber webhooks at `POST /webhooks/statuspage/:slug` (src/webhook.ts) —
+  // real-time status updates alongside the cron backstop. It's reachable at the
+  // *.workers.dev URL by default; authenticate it with a shared secret:
+  //   wrangler secret put WEBHOOK_SECRET
+  // then register the URL on the Statuspage page as
+  //   https://<worker>.workers.dev/webhooks/statuspage/<slug>?token=<secret>
+  // See docs/adapters/statuspage.md for setup. When WEBHOOK_SECRET is unset the
+  // endpoint fails closed (every request → 401).
+
   // Time-series checks + incident history.
   "d1_databases": [
     {
