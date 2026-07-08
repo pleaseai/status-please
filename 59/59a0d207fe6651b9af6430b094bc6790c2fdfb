@@ -1,0 +1,47 @@
+packages/core/src/check.test.ts
+  s_9b8500adb1b171::t_03e645902e36f4 234-277
+packages/core/src/check.ts
+  s_9b8500adb1b171::t_b9dbeb9ce1b54e 32-35,43
+  s_9b8500adb1b171::t_9260b70f74cc88 171-175,181
+  s_9b8500adb1b171::t_54c18674430a1f 202
+  s_9b8500adb1b171::t_138102efd6f4ce 216
+packages/core/src/config.ts
+  s_9b8500adb1b171::t_f1a899b47cf1ac 5-10
+  s_9b8500adb1b171::t_78739165311981 32-36
+  s_9b8500adb1b171::t_2081d162f1ea35 47-50,54
+status.config.yml
+  s_9b8500adb1b171::t_ac137c7ddecfdb 28-31
+apps/docs/src/content/docs/guides/configuration.mdx
+  s_9b8500adb1b171::t_cee2dd29b67904 43-48
+  s_9b8500adb1b171::t_7e525a18c784b6 25
+  s_9b8500adb1b171::t_039f1d68d52999 68-69,72
+packages/core/src/config.test.ts
+  s_9b8500adb1b171::t_7b4bbbb3ff552d 38-43
+status.config.example.yml
+  s_9b8500adb1b171::t_33022512e80afd 9
+  s_9b8500adb1b171::t_6252bc71354882 29-34
+docs/adapters/incidentio.md
+  s_9b8500adb1b171::t_cb19e3c1fba61e 1-91
+README.md
+  s_9b8500adb1b171::t_7bfb4fbb3beb43 173
+  s_9b8500adb1b171::t_52f7fe49692b69 186-188
+  s_9b8500adb1b171::t_918a023bca82cc 210,217-221
+  s_9b8500adb1b171::t_30450502c49851 352
+  s_9b8500adb1b171::t_4a235ce32998b2 222
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5959a0d207fe6651b9af6430b094bc6790c2fdfb",
+  "prompts": {},
+  "sessions": {
+    "s_9b8500adb1b171": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12907e56-a839-44bf-aefa-c83c91f461e6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
