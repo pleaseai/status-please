@@ -1,0 +1,36 @@
+packages/core/src/feed.ts
+  s_4c169f7378c91e::t_b6e9dad3334c48 202,210-211
+  s_4c169f7378c91e::t_76fe8264740f0c 82-95
+  s_4c169f7378c91e::t_8641a64324b1c8 162,169-173
+  s_215504a88d8639::t_d230650a3dc858 81
+packages/core/src/feed.test.ts
+  s_4c169f7378c91e::t_eb3bc7ff4f9cb1 136-137,140,143,146-152
+.claude/agent-memory/review-review-silent-failure-hunter/feed_ts_now_guard_gap.md
+  s_4c169f7378c91e::t_3df1bec32f4993 1-70
+.claude/agent-memory/review-review-silent-failure-hunter/MEMORY.md
+  s_4c169f7378c91e::t_6fc5ba7397f11c 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "82617f9b48f02032b84d243ac79fb927c1d8b714",
+  "prompts": {},
+  "sessions": {
+    "s_215504a88d8639": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "76080fd8-e3e0-49cb-94a7-a7022df876f4",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    },
+    "s_4c169f7378c91e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fb16ae35-85bd-4bbc-a43d-e554ccf84856",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
