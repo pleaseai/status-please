@@ -1,0 +1,21 @@
+docs/adr/0002-package-based-distribution.md
+  s_8e92e3b572342d::t_0d482e89d80506 5,43
+  s_8e92e3b572342d::t_63aae5a7e8e414 1-4,6-8,10-42,44-45,48-54,57-62,64-120,122-131,133,135,137-139
+  s_8e92e3b572342d::t_0920a91553d71d 9,46-47,55-56,63,121,132,134,136
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9af809e80f2acb487eb6877e42b3317a3c8b2eaf",
+  "prompts": {},
+  "sessions": {
+    "s_8e92e3b572342d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52d08657-14f3-46d7-8ede-abf31ccb1349",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
