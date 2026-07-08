@@ -1,0 +1,27 @@
+.claude/agent-memory/review-review-security-reviewer/MEMORY.md
+  s_4e4d323763b7b6::t_3894bad0a5ef0c 1-4
+.claude/agent-memory/review-review-documentation-analyzer/project_pr30_package_distribution_docs.md
+  s_4e4d323763b7b6::t_934cd15ef773f2 1-37
+.claude/agent-memory/review-review-documentation-analyzer/MEMORY.md
+  s_4e4d323763b7b6::t_2a10357f9ef7c7 4
+.claude/agent-memory/review-review-security-reviewer/injection-avoidance-conventions.md
+  s_4e4d323763b7b6::t_5f1cd06bac9f5c 1-17
+.claude/agent-memory/review-review-security-reviewer/publish-workflow-security-model.md
+  s_4e4d323763b7b6::t_90e75c0bb42e3f 1-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "45d02371f428bedb58d3b0e93f4be339376f6b2b",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
