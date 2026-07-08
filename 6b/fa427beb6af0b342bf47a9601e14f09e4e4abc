@@ -1,0 +1,19 @@
+.claude/agent-memory/review-review-code-reviewer/statuspage-provider-label-gap.md
+  s_9b8500adb1b171::t_0cc736d751b4ca 13-21,24-27,31-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6bfa427beb6af0b342bf47a9601e14f09e4e4abc",
+  "prompts": {},
+  "sessions": {
+    "s_9b8500adb1b171": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12907e56-a839-44bf-aefa-c83c91f461e6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
