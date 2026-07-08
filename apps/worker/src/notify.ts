@@ -152,6 +152,10 @@ export async function deliverNotification(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(message.body),
+    // Cap a slow/hung target so it can't stall the queue consumer (or hold an
+    // inline `ctx.waitUntil`). A timeout aborts as a throw → the consumer
+    // retries (transient), the inline path swallows it.
+    signal: AbortSignal.timeout(10_000),
   })
   if (!res.ok) {
     throw new Error(`POST ${redactUrl(message.url)} failed (${res.status})`)
