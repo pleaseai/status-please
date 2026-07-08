@@ -1,0 +1,25 @@
+.release-please-manifest.json
+  s_4e4d323763b7b6::t_71ce6a7a09129e 2-6
+.github/workflows/publish.yml
+  s_4e4d323763b7b6::t_8c9d5e38bd2b9f 1-76
+release-please-config.json
+  s_4e4d323763b7b6::t_ad87e0b9667436 6-11,13-16,20-24,28-29,31-32,36-40,44-48,53
+  s_4e4d323763b7b6::t_cc925117f1f406 3-4,17-19,25-27,33-35,41-43
+  s_4e4d323763b7b6::t_7383b9eae452c9 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2abb444d01591d905cbbfe75237513ce19b924a1",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
