@@ -96,6 +96,17 @@ describe('deriveStatuspageWebhookStatus — component site', () => {
     expect(deriveStatuspageWebhookStatus(payload, componentById)).toBe('degraded')
   })
 
+  it('prefers the component object over component_update when they conflict', () => {
+    // Both branches match the same site; the `component` object is checked
+    // first, so its status must win. Conflicting values lock in that precedence
+    // (a shared value would pass regardless of which branch fired).
+    const payload = {
+      component_update: { component_id: 'abc', new_status: 'major_outage' },
+      component: { id: 'abc', name: 'Claude API (api.anthropic.com)', status: 'operational' },
+    }
+    expect(deriveStatuspageWebhookStatus(payload, componentById)).toBe('up')
+  })
+
   it('grades a component found inside incident.components[]', () => {
     expect(deriveStatuspageWebhookStatus(incidentPayload, componentSite)).toBe('degraded')
     expect(deriveStatuspageWebhookStatus(incidentPayload, componentById)).toBe('degraded')
@@ -110,7 +121,16 @@ describe('deriveStatuspageWebhookStatus — component site', () => {
   })
 
   it('falls back to degraded for an unknown component status', () => {
-    const payload = { component: { id: 'abc', name: 'Claude API (api.anthropic.com)', status: 'weird' } }
-    expect(deriveStatuspageWebhookStatus(payload, componentSite)).toBe('degraded')
+    // The "never silently up" guarantee must hold on every branch that maps a
+    // component status, not just the `component` object: exercise the
+    // component_update and incident.components paths with an unknown string too.
+    const viaComponent = { component: { id: 'abc', name: 'Claude API (api.anthropic.com)', status: 'weird' } }
+    expect(deriveStatuspageWebhookStatus(viaComponent, componentSite)).toBe('degraded')
+
+    const viaUpdate = { component_update: { component_id: 'abc', new_status: 'weird' } }
+    expect(deriveStatuspageWebhookStatus(viaUpdate, componentById)).toBe('degraded')
+
+    const viaIncident = { incident: { components: [{ id: 'abc', name: 'Claude API (api.anthropic.com)', status: 'weird' }] } }
+    expect(deriveStatuspageWebhookStatus(viaIncident, componentSite)).toBe('degraded')
   })
 })
