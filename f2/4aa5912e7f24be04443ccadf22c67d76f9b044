@@ -1,0 +1,26 @@
+apps/worker/wrangler.jsonc
+  s_3ddd8e8777c597::t_a5e62438b73d33 47-49
+apps/worker/src/notify.ts
+  s_3ddd8e8777c597::t_9180fe60724a12 46-52,58,63-66,68,70-81,84
+  s_3ddd8e8777c597::t_35ef2982872a6b 122-124,127,129
+  s_3ddd8e8777c597::t_74a9225fd2a02c 88-93
+apps/worker/src/notify.test.ts
+  s_3ddd8e8777c597::t_be5029bb10bfa7 94-99,101-106,112,127-130,134,139-161
+  s_3ddd8e8777c597::t_8d1c3b5829fc34 193-199
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f24aa5912e7f24be04443ccadf22c67d76f9b044",
+  "prompts": {},
+  "sessions": {
+    "s_3ddd8e8777c597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fd456b48-a21d-4549-b0c9-bff0e1f5036b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
