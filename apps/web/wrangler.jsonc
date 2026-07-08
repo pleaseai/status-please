@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "status-please-web",
+  "name": "statusbeam-web",
   // `main` and `assets` are injected by the @astrojs/cloudflare adapter at
   // build time; do not set them here (they would point at not-yet-built output).
   "compatibility_date": "2026-07-01",
@@ -24,7 +24,7 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "status-please",
+      "database_name": "statusbeam",
       "database_id": "REPLACE_WITH_D1_DATABASE_ID"
     }
   ],

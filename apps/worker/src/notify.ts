@@ -1,5 +1,5 @@
-import type { Notifications, StatusChangePayload } from '@status-please/core'
-import { toSlackMessage } from '@status-please/core'
+import type { Notifications, StatusChangePayload } from '@statusbeam/core'
+import { toSlackMessage } from '@statusbeam/core'
 
 /**
  * Fan out a status-change payload to every configured target. Slack receives

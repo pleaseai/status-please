@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# setup.sh — interactive one-shot setup + deploy for a status-please fork.
+# setup.sh — interactive one-shot setup + deploy for a statusbeam fork.
 #
 # The "Deploy to Cloudflare" button can't deploy this monorepo (two Workers +
 # a shared workspace package), so this script is the guided alternative. It
@@ -23,7 +23,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-DB_NAME="status-please"
+DB_NAME="statusbeam"
 ASSUME_YES=0
 SKIP_DEPLOY=0
 
@@ -34,7 +34,7 @@ for arg in "$@"; do
     --skip-deploy) SKIP_DEPLOY=1 ;;
     -h|--help)
       cat <<'USAGE'
-setup.sh — interactive setup + deploy for a status-please fork.
+setup.sh — interactive setup + deploy for a statusbeam fork.
 
 Provisions D1 + KV, asks a couple of wrangler questions (custom domain, cron),
 wires everything into the committed config, applies the D1 schema, uploads your
@@ -201,11 +201,11 @@ fi
 
 # --- 4. deploy (reuses the same tasks CI runs) -----------------------------
 step "Applying the D1 schema"
-bun run --filter '@status-please/worker' db:apply:remote
+bun run --filter '@statusbeam/worker' db:apply:remote
 ok "Schema applied"
 
 step "Uploading status.config.yml to KV"
-bun run --filter '@status-please/worker' kv:config
+bun run --filter '@statusbeam/worker' kv:config
 ok "Config uploaded"
 
 step "Deploying the check Worker + status page"
@@ -213,13 +213,13 @@ bun run deploy
 ok "Deployed"
 
 # --- next steps ------------------------------------------------------------
-printf '\n%s✓ status-please is live.%s\n' "$GRN$B" "$RST"
+printf '\n%s✓ statusbeam is live.%s\n' "$GRN$B" "$RST"
 cat <<EOF
 ${DIM}
 Next:
   • The cron runs every few minutes — the page shows sample data until the
     first check writes a real snapshot. Force one now from the Cloudflare
-    dashboard → Workers → status-please-worker → Cron Triggers → Trigger.
+    dashboard → Workers → statusbeam-worker → Cron Triggers → Trigger.
   • Instant cache purge (optional): set the two secrets on the check Worker
       bunx wrangler secret put CF_API_TOKEN --config apps/worker/wrangler.jsonc
       bunx wrangler secret put CF_ZONE_ID   --config apps/worker/wrangler.jsonc

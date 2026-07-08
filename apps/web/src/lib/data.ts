@@ -1,5 +1,5 @@
-import type { CheckStatus, DayStat, Incident, Locale, ResponsePoint, SiteSummary } from '@status-please/core'
-import { DEFAULT_LOCALE, parseConfig, resolveLocale } from '@status-please/core'
+import type { CheckStatus, DayStat, Incident, Locale, ResponsePoint, SiteSummary } from '@statusbeam/core'
+import { DEFAULT_LOCALE, parseConfig, resolveLocale } from '@statusbeam/core'
 import { env } from 'cloudflare:workers'
 
 /**

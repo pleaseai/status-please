@@ -1,6 +1,6 @@
-import type { CheckResult, CheckStatus, DayStat, SiteSummary, StatusConfig } from '@status-please/core'
+import type { CheckResult, CheckStatus, DayStat, SiteSummary, StatusConfig } from '@statusbeam/core'
 import type { Env } from './env'
-import { buildStatusChangePayload, checkSite, formatUptime, parseConfig, windowUptime } from '@status-please/core'
+import { buildStatusChangePayload, checkSite, formatUptime, parseConfig, windowUptime } from '@statusbeam/core'
 import { purgeStatusCache } from './cache'
 import { KV_KEYS } from './env'
 import { dispatchNotifications } from './notify'

@@ -15,7 +15,7 @@ sites:
 
   # Read status straight from an Atlassian Statuspage (status.claude.com,
   # *.statuspage.io, vercel-status.com, …). `url` is the page's base URL;
-  # status-please appends /api/v2/summary.json automatically.
+  # statusbeam appends /api/v2/summary.json automatically.
   - name: Claude
     url: https://status.claude.com
     check: statuspage

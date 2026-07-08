@@ -14,7 +14,7 @@ export interface Env {
   CF_ZONE_ID?: string
 }
 
-/** KV keys used by status-please. */
+/** KV keys used by statusbeam. */
 export const KV_KEYS = {
   /** The `status.config.yml` document, uploaded at deploy time. */
   config: 'config',

@@ -23,7 +23,7 @@ What you expected to happen.
 
 ## Environment
 
-- status-please version:
+- StatusBeam version:
 - Deploy target (Cloudflare / Vercel / local):
 - Runtime/OS:
 

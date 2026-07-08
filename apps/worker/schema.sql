@@ -1,4 +1,4 @@
--- D1 schema for status-please. Apply with: bun run db:apply
+-- D1 schema for statusbeam. Apply with: bun run db:apply
 
 -- One row per check run. Git-commit history in upptime is replaced by rows here,
 -- which are cheap to query for uptime windows.

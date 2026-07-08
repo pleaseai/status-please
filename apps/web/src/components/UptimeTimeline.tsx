@@ -1,5 +1,5 @@
-import type { DayStat, Locale } from '@status-please/core'
-import { formatDay, formatUptime, getDict, windowUptime } from '@status-please/core'
+import type { DayStat, Locale } from '@statusbeam/core'
+import { formatDay, formatUptime, getDict, windowUptime } from '@statusbeam/core'
 import { cn } from '@/lib/utils'
 
 const DAY_COLOR = {

@@ -3,7 +3,7 @@
   "packages": {
     ".": {
       "release-type": "node",
-      "package-name": "status-please",
+      "package-name": "statusbeam",
       "changelog-path": "CHANGELOG.md",
       "release-as": "0.1.0",
       "bump-minor-pre-major": true,

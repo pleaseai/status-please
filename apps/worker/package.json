@@ -1,5 +1,5 @@
 {
-  "name": "@status-please/worker",
+  "name": "@statusbeam/worker",
   "type": "module",
   "version": "0.0.0",
   "private": true,
@@ -8,12 +8,12 @@
     "deploy": "wrangler deploy",
     "build": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
-    "db:apply": "wrangler d1 execute status-please --file=./schema.sql",
-    "db:apply:remote": "wrangler d1 execute status-please --remote --file=./schema.sql --yes",
+    "db:apply": "wrangler d1 execute statusbeam --file=./schema.sql",
+    "db:apply:remote": "wrangler d1 execute statusbeam --remote --file=./schema.sql --yes",
     "kv:config": "wrangler kv key put config --binding=STATUS_KV --path=../../status.config.yml --remote"
   },
   "dependencies": {
-    "@status-please/core": "workspace:*"
+    "@statusbeam/core": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260707.1",

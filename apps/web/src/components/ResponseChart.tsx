@@ -1,6 +1,6 @@
-import type { Locale, ResponsePoint } from '@status-please/core'
+import type { Locale, ResponsePoint } from '@statusbeam/core'
 import type { ChartConfig } from '@/components/ui/chart'
-import { averageResponse, getDict, percentileResponse } from '@status-please/core'
+import { averageResponse, getDict, percentileResponse } from '@statusbeam/core'
 import { useId } from 'react'
 import { Area, AreaChart, XAxis, YAxis } from 'recharts'
 import {

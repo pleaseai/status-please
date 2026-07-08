@@ -1,6 +1,6 @@
-import type { UptimePeriod } from '@status-please/core'
+import type { UptimePeriod } from '@statusbeam/core'
 import type { APIRoute } from 'astro'
-import { uptimeBadge } from '@status-please/core'
+import { uptimeBadge } from '@statusbeam/core'
 import { jsonResponse, notFound } from '../../../../lib/api'
 import { getSite } from '../../../../lib/data'
 

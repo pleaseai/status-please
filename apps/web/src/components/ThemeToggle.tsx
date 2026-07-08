@@ -1,5 +1,5 @@
-import type { Locale } from '@status-please/core'
-import { getDict } from '@status-please/core'
+import type { Locale } from '@statusbeam/core'
+import { getDict } from '@statusbeam/core'
 import { Monitor, Moon, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'

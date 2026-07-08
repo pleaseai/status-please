@@ -1,7 +1,7 @@
 ---
-import type { Locale } from '@status-please/core'
+import type { Locale } from '@statusbeam/core'
 import type { StatusPageData } from '../lib/page'
-import { DEFAULT_LOCALE, getDict, LOCALES } from '@status-please/core'
+import { DEFAULT_LOCALE, getDict, LOCALES } from '@statusbeam/core'
 import '../styles/global.css'
 import { IncidentList } from './IncidentList'
 import { StatusBanner } from './StatusBanner'
@@ -95,7 +95,7 @@ const localeHref = (l: string): string => new URL(`/${l}/`, Astro.site ?? Astro.
           ))}
         </nav>
         <p>
-          Powered by <a class="underline underline-offset-4" href="https://github.com/pleaseai/status-please">status-please</a>
+          Powered by <a class="underline underline-offset-4" href="https://github.com/pleaseai/statusbeam">statusbeam</a>
         </p>
       </footer>
     </main>

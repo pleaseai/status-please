@@ -75,7 +75,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: bun run --filter '@status-please/worker' db:apply:remote
+        run: bun run --filter '@statusbeam/worker' db:apply:remote
 
       - name: Upload config to KV
         env:
@@ -86,16 +86,16 @@ jobs:
             echo "::error::status.config.yml not found. Create it from status.config.example.yml (see DEPLOYMENT.md)."
             exit 1
           fi
-          bun run --filter '@status-please/worker' kv:config
+          bun run --filter '@statusbeam/worker' kv:config
 
       - name: Deploy check Worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: bun run --filter '@status-please/worker' deploy
+        run: bun run --filter '@statusbeam/worker' deploy
 
       - name: Deploy status page
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: bun run --filter '@status-please/web' deploy:publish
+        run: bun run --filter '@statusbeam/web' deploy:publish

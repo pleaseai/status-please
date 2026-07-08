@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro'
-import { statusBadge } from '@status-please/core'
+import { statusBadge } from '@statusbeam/core'
 import { jsonResponse, notFound } from '../../../lib/api'
 import { getSite } from '../../../lib/data'
 

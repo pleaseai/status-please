@@ -1,4 +1,4 @@
-# mise.toml — pinned toolchain for status-please
+# mise.toml — pinned toolchain for statusbeam
 # Usage: `mise trust && mise install`
 # See Skill("standards:dev-tooling").
 
