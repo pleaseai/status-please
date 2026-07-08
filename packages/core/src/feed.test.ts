@@ -133,19 +133,23 @@ describe('feed robustness', () => {
   it('does not throw or emit "Invalid Date" when an incident timestamp is unparseable', () => {
     const broken = incident({ startedAt: 'not-a-date', resolvedAt: null, updates: [update(1, 'investigating', 'nonsense')] })
     // Atom's toISOString() would RangeError, RSS's toUTCString() would emit
-    // "Invalid Date" — both fall back to the feed build time instead.
+    // "Invalid Date" — both fall back to the epoch (stable across rebuilds,
+    // consistent with the sort fallback) instead.
     const atom = buildAtomFeed([broken], META)
     expect(atom).not.toContain('Invalid Date')
-    expect(atom).toContain('<published>2026-01-02T00:00:00.000Z</published>')
+    expect(atom).toContain('<published>1970-01-01T00:00:00.000Z</published>')
     const rss = buildRssFeed([broken], { ...META, feedUrl: 'https://demo.statusbeam.dev/feed.rss' })
     expect(rss).not.toContain('Invalid Date')
-    expect(rss).toContain('<pubDate>Fri, 02 Jan 2026 00:00:00 GMT</pubDate>')
+    expect(rss).toContain('<pubDate>Thu, 01 Jan 1970 00:00:00 GMT</pubDate>')
   })
 
-  it('does not throw on a non-finite `now`, falling back to the current build time', () => {
-    expect(() => buildAtomFeed([incident()], { ...META, now: Number.NaN })).not.toThrow()
-    const rss = buildRssFeed([incident()], { ...META, now: Number.NaN })
-    expect(rss).not.toContain('Invalid Date')
+  it('does not throw or emit "Invalid Date" for a non-finite or out-of-range `now`', () => {
+    // Number.isFinite(1e20) is true, but new Date(1e20) is an invalid Date —
+    // the build-time guard must validate the Date, not just the number.
+    for (const now of [Number.NaN, Number.POSITIVE_INFINITY, 1e20]) {
+      expect(() => buildAtomFeed([incident()], { ...META, now })).not.toThrow()
+      expect(buildRssFeed([incident()], { ...META, now })).not.toContain('Invalid Date')
+    }
   })
 
   it('escapes the tag: URI host when siteUrl is unparseable (feedHost raw fallback)', () => {

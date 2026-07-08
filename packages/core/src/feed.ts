@@ -79,6 +79,21 @@ function toMs(iso: string, fallback: number): number {
 }
 
 /**
+ * Resolve the feed's build time (ms) from the optional injectable `meta.now`,
+ * falling back to the current time. Validates the resulting {@link Date}, not
+ * just `Number.isFinite(now)` — a finite but out-of-range value (e.g. `1e20`)
+ * still yields an invalid Date that would throw in `toISOString()` / emit the
+ * literal "Invalid Date" in `toUTCString()`.
+ */
+function resolveBuildMs(now: number | undefined): number {
+  if (now === undefined) {
+    return Date.now()
+  }
+  const ms = new Date(now).getTime()
+  return Number.isNaN(ms) ? Date.now() : ms
+}
+
+/**
  * The timestamp a feed reader should sort/display the incident by: its most
  * recent update, falling back to resolution then start. Drives both feed
  * ordering and each item's `pubDate` / `<updated>`.
@@ -144,18 +159,18 @@ function tagUri(host: string, id?: number): string {
  */
 export function buildAtomFeed(incidents: Incident[], meta: FeedMeta): string {
   const host = feedHost(meta.siteUrl)
-  // `?? Date.now()` only covers an absent `now`; `Number.isFinite` also rejects
-  // a `NaN`/`Infinity` value, which would otherwise throw in `toISOString()`.
-  const buildMs = Number.isFinite(meta.now) ? (meta.now as number) : Date.now()
-  const updated = new Date(buildMs).toISOString()
+  const updated = new Date(resolveBuildMs(meta.now)).toISOString()
 
   const entries = sortIncidentsForFeed(incidents).map(inc =>
     [
       '  <entry>',
       `    <id>${tagUri(host, inc.id)}</id>`,
       `    <title>${escapeXml(inc.title)}</title>`,
-      `    <published>${new Date(toMs(inc.startedAt, buildMs)).toISOString()}</published>`,
-      `    <updated>${new Date(toMs(incidentUpdatedAt(inc), buildMs)).toISOString()}</updated>`,
+      // Malformed timestamps fall back to the epoch (0), matching
+      // `sortIncidentsForFeed` — a dead record stays put and reads as old,
+      // rather than masquerading as freshly-built on every rebuild.
+      `    <published>${new Date(toMs(inc.startedAt, 0)).toISOString()}</published>`,
+      `    <updated>${new Date(toMs(incidentUpdatedAt(inc), 0)).toISOString()}</updated>`,
       `    <link rel="alternate" type="text/html" href="${escapeXml(`${meta.siteUrl}/`)}"/>`,
       `    <content type="html">${escapeXml(incidentContentHtml(inc))}</content>`,
       '  </entry>',
@@ -184,10 +199,7 @@ export function buildAtomFeed(incidents: Incident[], meta: FeedMeta): string {
  */
 export function buildRssFeed(incidents: Incident[], meta: FeedMeta): string {
   const host = feedHost(meta.siteUrl)
-  // See `buildAtomFeed`: guard against a non-finite `now` that would otherwise
-  // surface as the literal string "Invalid Date" in `toUTCString()`.
-  const buildMs = Number.isFinite(meta.now) ? (meta.now as number) : Date.now()
-  const buildDate = new Date(buildMs).toUTCString()
+  const buildDate = new Date(resolveBuildMs(meta.now)).toUTCString()
 
   const items = sortIncidentsForFeed(incidents).map(inc =>
     [
@@ -195,7 +207,8 @@ export function buildRssFeed(incidents: Incident[], meta: FeedMeta): string {
       `      <title>${escapeXml(inc.title)}</title>`,
       `      <link>${escapeXml(`${meta.siteUrl}/`)}</link>`,
       `      <guid isPermaLink="false">${tagUri(host, inc.id)}</guid>`,
-      `      <pubDate>${new Date(toMs(incidentUpdatedAt(inc), buildMs)).toUTCString()}</pubDate>`,
+      // Epoch fallback for a malformed timestamp (see `buildAtomFeed`).
+      `      <pubDate>${new Date(toMs(incidentUpdatedAt(inc), 0)).toUTCString()}</pubDate>`,
       `      <description>${escapeXml(incidentContentHtml(inc))}</description>`,
       '    </item>',
     ].join('\n'),
