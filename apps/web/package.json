@@ -1,5 +1,5 @@
 {
-  "name": "@status-please/web",
+  "name": "@statusbeam/web",
   "type": "module",
   "version": "0.0.0",
   "private": true,
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
-    "@status-please/core": "workspace:*",
+    "@statusbeam/core": "workspace:*",
     "astro": "^7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

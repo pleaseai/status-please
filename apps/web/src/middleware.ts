@@ -1,4 +1,4 @@
-import { negotiateLocale } from '@status-please/core'
+import { negotiateLocale } from '@statusbeam/core'
 import { defineMiddleware } from 'astro:middleware'
 import { getLocale } from './lib/data'
 

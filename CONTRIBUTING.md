@@ -1,18 +1,18 @@
 # Contributing
 
-Thanks for your interest in contributing to **status-please**! This guide covers how to get from a clone to a merged pull request.
+Thanks for your interest in contributing to **statusbeam**! This guide covers how to get from a clone to a merged pull request.
 
 By participating, you agree to abide by our [Code of Conduct](./CODE_OF_CONDUCT.md). All documentation, code, comments, and commit messages in this repository are written in **English**.
 
 ## Getting started
 
 ```bash
-git clone https://github.com/pleaseai/status-please.git
-cd status-please
+git clone https://github.com/pleaseai/statusbeam.git
+cd statusbeam
 bun install         # install dependencies
 ```
 
-The full toolchain and local setup are described in the [`README.md`](./README.md). status-please targets Cloudflare (Workers, D1, KV, Workers Cache); you will need a Cloudflare account and [Wrangler](https://developers.cloudflare.com/workers/wrangler/) to run the check and display layers end to end. The Astro app alone can run against fixture data.
+The full toolchain and local setup are described in the [`README.md`](./README.md). statusbeam targets Cloudflare (Workers, D1, KV, Workers Cache); you will need a Cloudflare account and [Wrangler](https://developers.cloudflare.com/workers/wrangler/) to run the check and display layers end to end. The Astro app alone can run against fixture data.
 
 ## Development workflow
 

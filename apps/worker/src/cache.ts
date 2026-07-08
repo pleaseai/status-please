@@ -1,7 +1,7 @@
 import type { Env } from './env'
 // Tag helpers live in core so the purge side (here) and the emit side
 // (apps/web's Cache-Tag header) share one definition and can't drift.
-import { cacheTags, STATUS_PAGE_TAG } from '@status-please/core'
+import { cacheTags, STATUS_PAGE_TAG } from '@statusbeam/core'
 
 /**
  * Purge the edge cache by Cache-Tag when a status changes, so the page reflects

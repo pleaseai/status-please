@@ -1,5 +1,5 @@
-import type { Dict, Locale, SiteSummary } from '@status-please/core'
-import { formatUptime, getDict, toSeverity, windowUptime } from '@status-please/core'
+import type { Dict, Locale, SiteSummary } from '@statusbeam/core'
+import { formatUptime, getDict, toSeverity, windowUptime } from '@statusbeam/core'
 import { ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'

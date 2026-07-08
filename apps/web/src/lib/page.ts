@@ -1,6 +1,6 @@
-import type { Incident, SiteSummary } from '@status-please/core'
+import type { Incident, SiteSummary } from '@statusbeam/core'
 import type { AstroGlobal } from 'astro'
-import { cacheTagHeader, overallSeverity } from '@status-please/core'
+import { cacheTagHeader, overallSeverity } from '@statusbeam/core'
 import { getIncidents, getSummary } from './data'
 
 export interface StatusPageData {

@@ -1,6 +1,6 @@
 # Deployment
 
-`status-please` runs entirely on Cloudflare: a **check Worker** (`apps/worker`) probes
+StatusBeam runs entirely on Cloudflare: a **check Worker** (`apps/worker`) probes
 your services on a cron and writes results to **D1** (history) and **KV** (the current
 snapshot + config); a **status page** (`apps/web`, Astro SSR on Workers) renders that
 snapshot at the edge, fronted by Workers Cache.
@@ -39,7 +39,7 @@ understand exactly what the script does.
 ## 1. Provision D1 + KV
 
 ```bash
-bunx wrangler d1 create status-please
+bunx wrangler d1 create statusbeam
 bunx wrangler kv namespace create STATUS_KV
 ```
 
@@ -67,7 +67,7 @@ deploy can upload it. Keep real webhook URLs out of it (see §6).
 ## 4. Apply the D1 schema
 
 ```bash
-bunx wrangler d1 execute status-please --remote --file=./apps/worker/schema.sql --yes
+bunx wrangler d1 execute statusbeam --remote --file=./apps/worker/schema.sql --yes
 ```
 
 The schema uses `CREATE TABLE IF NOT EXISTS`, so re-running it is safe.
@@ -138,7 +138,7 @@ settings to gate every deploy behind an approval.
   page shows sample data until the first run writes the real `summary` — just wait for the
   first tick. (To force a run against production immediately, invoke the deployed Worker's
   scheduled handler from the Cloudflare dashboard's Cron Triggers → "Trigger" action.)
-- Point a custom domain at the `status-please-web` Worker. If the zone is in the same
+- Point a custom domain at the `statusbeam-web` Worker. If the zone is in the same
   Cloudflare account, add a Custom Domain route to `apps/web/wrangler.jsonc` — Cloudflare
   auto-provisions the proxied DNS record and edge cert (issuance takes a few minutes):
 

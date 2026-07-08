@@ -7,7 +7,7 @@ built on Statuspage — instead of probing an endpoint yourself.
 A regular `http` check tells you whether _your_ request succeeded. The
 `statuspage` check instead reads the vendor's own published verdict: one request
 to their `/api/v2/summary.json` returns the overall page indicator plus every
-component, and status-please maps that to its `up` / `degraded` / `down` model.
+component, and StatusBeam maps that to its `up` / `degraded` / `down` model.
 
 ## When to use it
 
@@ -50,7 +50,7 @@ the API call (see [Notes](#notes--limitations)).
 
 ### URL derivation
 
-`url` is normally the page's base URL and status-please builds the API endpoint
+`url` is normally the page's base URL and StatusBeam builds the API endpoint
 for you:
 
 | Configured `url`                              | Requested endpoint                                        |
@@ -79,12 +79,12 @@ special characters, quote it: `component: "Claude API (api.anthropic.com)"`.
 
 ## Status mapping
 
-status-please has three states — `up`, `degraded`, `down`. Statuspage's richer
+StatusBeam has three states — `up`, `degraded`, `down`. Statuspage's richer
 vocabulary is folded in as follows.
 
 **Overall page indicator** (used when no `component` is set):
 
-| Statuspage `status.indicator` | status-please |
+| Statuspage `status.indicator` | StatusBeam |
 | ----------------------------- | ------------- |
 | `none`                        | `up`          |
 | `minor`                       | `degraded`    |
@@ -94,7 +94,7 @@ vocabulary is folded in as follows.
 
 **Component status** (used when `component` matches one service):
 
-| Statuspage component `status` | status-please |
+| Statuspage component `status` | StatusBeam |
 | ----------------------------- | ------------- |
 | `operational`                 | `up`          |
 | `degraded_performance`        | `degraded`    |
@@ -144,7 +144,7 @@ config mistake from masquerading as transient flakiness in your history.
   page, add one `site` entry per component (they share the same `url`).
 - **Incidents aren't ingested yet.** Only the current status is read. The
   vendor's incident history and scheduled maintenances in `summary.json` are not
-  imported into status-please's own incident timeline.
+  imported into StatusBeam's own incident timeline.
 - **Trusted config.** `url` comes from your committed `status.config.yml`, not
   from end users; it's validated as a URL at parse time.
 

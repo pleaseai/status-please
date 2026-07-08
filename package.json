@@ -1,5 +1,5 @@
 {
-  "name": "status-please",
+  "name": "statusbeam",
   "type": "module",
   "version": "0.0.0",
   "private": true,
@@ -8,7 +8,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pleaseai/status-please.git"
+    "url": "git+https://github.com/pleaseai/statusbeam.git"
   },
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
@@ -18,7 +18,7 @@
     "typecheck": "turbo run typecheck",
     "test": "bun test",
     "setup": "bash scripts/setup.sh",
-    "deploy": "bun run --filter '@status-please/worker' deploy && bun run --filter '@status-please/web' deploy"
+    "deploy": "bun run --filter '@statusbeam/worker' deploy && bun run --filter '@statusbeam/web' deploy"
   },
   "devDependencies": {
     "@pleaseai/eslint-config": "^0.0.4",

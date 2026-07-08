@@ -1,5 +1,5 @@
-import type { Locale, Severity } from '@status-please/core'
-import { getDict } from '@status-please/core'
+import type { Locale, Severity } from '@statusbeam/core'
+import { getDict } from '@statusbeam/core'
 import { CircleCheck, CircleX, TriangleAlert, Wrench } from 'lucide-react'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import { cn } from '@/lib/utils'

@@ -1,9 +1,9 @@
-# Live demo config for status-please. This monitors a handful of stable public
+# Live demo config for statusbeam. This monitors a handful of stable public
 # endpoints so the hosted demo shows real, moving data. Not a secret — committed
 # so the deploy uploads it to the Worker's KV "config" key (see DEPLOYMENT.md §3).
 # Keep real webhook URLs out of here; set them post-deploy via secrets/KV.
 
-name: status-please Demo
+name: statusbeam Demo
 
 sites:
   - name: GitHub API

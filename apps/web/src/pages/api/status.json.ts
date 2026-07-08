@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro'
-import { overallSeverity } from '@status-please/core'
+import { overallSeverity } from '@statusbeam/core'
 import { jsonResponse } from '../../lib/api'
 import { getSummary } from '../../lib/data'
 

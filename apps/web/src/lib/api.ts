@@ -1,4 +1,4 @@
-import { cacheTagHeader } from '@status-please/core'
+import { cacheTagHeader } from '@statusbeam/core'
 
 /**
  * JSON response for the public `/api/*` endpoints (badges + status API).

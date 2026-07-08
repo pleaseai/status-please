@@ -1,33 +1,33 @@
-# status-please
+# StatusBeam
 
-[![CI](https://github.com/pleaseai/status-please/actions/workflows/ci.yml/badge.svg)](https://github.com/pleaseai/status-please/actions/workflows/ci.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pleaseai_status-please&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pleaseai_status-please)
-[![codecov](https://codecov.io/gh/pleaseai/status-please/graph/badge.svg)](https://codecov.io/gh/pleaseai/status-please)
+[![CI](https://github.com/pleaseai/statusbeam/actions/workflows/ci.yml/badge.svg)](https://github.com/pleaseai/statusbeam/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pleaseai_statusbeam&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pleaseai_statusbeam)
+[![codecov](https://codecov.io/gh/pleaseai/statusbeam/graph/badge.svg)](https://codecov.io/gh/pleaseai/statusbeam)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Live demo](https://img.shields.io/badge/live%20demo-demo.status.pleaseai.dev-brightgreen)](https://demo.status.pleaseai.dev)
 [![Deploy on Cloudflare](https://img.shields.io/badge/deploy%20on-Cloudflare-F38020?logo=cloudflare&logoColor=white)](./DEPLOYMENT.md)
 
 > An open-source, CDN-native **status page** generator — the modern successor to [upptime](https://github.com/upptime/upptime).
 
-🔗 **Live demo:** [demo.status.pleaseai.dev](https://demo.status.pleaseai.dev) — a status-please instance monitoring a few public services, running on Cloudflare.
+🔗 **Live demo:** [demo.status.pleaseai.dev](https://demo.status.pleaseai.dev) — a StatusBeam instance monitoring a few public services, running on Cloudflare.
 
-`status-please` monitors your services, records their uptime as durable time-series
+StatusBeam monitors your services, records their uptime as durable time-series
 data, and publishes a fast, good-looking status page to the edge. It keeps the parts
 of upptime that people love — config-as-YAML, zero servers to babysit, badges, a
 public JSON API — while fixing upptime's biggest structural weaknesses:
 
 - **No client-side rate limits.** upptime's page calls the GitHub API *from the
   visitor's browser* (unauthenticated, 60 req/h/IP), so popular pages break with a
-  "rate limit exceeded" screen. `status-please` renders every byte at the edge from
+  "rate limit exceeded" screen. StatusBeam renders every byte at the edge from
   its own store — the browser never talks to a third-party API.
 - **Reliable scheduling.** upptime rides GitHub Actions cron, which is best-effort
-  (a "every 5 min" job can slip to 15–60 min). `status-please` uses **Cloudflare
+  (a "every 5 min" job can slip to 15–60 min). StatusBeam uses **Cloudflare
   Cron Triggers**, which fire on time.
 - **A store that scales.** upptime treats git commit history as its database and
-  walks it through a rate-limited API. `status-please` uses **Cloudflare D1 + KV**,
+  walks it through a rate-limited API. StatusBeam uses **Cloudflare D1 + KV**,
   purpose-built for time-series reads.
 - **A current, maintained frontend.** upptime's page is built on **Svelte 3 + Sapper**,
-  both end-of-life. `status-please` is **Astro + shadcn/ui**.
+  both end-of-life. StatusBeam is **Astro + shadcn/ui**.
 
 ---
 
@@ -44,7 +44,7 @@ next — see the [Roadmap](#roadmap).
 
 ## How it works
 
-`status-please` is deliberately split into three independent layers. Each can be
+StatusBeam is deliberately split into three independent layers. Each can be
 understood, deployed, and replaced on its own.
 
 ```
@@ -136,7 +136,7 @@ A Bun-workspaces monorepo. The three runtime layers map to three workspaces, wit
 the domain logic shared in `core`:
 
 ```
-status-please/
+statusbeam/
 ├── apps/
 │   ├── web/       # Astro status page (Cloudflare adapter + Workers Cache)
 │   └── worker/    # Cron Worker: checks + notifications (D1/KV, schema.sql)
@@ -238,7 +238,7 @@ changes, so badges never lag the page).
 ### Badges
 
 The badge routes speak the [shields.io endpoint](https://shields.io/badges/endpoint-badge)
-protocol — point shields.io at one and it renders the SVG; status-please only
+protocol — point shields.io at one and it renders the SVG; StatusBeam only
 emits the JSON. Replace `<origin>` with your status page's URL and `<slug>` with
 a component's slug (the `slug` from `status.config.yml`, or the slugified name):
 
@@ -271,7 +271,7 @@ Both send `Access-Control-Allow-Origin: *`, so a browser can fetch them directly
 
 ## Deployment
 
-`status-please` deploys to any Cloudflare account (Workers + D1 + KV + Pages). Vercel
+StatusBeam deploys to any Cloudflare account (Workers + D1 + KV + Pages). Vercel
 is also supported for the display layer via Astro's Vercel adapter.
 
 **Fastest path — the guided script.** A one-click "Deploy to Cloudflare" button can't
@@ -293,7 +293,7 @@ bun run setup         # -- --skip-deploy to configure without deploying
 ```bash
 # 1. Use this template / clone it
 # 2. Provision Cloudflare resources
-bunx wrangler d1 create status-please
+bunx wrangler d1 create statusbeam
 bunx wrangler kv namespace create STATUS_KV
 
 # 3. Configure your services in status.config.yml, then deploy

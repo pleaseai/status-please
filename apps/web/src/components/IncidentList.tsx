@@ -1,5 +1,5 @@
-import type { Dict, Incident, IncidentState, Locale, Severity } from '@status-please/core'
-import { getDict, isActive, orderedUpdates, relativeTime } from '@status-please/core'
+import type { Dict, Incident, IncidentState, Locale, Severity } from '@statusbeam/core'
+import { getDict, isActive, orderedUpdates, relativeTime } from '@statusbeam/core'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
