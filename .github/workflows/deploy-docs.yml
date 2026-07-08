@@ -1,8 +1,10 @@
 name: Deploy Docs
 
-# The documentation site (apps/docs) is a static Starlight build served from
-# Cloudflare Workers Static Assets. It has no D1/KV or config dependencies, so it
-# deploys independently of the production status page (see deploy.yml).
+# The documentation site (apps/docs) is a static Starlight build deployed to a
+# Cloudflare Pages project (statusbeam-docs). It has no D1/KV or config
+# dependencies, so it deploys independently of the production status page (see
+# deploy.yml). CLOUDFLARE_API_TOKEN must include the "Cloudflare Pages: Edit"
+# permission (Workers-only tokens will fail the pages deploy).
 on:
   workflow_dispatch:
   push:

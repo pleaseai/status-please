@@ -14,6 +14,15 @@ export default defineConfig({
   // starlight-llms-txt (llms.txt / llms-full.txt), the sitemap, and the
   // "Open in ChatGPT/Claude" page actions (which pass `Astro.url.href`).
   site: 'https://docs.statusbeam.dev',
+  // Serve bundled assets (`_astro/*` JS, CSS, fonts, images) from the Cloudflare
+  // Pages project origin, decoupled from the page host. Pages are reached at `site`
+  // (docs.statusbeam.dev — a custom domain on the same Pages project); their bundled
+  // assets load from statusbeam-docs.pages.dev. Because that makes the module scripts
+  // and @font-face cross-origin, the asset origin must send CORS — see public/_headers.
+  // https://docs.astro.build/en/reference/configuration-reference/#buildassetsprefix
+  build: {
+    assetsPrefix: 'https://statusbeam-docs.pages.dev',
+  },
   integrations: [
     starlight({
       title: 'StatusBeam',
