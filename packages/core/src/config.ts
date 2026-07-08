@@ -27,7 +27,8 @@ export const siteSchema = z
     /**
      * For `check: statuspage` only. Reads one Atlassian Statuspage component by
      * name (case-insensitive) or id; when omitted, the page's overall indicator
-     * is used. Ignored by other check kinds.
+     * is used. Rejected at parse time for other check kinds (see superRefine
+     * below) so a mistyped `check` doesn't silently ignore the field.
      */
     component: z.string().min(1).optional(),
     /**
@@ -36,6 +37,18 @@ export const siteSchema = z
      * commas/whitespace, which would corrupt the header — see cache.ts).
      */
     slug: z.string().regex(/^[a-z0-9-]+$/, 'slug must be lowercase letters, digits, and hyphens').optional(),
+  })
+  .superRefine((site, ctx) => {
+    // `component` only means something for statuspage checks; surface a mistyped
+    // `check` (or a stray `component:` line) as a parse error instead of quietly
+    // ignoring it at runtime.
+    if (site.component !== undefined && site.check !== 'statuspage') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['component'],
+        message: `component is only valid with check: statuspage (got check: ${site.check})`,
+      })
+    }
   })
   .transform(site => ({ ...site, slug: site.slug ?? slugify(site.name) }))
 

@@ -41,7 +41,7 @@ sites:
 | ----------- | -------- | ---------------------------------------------------------------------------------------------------------- |
 | `check`     | yes      | Must be `statuspage`.                                                                                       |
 | `url`       | yes      | The Statuspage **base URL**. `/api/v2/summary.json` is appended automatically (see [URL derivation](#url-derivation)). |
-| `component` | no       | Track a single component instead of the whole page. Matched by **name** (case-insensitive) or **id**. When omitted, the page's overall indicator is used. |
+| `component` | no       | Track a single component instead of the whole page. Matched by **name** (case-insensitive) or **id**. When omitted, the page's overall indicator is used. Only valid with `check: statuspage` — setting it on another check kind is a parse error (guards against a mistyped `check`). |
 | `name`      | yes      | Display name on your status page (as with any site).                                                       |
 
 `expectedStatusCodes` and `maxResponseTime` are ignored for `statuspage` checks —

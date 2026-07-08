@@ -42,6 +42,12 @@ describe('parseConfig', () => {
   it('rejects an empty component string', () => {
     expect(() => parseConfig(`${baseYaml}    check: statuspage\n    component: ""\n`)).toThrow()
   })
+
+  it('rejects component on a non-statuspage check kind', () => {
+    // A mistyped `check` should surface as a parse error, not silently ignore
+    // the component.
+    expect(() => parseConfig(`${baseYaml}    check: http\n    component: Some Service\n`)).toThrow()
+  })
 })
 
 describe('theme.locale', () => {
