@@ -1,0 +1,95 @@
+name: Publish
+
+# release-please cuts one GitHub Release per changed package (tags like
+# `core-v0.1.0`, `cli-v0.1.0`). Each published release fires this workflow, which
+# publishes just that package to npm with provenance. See ADR-0002.
+on:
+  release:
+    types: [published]
+
+# Least privilege. id-token: write is required for npm provenance (OIDC).
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish to npm (provenance)
+    runs-on: ubuntu-latest
+    environment: npm # holds NPM_TOKEN; add protection rules in repo settings
+    steps:
+      - name: Resolve package from the release tag
+        id: pkg
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          # tags: <component>-v<version> → strip the -v<version> suffix.
+          component="${TAG%-v*}"
+          case "$component" in
+            core) dir="packages/core" ;;
+            worker) dir="apps/worker" ;;
+            web) dir="apps/web" ;;
+            cli) dir="packages/cli" ;;
+            create-statusbeam) dir="packages/create-statusbeam" ;;
+            *) echo "::error::unknown release component '$component' (tag '$TAG')"; exit 1 ;;
+          esac
+          echo "dir=$dir" >> "$GITHUB_OUTPUT"
+          echo "Publishing $dir for tag $TAG"
+
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up bun
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
+        with:
+          # Pin to the repo's declared packageManager so release-to-release builds
+          # don't drift with a moving `latest`.
+          bun-version: 1.3.14
+          # This workflow is release-triggered and publishes to npm; a poisoned
+          # cache could taint the tarball, so disable caching (zizmor cache-poisoning).
+          # node + npm (used for the provenance publish) come from the runner's
+          # preinstalled toolchain — no actions/setup-node, which would re-introduce
+          # a cache-capable action into the publish path.
+          no-cache: true
+
+      - name: Install dependencies
+        # --ignore-scripts: a release-triggered publish must not run arbitrary
+        # dependency lifecycle scripts (supply-chain hardening). The build below
+        # still works — esbuild/workerd resolve their platform binaries via
+        # optionalDependencies, not postinstall.
+        run: bun install --frozen-lockfile --ignore-scripts
+
+      - name: Quality gate
+        # A GitHub Release can be cut from any commit (e.g. a manual release off a
+        # branch), not only release-please's main-gated one — so re-run the same
+        # checks here before publishing, so a red build can never reach npm.
+        run: |
+          bun run lint
+          bun run typecheck
+          bun run test
+
+      - name: Build
+        # Builds the workspace so core/cli/create-statusbeam emit their dist/.
+        run: bun run build
+
+      - name: Pack + publish with provenance
+        working-directory: ${{ steps.pkg.outputs.dir }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          dest="$RUNNER_TEMP/pack"
+          mkdir -p "$dest"
+          # bun pm pack rewrites workspace:* deps to real versions in the tarball.
+          bun pm pack --destination "$dest"
+          tarball="$(find "$dest" -name '*.tgz' | head -1)"
+          if [ -z "$tarball" ]; then
+            echo "::error::no tarball produced by bun pm pack"; exit 1
+          fi
+          # Configure the npm registry auth (setup-node's registry-url did this
+          # before it was dropped). Provenance still works: it keys off the
+          # id-token: write OIDC + the GitHub Actions env, not setup-node.
+          npm config set //registry.npmjs.org/:_authToken "$NODE_AUTH_TOKEN"
+          # npm (not bun) publish: only npm emits the provenance attestation.
+          npm publish "$tarball" --provenance --access public
