@@ -1,0 +1,33 @@
+apps/worker/src/index.ts
+  s_3ddd8e8777c597::t_638acf7cfa6134 25-26
+apps/worker/wrangler.jsonc
+  s_3ddd8e8777c597::t_322ed17d1752f8 46-49
+status.config.example.yml
+  s_3ddd8e8777c597::t_893d76c87a0e5b 41-44
+packages/core/src/config.ts
+  s_3ddd8e8777c597::t_e34d31ca5492c0 69-72
+packages/create-statusbeam/templates/README.md
+  s_3ddd8e8777c597::t_cd20e86bae86e8 34-35,37-38
+packages/create-statusbeam/templates/status.config.yml
+  s_3ddd8e8777c597::t_2fc860ccd1f142 30-32
+apps/worker/src/env.ts
+  s_3ddd8e8777c597::t_1762226c5668bd 11-14
+packages/create-statusbeam/templates/wrangler.worker.jsonc
+  s_3ddd8e8777c597::t_36b4615d01a099 40-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "109f0b0f3dfe29f4e3240c11b154a8727cbd3817",
+  "prompts": {},
+  "sessions": {
+    "s_3ddd8e8777c597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fd456b48-a21d-4549-b0c9-bff0e1f5036b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
