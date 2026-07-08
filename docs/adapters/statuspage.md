@@ -131,10 +131,13 @@ verdict is mapped with the **same tables** as polling (see [Status mapping](#sta
 
    ```bash
    cd apps/worker
-   wrangler secret put WEBHOOK_SECRET   # paste a long random value
+   wrangler secret put WEBHOOK_SECRET   # paste a long random value: openssl rand -hex 32
    ```
 
-   Until it's set, the endpoint fails closed — every request returns `401`.
+   Until it's set, the endpoint fails closed — every request returns `401`. Use a
+   long, random secret: the constant-time token check short-circuits on a length
+   mismatch (as Node's `crypto.timingSafeEqual` does), so a 32-byte random value
+   keeps the search space astronomically large even though its length isn't secret.
 
 2. **Register the URL** on the vendor's Statuspage. On their page, open
    *Subscribe to updates → Webhook* (or the page's webhook settings) and use one

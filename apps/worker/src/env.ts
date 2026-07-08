@@ -16,7 +16,13 @@ export interface Env {
    * Shared secret authenticating inbound Statuspage webhooks. Compared
    * constant-time against the request's `?token=` by {@link handleStatuspageWebhook}.
    * When unset, the webhook endpoint fails closed (every request → 401), so the
-   * endpoint is never open. Set with `wrangler secret put WEBHOOK_SECRET`.
+   * endpoint is never open.
+   *
+   * Use a long, random value — generate one with `openssl rand -hex 32` — and
+   * set it with `wrangler secret put WEBHOOK_SECRET`. The comparison short-circuits
+   * on a length mismatch (like Node's `crypto.timingSafeEqual`), so the secret's
+   * length is not itself secret; a 32-byte random value keeps the brute-force
+   * search space astronomically large regardless.
    */
   WEBHOOK_SECRET?: string
 }
