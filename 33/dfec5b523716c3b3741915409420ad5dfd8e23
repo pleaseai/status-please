@@ -1,0 +1,33 @@
+.claude/agent-memory/review-review-code-reviewer/MEMORY.md
+  s_4c169f7378c91e::t_bd8ea5dcb52ab1 4
+packages/core/src/feed.ts
+  s_4c169f7378c91e::t_f392ca29884f0d 69-80,92-93,95
+  s_4c169f7378c91e::t_75d19215fb7b53 147-150,157-158
+  s_4c169f7378c91e::t_9fecc259840cab 187-190,198
+  s_4c169f7378c91e::t_5ce64603544b42 132-137
+  s_4c169f7378c91e::t_b742053c8e4e7b 68
+apps/web/src/lib/data.ts
+  s_4c169f7378c91e::t_a03372501eb26d 122-124
+  s_4c169f7378c91e::t_dc9bea6a3c0136 138-144
+packages/core/src/feed.test.ts
+  s_4c169f7378c91e::t_fc6f3fc8076823 53-66
+  s_4c169f7378c91e::t_8ad8151ecb34e5 121-159
+.claude/agent-memory/review-review-code-reviewer/pr-feed-rss-atom-review.md
+  s_4c169f7378c91e::t_e8214ba8bd55de 1-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "33dfec5b523716c3b3741915409420ad5dfd8e23",
+  "prompts": {},
+  "sessions": {
+    "s_4c169f7378c91e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fb16ae35-85bd-4bbc-a43d-e554ccf84856",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
