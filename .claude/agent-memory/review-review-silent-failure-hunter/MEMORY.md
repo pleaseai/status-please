@@ -1,0 +1,1 @@
+- [status-please conventions](status_please_conventions.md) — repo's logging style (plain console.error, no Sentry/errorIds) + known intentional fail-open fallbacks in badge.ts

@@ -20,6 +20,7 @@ export function jsonResponse(
   return new Response(JSON.stringify(data), {
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
+      'X-Content-Type-Options': 'nosniff',
       'Cache-Control': `public, s-maxage=${maxAge}, stale-while-revalidate=600`,
       'Cache-Tag': cacheTagHeader(tagSlugs),
       'Access-Control-Allow-Origin': '*',
@@ -36,6 +37,7 @@ export function notFound(message: string): Response {
     status: 404,
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
+      'X-Content-Type-Options': 'nosniff',
       'Cache-Control': 'no-store',
       'Access-Control-Allow-Origin': '*',
     },

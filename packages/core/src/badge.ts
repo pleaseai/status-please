@@ -21,8 +21,16 @@ export interface ShieldsEndpoint {
 /** Uptime window a badge can report; mirrors the SiteSummary trailing fields. */
 export type UptimePeriod = 'day' | 'week' | 'month'
 
+/**
+ * The shields.io named colors this module emits. The color functions return
+ * this union (not bare `string`) so a typo — `'brigthgreen'` — fails to compile
+ * instead of slipping through to a broken badge. `ShieldsEndpoint.color` stays
+ * `string` because the wire contract also accepts raw `rrggbb` hex.
+ */
+export type BadgeColor = 'brightgreen' | 'green' | 'yellowgreen' | 'yellow' | 'orange' | 'red' | 'blue'
+
 /** Map a display severity to a shields.io badge color. */
-export function severityColor(status: SiteSummary['status']): string {
+export function severityColor(status: SiteSummary['status']): BadgeColor {
   switch (toSeverity(status)) {
     case 'operational':
       return 'brightgreen'
@@ -53,7 +61,7 @@ export function statusMessage(status: SiteSummary['status']): string {
  * Badge color for an uptime ratio (0..1), from healthy (green) to poor (red).
  * Thresholds match common status-page conventions (three nines is excellent).
  */
-export function uptimeColor(ratio: number): string {
+export function uptimeColor(ratio: number): BadgeColor {
   if (ratio >= 0.999) {
     return 'brightgreen'
   }
@@ -73,7 +81,7 @@ export function uptimeColor(ratio: number): string {
  * Badge color for a response time in ms, from fast (green) to slow (red).
  * Lower is better, so the scale is inverted relative to {@link uptimeColor}.
  */
-export function responseColor(ms: number): string {
+export function responseColor(ms: number): BadgeColor {
   if (ms <= 200) {
     return 'brightgreen'
   }
