@@ -1,0 +1,50 @@
+packages/cli/src/commands/update.test.ts
+  s_4e4d323763b7b6::t_4d06ba0ab9b649 1-63
+packages/cli/src/lib/run.ts
+  s_4e4d323763b7b6::t_778bf6071a20cd 22-27,35
+  s_4e4d323763b7b6::t_8e8d458706589d 56
+packages/cli/src/lib/read-jsonc.test.ts
+  s_4e4d323763b7b6::t_9f73f3c99c261d 1-41
+.github/workflows/publish.yml
+  s_4e4d323763b7b6::t_5eeaaca89758ac 64-72
+  s_4e4d323763b7b6::t_1fbb09035894c8 47-49
+packages/cli/src/lib/prompt.ts
+  s_4e4d323763b7b6::t_254953af133ae0 24-28
+packages/create-statusbeam/templates/mise.toml
+  s_4e4d323763b7b6::t_d77538b6af457a 5
+packages/cli/tsconfig.json
+  s_4e4d323763b7b6::t_7f198e3b206ff6 5
+packages/core/package.json
+  s_4e4d323763b7b6::t_72c2ad204c0055 25
+  s_4e4d323763b7b6::t_56aa0cf56c9d73 26-27
+packages/create-statusbeam/src/index.ts
+  s_4e4d323763b7b6::t_b941828241189b 49-52
+packages/cli/src/lib/apply-config.ts
+  s_4e4d323763b7b6::t_27a9c2b52bfc76 31-34
+  s_4e4d323763b7b6::t_f02e9b419c6635 45-53
+packages/cli/src/commands/update.ts
+  s_4e4d323763b7b6::t_7daa83ecd0c180 38,51-53,55,57,68
+  s_4e4d323763b7b6::t_728ec732b7450a 6,18-19,21,39-50,54,56,58-61,67
+  s_4e4d323763b7b6::t_a8d3fee06fb76f 34-37
+packages/cli/src/lib/apply-config.test.ts
+  s_4e4d323763b7b6::t_bfc911892ca338 1-112
+packages/cli/src/commands/setup.ts
+  s_4e4d323763b7b6::t_4ef77e3859b385 75
+  s_4e4d323763b7b6::t_dca5639c23853e 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fa56f4cc96b8d75455d6cbd92c0d580e1b9a647e",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
