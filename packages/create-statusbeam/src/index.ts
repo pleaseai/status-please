@@ -57,7 +57,9 @@ function parseArgs(argv: string[]): Args {
 /** Turn a directory name into a valid npm package name. */
 function toPackageName(dir: string): string {
   const base = basename(resolve(dir)) || 'statusbeam-status'
-  const slug = base.toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^[-.]+|[-.]+$/g, '')
+  // npm names may not start with `.` or `_`, so strip those (and `-`) from the
+  // front as well as trailing `-`/`.`.
+  const slug = base.toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^[-._]+|[-.]+$/g, '')
   return slug || 'statusbeam-status'
 }
 

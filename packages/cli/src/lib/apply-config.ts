@@ -32,9 +32,10 @@ export function injectIds(s: string, d1?: string, kv?: string): string {
     s = s.replace(/("database_id"\s*:\s*")[^"]*(")/, (_m, p, q) => `${p}${d1}${q}`)
   }
   if (kv) {
-    // Scope to the kv_namespaces block so the generic `"id"` key can't match
-    // some other `"id"` elsewhere in the config.
-    s = s.replace(/("kv_namespaces"\s*:\s*\[[\s\S]*?"id"\s*:\s*")[^"]*(")/, (_m, p, q) => `${p}${kv}${q}`)
+    // Scope to the STATUS_KV binding specifically (its `"binding"` precedes its
+    // `"id"` in the template) so a KV namespace listed before it can't be the one
+    // whose id gets overwritten.
+    s = s.replace(/("binding"\s*:\s*"STATUS_KV"[\s\S]*?"id"\s*:\s*")[^"]*(")/, (_m, p, q) => `${p}${kv}${q}`)
   }
   return s
 }

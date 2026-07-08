@@ -40,10 +40,16 @@ function parse(argv: string[]): { command?: string, flags: Flags } {
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i]
     switch (arg) {
-      case '--cwd':
+      case '--cwd': {
+        const next = argv[i + 1]
+        // Guard against `--cwd --yes` swallowing the following flag as the path.
+        if (!next || next.startsWith('-')) {
+          die('missing value for --cwd (expected a directory path)')
+        }
         i += 1
-        flags.cwd = argv[i] ?? process.cwd()
+        flags.cwd = next
         break
+      }
       case '--yes':
       case '-y':
         flags.yes = true
