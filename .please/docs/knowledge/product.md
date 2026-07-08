@@ -56,8 +56,9 @@ webhook notifications, edge cache purge-on-change, shields.io badges + JSON
 status API, and a Statuspage adapter. The response-time charts and the incident
 timeline (Investigating → Identified → Monitoring → Resolved) ship as UI + schema,
 but the check worker does not yet persist `responseHistory` or the `incidents` KV
-key — in production those views currently render from bundled sample data until
-that persistence is wired up.
+key. Until that persistence is wired up, production behaves differently per view:
+the response-time chart is simply hidden when `responseHistory` is absent, while
+the incident timeline falls back to bundled sample incidents.
 
 ## Roadmap (planned)
 
