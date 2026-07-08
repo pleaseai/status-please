@@ -80,17 +80,20 @@ export async function getSummary(): Promise<SiteSummary[]> {
 export async function getLocale(): Promise<Locale> {
   const kv = env.STATUS_KV
   if (kv) {
-    const raw = await kv.get('config')
-    if (raw) {
-      try {
+    try {
+      // The KV read is inside the try too: a transient KV error must degrade to
+      // the default locale, not throw — `/`'s middleware fallback depends on
+      // this never failing the redirect.
+      const raw = await kv.get('config')
+      if (raw) {
         return resolveLocale(parseConfig(raw).theme.locale)
       }
-      catch (err) {
-        // Malformed config: fall back rather than fail the whole page render,
-        // but log it (matching cache.ts/notify.ts) so the operator can debug
-        // why `/` isn't honoring their configured `theme.locale`.
-        console.warn('getLocale: malformed config in KV, falling back to default locale', err)
-      }
+    }
+    catch (err) {
+      // KV read failure or malformed config: fall back rather than fail the
+      // whole page render, but log it (matching cache.ts/notify.ts) so the
+      // operator can debug why `/` isn't honoring their configured `theme.locale`.
+      console.warn('getLocale: KV read failed or malformed config, falling back to default locale', err)
     }
   }
   return DEFAULT_LOCALE
