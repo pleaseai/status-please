@@ -51,10 +51,13 @@ Split into three independent layers, each deployable and replaceable on its own:
    change (via `ctx.waitUntil`); a Cloudflare Queues upgrade path is planned but
    not yet wired up (see ARCHITECTURE.md).
 
-Shipped: HTTP checks, D1 time-series + KV snapshot, uptime bars & charts,
-incident lifecycle (Investigating → Identified → Monitoring → Resolved), Slack +
+Shipped: HTTP checks, D1 time-series + KV snapshot, 90-day uptime bars, Slack +
 webhook notifications, edge cache purge-on-change, shields.io badges + JSON
-status API, and a Statuspage adapter.
+status API, and a Statuspage adapter. The response-time charts and the incident
+timeline (Investigating → Identified → Monitoring → Resolved) ship as UI + schema,
+but the check worker does not yet persist `responseHistory` or the `incidents` KV
+key — in production those views currently render from bundled sample data until
+that persistence is wired up.
 
 ## Roadmap (planned)
 

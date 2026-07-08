@@ -15,8 +15,9 @@ TypeScript throughout. Three workspaces under `apps/*` and `packages/*`.
 
 ## Toolchain
 
-- **Runtime / package manager**: [Bun](https://bun.sh) `1.3.14` (pinned via
-  `packageManager` + `mise.toml`). Test runner: `bun test`.
+- **Runtime / package manager**: [Bun](https://bun.sh) `1.3.14`, pinned via
+  `package.json` `packageManager`. `mise.toml` installs Bun (currently at
+  `latest`) and provides tasks. Test runner: `bun test`.
 - **Monorepo orchestration**: [Turborepo](https://turborepo.com) `^2.10`
   (`turbo run dev | build | typecheck`).
 - **Language**: TypeScript `^6.0`.

@@ -27,8 +27,10 @@
   adaptive custom timeline.
 - **Accessibility**: status must never be conveyed by color alone — pair every
   severity color with a label/icon (WCAG 2.1 AA).
-- **Performance**: the page is edge-rendered and cached by `Cache-Tag`; keep
-  client JS minimal (Astro islands only where interactivity is required).
+- **Performance**: the page is edge-rendered and cached via `Cache-Control`
+  (Workers Cache), with `Cache-Tag` as purge-by-tag metadata for invalidation on
+  status change; keep client JS minimal (Astro islands only where interactivity
+  is required).
 
 ## Configuration UX
 
