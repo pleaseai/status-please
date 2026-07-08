@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "wrangler dev",
-    "deploy": "astro build && wrangler deploy",
-    "deploy:publish": "wrangler deploy",
+    "preview": "wrangler pages dev ./dist",
+    "deploy": "astro build && wrangler pages deploy --branch=main",
+    "deploy:publish": "wrangler pages deploy --branch=main",
     "typecheck": "astro check"
   },
   "dependencies": {

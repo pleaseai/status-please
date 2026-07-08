@@ -1,0 +1,9 @@
+# Cloudflare Pages headers rules. https://developers.cloudflare.com/pages/configuration/headers/
+#
+# Pages are served at docs.statusbeam.dev, but their bundled assets load from
+# statusbeam-docs.pages.dev (build.assetsPrefix in astro.config.ts). That makes the
+# `_astro/*` bundles cross-origin. ES module scripts and @font-face are always
+# fetched in CORS mode, so the asset origin must allow cross-origin reads or the
+# browser blocks them. These are public, read-only static assets, so `*` is safe.
+/_astro/*
+  Access-Control-Allow-Origin: *

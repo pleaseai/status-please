@@ -7,7 +7,9 @@ allowed-tools: Bash, Read
 # Run the StatusBeam docs site (`apps/docs`)
 
 Static **Astro + Starlight** documentation site. It builds to `./dist` and is
-served on Cloudflare via Workers Static Assets (no server, no D1/KV). The AI
+deployed to a Cloudflare **Pages** project (no server, no D1/KV) — served at
+`docs.statusbeam.dev`, with bundled assets loaded from `statusbeam-docs.pages.dev`
+(`build.assetsPrefix`). The AI
 surface — `/llms.txt`, `/llms-full.txt`, per-page `.md.txt` raw Markdown, and the
 "Copy Markdown" / "Open in ChatGPT·Claude" buttons — is what most edits touch.
 
@@ -76,11 +78,13 @@ Useful for editing content; not needed for verification.
 ## Deploy
 
 ```bash
-bun run --filter '@statusbeam/docs' deploy    # astro build && wrangler deploy
+bun run --filter '@statusbeam/docs' deploy    # astro build && wrangler pages deploy --branch=main
 ```
 
-Needs `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`. CI does this via
-`.github/workflows/deploy-docs.yml` on merge to `main`.
+Needs `CLOUDFLARE_API_TOKEN` (with **Cloudflare Pages: Edit**) + `CLOUDFLARE_ACCOUNT_ID`,
+and the `statusbeam-docs` Pages project must already exist
+(`bunx wrangler pages project create statusbeam-docs --production-branch main`). CI
+does this via `.github/workflows/deploy-docs.yml` on merge to `main`.
 
 ## Gotchas
 
