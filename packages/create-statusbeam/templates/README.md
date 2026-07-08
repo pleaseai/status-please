@@ -30,5 +30,11 @@ Commit the updated `wrangler.*.jsonc` (with your real resource ids) afterwards.
 - **Deploy from CI:** push to `main` (set `CLOUDFLARE_API_TOKEN` +
   `CLOUDFLARE_ACCOUNT_ID` as repo secrets first).
 - **Upgrade StatusBeam:** `bunx statusbeam update`, then `bunx statusbeam deploy`.
+- **Reliable notifications (optional):** alerts POST inline by default (no
+  retries). For automatic retries + dead-lettering, set
+  `notifications.delivery: queue` in `status.config.yml` and uncomment the
+  `queues` block in `wrangler.worker.jsonc` — this uses Cloudflare Queues, which
+  is available on the **Workers Free plan** (10k operations/day, 24h dead-letter
+  retention); the Paid plan raises those limits and extends retention to 14 days.
 
 The page shows sample data until the first cron writes a real snapshot.

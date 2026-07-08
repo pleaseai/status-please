@@ -8,3 +8,4 @@
 - [feed.ts now-guard gap](feed_ts_now_guard_gap.md) — RESOLVED in 82617f9: resolveBuildMs now validates the resulting Date (not just Number.isFinite), so out-of-range finite `now` no longer crashes/emits Invalid Date; malformed incident timestamps fall back to epoch
 - [CLI/scaffolder error handling (PR #30)](cli_scaffolder_error_handling_pr30.md) — packages/cli + create-statusbeam port of setup.sh; PR #22 fixes carried forward; new injectIds stale-id-on-rerun gap found
 - [statuspage webhook ingest 2026-07](statuspage_webhook_ingest_2026_07.md) — amondnet/statuspage-webhook: webhook.ts reject paths (400/401/404) log nothing (gap); fallback chains and degraded-default confirmed sound, not new regressions
+- [notify queue delivery 2026-07](notify_queue_delivery_2026_07.md) — amondnet/42: unguarded NOTIFY_QUEUE.sendBatch() drops whole batch silently on throw; ack()/retry() conflation risk in consumer

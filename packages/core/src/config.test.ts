@@ -86,8 +86,16 @@ describe('notificationsSchema', () => {
     expect(parsed.webhooks).toHaveLength(1)
   })
 
-  it('accepts an empty object (all fields optional)', () => {
-    expect(notificationsSchema.parse({})).toEqual({})
+  it('accepts an empty object (all targets optional) and defaults delivery to inline', () => {
+    expect(notificationsSchema.parse({})).toEqual({ delivery: 'inline' })
+  })
+
+  it('accepts an explicit queue delivery mode', () => {
+    expect(notificationsSchema.parse({ delivery: 'queue' }).delivery).toBe('queue')
+  })
+
+  it('rejects an unknown delivery mode', () => {
+    expect(() => notificationsSchema.parse({ delivery: 'carrier-pigeon' })).toThrow()
   })
 
   it('rejects an invalid slack webhook URL', () => {
