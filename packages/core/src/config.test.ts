@@ -28,6 +28,20 @@ describe('parseConfig', () => {
     // A comma would split the Cache-Tag header into bogus tags.
     expect(() => parseConfig(`${baseYaml}    slug: my,service\n`)).toThrow()
   })
+
+  it('accepts the statuspage check kind with a component', () => {
+    const config = parseConfig(`${baseYaml}    check: statuspage\n    component: Claude API\n`)
+    expect(config.sites[0]?.check).toBe('statuspage')
+    expect(config.sites[0]?.component).toBe('Claude API')
+  })
+
+  it('rejects an unknown check kind', () => {
+    expect(() => parseConfig(`${baseYaml}    check: carrier-pigeon\n`)).toThrow()
+  })
+
+  it('rejects an empty component string', () => {
+    expect(() => parseConfig(`${baseYaml}    check: statuspage\n    component: ""\n`)).toThrow()
+  })
 })
 
 describe('theme.locale', () => {

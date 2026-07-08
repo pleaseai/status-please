@@ -75,10 +75,21 @@ describe('statuspageSummaryUrl', () => {
 })
 
 describe('deriveStatuspageStatus', () => {
-  it('maps the overall indicator when no component is given', () => {
+  it('maps every overall indicator when no component is given', () => {
     expect(deriveStatuspageStatus({ status: { indicator: 'none' } })).toBe('up')
     expect(deriveStatuspageStatus({ status: { indicator: 'minor' } })).toBe('degraded')
+    expect(deriveStatuspageStatus({ status: { indicator: 'major' } })).toBe('down')
     expect(deriveStatuspageStatus({ status: { indicator: 'critical' } })).toBe('down')
+    expect(deriveStatuspageStatus({ status: { indicator: 'maintenance' } })).toBe('degraded')
+  })
+
+  it('maps every component status', () => {
+    const status = (s: string) => deriveStatuspageStatus({ components: [{ name: 'X', status: s }] }, 'X')
+    expect(status('operational')).toBe('up')
+    expect(status('degraded_performance')).toBe('degraded')
+    expect(status('partial_outage')).toBe('degraded')
+    expect(status('major_outage')).toBe('down')
+    expect(status('under_maintenance')).toBe('degraded')
   })
 
   it('reads a specific component by case-insensitive name', () => {
@@ -119,7 +130,46 @@ describe('checkSite (statuspage)', () => {
   it('grades a single configured component', async () => {
     const result = await checkSite(componentSite, { fetchImpl: statuspageResponse(claudeSummary), now: () => 0 })
     expect(result.status).toBe('down')
+    expect(result.code).toBe(200)
     expect(result.slug).toBe('claude-api')
+  })
+
+  it('reports down when a configured component is not on the page', async () => {
+    const missing = siteSchema.parse({
+      name: 'Claude API',
+      url: 'https://status.claude.com',
+      check: 'statuspage',
+      component: 'Nonexistent Service',
+    })
+    const result = await checkSite(missing, { fetchImpl: statuspageResponse(claudeSummary), now: () => 0 })
+    expect(result.status).toBe('down')
+    expect(result.error).toMatch(/not found/)
+    // The fetch completed (200) — a config typo must not masquerade as a
+    // network failure (code 0) in the persisted history.
+    expect(result.code).toBe(200)
+  })
+
+  it('reports down with the real status code on a non-JSON body', async () => {
+    const result = await checkSite(pageSite, {
+      fetchImpl: () => Promise.resolve(new Response('<html>not json</html>', { status: 200 })),
+      now: () => 0,
+    })
+    expect(result.status).toBe('down')
+    expect(result.code).toBe(200)
+    expect(result.error).toBeDefined()
+  })
+
+  it('reports down on a JSON null body instead of throwing', async () => {
+    const result = await checkSite(pageSite, {
+      fetchImpl: () => Promise.resolve(new Response('null', {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })),
+      now: () => 0,
+    })
+    expect(result.status).toBe('down')
+    expect(result.code).toBe(200)
+    expect(result.error).toMatch(/not a JSON object/)
   })
 
   it('fetches the derived summary.json endpoint', async () => {

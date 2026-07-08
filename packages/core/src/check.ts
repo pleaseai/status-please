@@ -139,28 +139,13 @@ export function deriveStatuspageStatus(summary: StatuspageSummary, component?: s
 async function checkStatuspage(site: Site, fetchImpl: FetchLike, now: () => number): Promise<CheckResult> {
   const start = now()
   const url = statuspageSummaryUrl(site.url)
+  const checkedAt = new Date(start).toISOString()
 
+  // Phase 1: the network round-trip. A throw here means the request never
+  // completed, so `code: 0` is the honest signal (per CheckResult.code).
+  let res: Response
   try {
-    const res = await fetchImpl(url, { method: 'GET', redirect: 'follow' })
-    const responseTime = now() - start
-    if (!res.ok) {
-      return {
-        slug: site.slug,
-        status: 'down',
-        code: res.status,
-        responseTime,
-        checkedAt: new Date(start).toISOString(),
-        error: `Statuspage API returned ${res.status}`,
-      }
-    }
-    const summary = (await res.json()) as StatuspageSummary
-    return {
-      slug: site.slug,
-      status: deriveStatuspageStatus(summary, site.component),
-      code: res.status,
-      responseTime,
-      checkedAt: new Date(start).toISOString(),
-    }
+    res = await fetchImpl(url, { method: 'GET', redirect: 'follow' })
   }
   catch (err) {
     return {
@@ -168,7 +153,41 @@ async function checkStatuspage(site: Site, fetchImpl: FetchLike, now: () => numb
       status: 'down',
       code: 0,
       responseTime: now() - start,
-      checkedAt: new Date(start).toISOString(),
+      checkedAt,
+      error: err instanceof Error ? err.message : String(err),
+    }
+  }
+
+  const responseTime = now() - start
+  if (!res.ok) {
+    return { slug: site.slug, status: 'down', code: res.status, responseTime, checkedAt, error: `Statuspage API returned ${res.status}` }
+  }
+
+  // Phase 2: parse and grade. The request already completed, so preserve the
+  // real HTTP status in `code` — a failure here (malformed body, unknown
+  // component) is a payload/config problem, distinct from a network outage,
+  // and collapsing it to `code: 0` would make a persistent misconfiguration
+  // look like transient flakiness in the persisted history.
+  try {
+    const summary = (await res.json()) as StatuspageSummary
+    if (typeof summary !== 'object' || summary === null) {
+      return { slug: site.slug, status: 'down', code: res.status, responseTime, checkedAt, error: 'Statuspage summary.json was not a JSON object' }
+    }
+    return {
+      slug: site.slug,
+      status: deriveStatuspageStatus(summary, site.component),
+      code: res.status,
+      responseTime,
+      checkedAt,
+    }
+  }
+  catch (err) {
+    return {
+      slug: site.slug,
+      status: 'down',
+      code: res.status,
+      responseTime,
+      checkedAt,
       error: err instanceof Error ? err.message : String(err),
     }
   }

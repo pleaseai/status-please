@@ -167,7 +167,7 @@ name: Acme Status
 sites:
   - name: Website
     url: https://example.com
-    check: http # http | tcp | ssl
+    check: http # http | tcp | ssl | statuspage
     expectedStatusCodes: [200]
     maxResponseTime: 2000 # ms → "degraded" above this
   - name: API
