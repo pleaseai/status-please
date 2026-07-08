@@ -1,0 +1,19 @@
+apps/web/src/components/ThemeToggle.tsx
+  s_f9e0f378bf7017::t_e562c3ec8aa1a4 66-72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b5e8fe9b413426958299ec5211e2b1339e8f1c25",
+  "prompts": {},
+  "sessions": {
+    "s_f9e0f378bf7017": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a50ff18b-eb64-40a3-96d6-dbd56f2a137f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
