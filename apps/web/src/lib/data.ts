@@ -88,6 +88,10 @@ export async function getLocale(): Promise<Locale> {
       if (raw) {
         return resolveLocale(parseConfig(raw).theme.locale)
       }
+      // KV is bound but has no `config` key — the deploy step never uploaded it
+      // (or the key name is wrong). Warn so the misconfiguration is debuggable,
+      // instead of silently serving the default locale.
+      console.warn('getLocale: no `config` key in KV, falling back to default locale')
     }
     catch (err) {
       // KV read failure or malformed config: fall back rather than fail the
