@@ -15,24 +15,39 @@ export type Theme = 'light' | 'dark' | 'system'
 export const THEME_STORAGE_KEY = 'theme'
 
 const ORDER: readonly Theme[] = ['system', 'light', 'dark']
-const ICON: Record<Theme, typeof Sun> = { system: Monitor, light: Sun, dark: Moon }
 
-/** Apply a theme to <html> and persist it. Mirrors the inline script's logic. */
+/**
+ * Apply a theme to <html> and persist it. Mirrors the inline script's logic.
+ * `localStorage` access is guarded because a restrictive environment (Safari
+ * "Block All Cookies", sandboxed iframe, enterprise policy) throws a
+ * SecurityError on any access — the class toggle stays outside the guard so the
+ * visual theme still flips even when persistence is unavailable.
+ */
 function applyTheme(theme: Theme): void {
   const root = document.documentElement
   root.classList.toggle('light', theme === 'light')
   root.classList.toggle('dark', theme === 'dark')
-  if (theme === 'system') {
-    localStorage.removeItem(THEME_STORAGE_KEY)
+  try {
+    if (theme === 'system') {
+      localStorage.removeItem(THEME_STORAGE_KEY)
+    }
+    else {
+      localStorage.setItem(THEME_STORAGE_KEY, theme)
+    }
   }
-  else {
-    localStorage.setItem(THEME_STORAGE_KEY, theme)
+  catch {
+    // Persistence unavailable — the in-page toggle still works for this visit.
   }
 }
 
 function readStoredTheme(): Theme {
-  const stored = localStorage.getItem(THEME_STORAGE_KEY)
-  return stored === 'light' || stored === 'dark' ? stored : 'system'
+  try {
+    const stored = localStorage.getItem(THEME_STORAGE_KEY)
+    return stored === 'light' || stored === 'dark' ? stored : 'system'
+  }
+  catch {
+    return 'system'
+  }
 }
 
 /**
@@ -57,7 +72,6 @@ export function ThemeToggle({ locale }: Readonly<{ locale: Locale }>) {
     setTheme(next)
   }
 
-  const Icon = ICON[theme]
   const label = `${t.a11y.themeToggle}: ${t.theme[theme]}`
 
   return (
@@ -70,10 +84,20 @@ export function ThemeToggle({ locale }: Readonly<{ locale: Locale }>) {
         'inline-flex size-8 items-center justify-center rounded-md border border-border',
         'text-muted-foreground transition-colors',
         'hover:bg-muted hover:text-foreground',
-        'focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none',
+        'focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
       )}
     >
-      <Icon className="size-4" aria-hidden="true" />
+      {/*
+        Which icon shows is driven by the `.light`/`.dark` class the inline
+        script sets on <html> before first paint, not by React state — so a
+        returning visitor with a forced theme sees the correct icon immediately,
+        with no post-hydration flash. `system` = neither class → Monitor. The
+        aria-label still comes from state (reconciled in the mount effect); a
+        label that settles a tick after paint is invisible and pre-interaction.
+      */}
+      <Monitor className="size-4 dark:hidden light:hidden" aria-hidden="true" />
+      <Sun className="hidden size-4 light:block" aria-hidden="true" />
+      <Moon className="hidden size-4 dark:block" aria-hidden="true" />
     </button>
   )
 }
