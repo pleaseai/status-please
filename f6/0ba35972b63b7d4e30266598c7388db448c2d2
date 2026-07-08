@@ -1,0 +1,28 @@
+.claude/settings.json
+  s_14d600a2488657::t_9fa96145189d03 2-19
+  s_f9e0f378bf7017::t_4200354abac95c 1,20-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f60ba35972b63b7d4e30266598c7388db448c2d2",
+  "prompts": {},
+  "sessions": {
+    "s_14d600a2488657": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c2805e4b-77b7-41a8-9266-80c090912f4c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    },
+    "s_f9e0f378bf7017": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a50ff18b-eb64-40a3-96d6-dbd56f2a137f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
