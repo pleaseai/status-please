@@ -4,6 +4,12 @@
 - **Date:** 2026-07-07
 - **Deciders:** StatusBeam maintainers
 
+> **Note:** This ADR's tech-stack decision stands. Its *distribution* framing —
+> upptime's "fork a repo, done" as the baseline — has been revisited by
+> [ADR-0002](0002-package-based-distribution.md): StatusBeam now ships as published
+> packages consumed as a versioned dependency, not as a repository to fork. Read the
+> "fork" references below as the historical starting point, not the current model.
+
 ## Context
 
 StatusBeam is an open-source status page generator, conceived as a modern
