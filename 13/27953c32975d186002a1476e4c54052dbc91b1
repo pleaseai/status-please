@@ -1,0 +1,19 @@
+.please/docs/knowledge/product.md
+  s_984df4a422abe4::t_cfbc09d9962774 59-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1327953c32975d186002a1476e4c54052dbc91b1",
+  "prompts": {},
+  "sessions": {
+    "s_984df4a422abe4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a57dacee-b99d-47ef-be17-6a159feb5833",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
