@@ -20,8 +20,7 @@ comment:
 # (apply-config, update's PM/upgrade selection) is unit-tested and stays counted.
 ignore:
   - packages/cli/src/cli.ts
-  - packages/cli/src/commands/setup.ts
-  - packages/cli/src/commands/deploy.ts
+  - packages/cli/src/commands/**
   - packages/cli/src/lib/wrangler.ts
   - packages/cli/src/lib/run.ts
   - packages/cli/src/lib/project.ts

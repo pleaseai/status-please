@@ -93,6 +93,22 @@ describe('setNetworking', () => {
     expect(out).not.toContain('"routes"')
     expect(out).toContain('workers_dev')
   })
+
+  it('inserts the block after compatibility_flags when no marker/comment exists', () => {
+    const bare = `{
+      "name": "x",
+      "compatibility_flags": ["nodejs_compat"],
+      "workers_dev": true
+    }`
+    const out = setNetworking(bare, 'status.example.com')
+    expect(out).toContain('"compatibility_flags"')
+    expect(out).toContain('"pattern": "status.example.com"')
+    expect(out).toContain('managed by statusbeam')
+  })
+
+  it('throws when there is no marker, shipped comment, or anchor to place the block', () => {
+    expect(() => setNetworking('{ "name": "x" }', 'status.example.com')).toThrow()
+  })
 })
 
 describe('normalizeDomain', () => {
