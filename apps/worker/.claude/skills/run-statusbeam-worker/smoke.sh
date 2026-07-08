@@ -70,6 +70,11 @@ bunx wrangler d1 execute statusbeam --local --file=./schema.sql >/dev/null 2>&1 
   || { echo "✗ D1 schema apply failed"; exit 1; }
 bunx wrangler kv key put config --binding=STATUS_KV --local --path="$OUT/config.yml" >/dev/null 2>&1 \
   || { echo "✗ KV seed failed"; exit 1; }
+# Reset prior-run side effects (.wrangler local state persists across runs) so the
+# ingest assertions below verify rows/summary written by THIS run's webhook POST,
+# not a stale row/summary that would let the check false-green.
+bunx wrangler d1 execute statusbeam --local --command "DELETE FROM checks" >/dev/null 2>&1 || true
+bunx wrangler kv key delete summary --binding=STATUS_KV --local >/dev/null 2>&1 || true
 
 # ── 3. Launch wrangler dev (local) ───────────────────────────────────────────
 echo "▸ Starting wrangler dev on port ${PORT}…"

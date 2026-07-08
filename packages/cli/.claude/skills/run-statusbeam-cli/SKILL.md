@@ -43,7 +43,8 @@ This is the primary way to drive the CLI. From `packages/cli/`:
 .claude/skills/run-statusbeam-cli/smoke.sh --no-build # skip build (binary already built)
 ```
 
-Exit 0 = every assertion passed; non-zero = first failure (with its output).
+Exit 0 = every assertion passed; non-zero = one or more assertions failed (all
+failures are printed before exit).
 The driver covers three layers:
 
 1. **The built binary** — `--version`, `--help`, no-args→help, and the error

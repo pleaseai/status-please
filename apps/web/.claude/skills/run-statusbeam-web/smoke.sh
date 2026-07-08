@@ -54,7 +54,7 @@ shoot() {
         || orca tab create --url "$URL$seg" --json >/dev/null 2>&1   # first call: no tab yet
       orca wait --text "$needle" --json >/dev/null 2>&1
       orca full-screenshot --json 2>/dev/null \
-        | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const r=(JSON.parse(s).result)||{};if(!r.data)process.exit(1);require("fs").writeFileSync(process.argv[1],Buffer.from(r.data,"base64"))})' "$outfile"
+        | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=(JSON.parse(s).result)||{};if(!r.data)process.exit(1);require("fs").writeFileSync(process.argv[1],Buffer.from(r.data,"base64"))}catch{process.exit(1)}})' "$outfile"
       ;;
     chromium-cli)
       chromium-cli >/dev/null 2>&1 <<EOF
@@ -79,7 +79,7 @@ EOF
 close_orca_tabs() {
   [[ -n "${URL:-}" ]] || return 0
   orca tab list --json 2>/dev/null \
-    | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const r=JSON.parse(s).result||{};for(const t of (r.tabs||[]))if((t.url||"").startsWith(process.argv[1]))console.log(t.browserPageId)})' "$URL" \
+    | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s).result||{};for(const t of (r.tabs||[]))if((t.url||"").startsWith(process.argv[1]))console.log(t.browserPageId)}catch{}})' "$URL" \
     | while read -r pid; do orca tab close --page "$pid" >/dev/null 2>&1 || true; done
 }
 

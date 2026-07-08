@@ -9,7 +9,8 @@
 #   .claude/skills/run-statusbeam-cli/smoke.sh          # build + drive + direct-invoke
 #   .claude/skills/run-statusbeam-cli/smoke.sh --no-build # skip the build step
 #
-# Exit 0 = every assertion passed. Non-zero = the first failing assertion.
+# Exit 0 = every assertion passed. Non-zero = one or more assertions failed (all
+# failures are reported before exit).
 set -uo pipefail
 
 # Resolve packages/cli/ regardless of where this is invoked from.
@@ -76,7 +77,7 @@ DI="$CLI_DIR/.smoke-direct-invoke.mjs"
 cat > "$DI" <<EOF
 import { detectPackageManager, upgradeArgs } from '$CLI_DIR/src/commands/update.ts'
 import { injectIds, normalizeDomain } from '$CLI_DIR/src/lib/apply-config.ts'
-import { mkdtempSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 const dir = mkdtempSync(join(tmpdir(), 'sb-'))
@@ -95,6 +96,7 @@ for (const [label, got, want] of checks) {
   console.log(\`  \${ok ? '✓' : '✗'} \${label} = \${JSON.stringify(got)}\`)
   if (!ok) bad++
 }
+rmSync(dir, { recursive: true, force: true })
 process.exit(bad === 0 ? 0 : 1)
 EOF
 if NODE_ENV=test bun run "$DI"; then ((pass++)); else ((fail++)); fi
