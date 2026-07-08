@@ -1,0 +1,35 @@
+{
+  "name": "@statusbeam/cli",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "StatusBeam CLI — provision, configure, and deploy a StatusBeam status page to Cloudflare.",
+  "license": "MIT",
+  "homepage": "https://github.com/pleaseai/statusbeam/tree/main/packages/cli#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pleaseai/statusbeam.git",
+    "directory": "packages/cli"
+  },
+  "bin": {
+    "statusbeam": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "bun build ./src/cli.ts --outdir dist --target node --format esm --banner '#!/usr/bin/env node' && chmod +x dist/cli.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@statusbeam/core": "workspace:*",
+    "@statusbeam/web": "workspace:*",
+    "@statusbeam/worker": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24"
+  }
+}
