@@ -77,6 +77,13 @@ export async function getSite(slug: string): Promise<SiteSummary | undefined> {
   return summary.find(s => s.slug === slug)
 }
 
+// A missing `config` key is a steady-state deploy misconfiguration, so
+// `getLocale()` (invoked on every bare-`/` request) would log it on every hit.
+// Warn once per Worker isolate instead — enough to surface the problem without
+// flooding the logs. (The catch below logs unconditionally: a thrown KV/parse
+// error is exceptional, not steady-state, so each occurrence is worth a line.)
+let warnedNoConfigKey = false
+
 /**
  * Resolve the status page's UI locale from the `config` YAML in KV (the same
  * document the check Worker reads). Falls back to the default locale so `astro
@@ -86,17 +93,27 @@ export async function getSite(slug: string): Promise<SiteSummary | undefined> {
 export async function getLocale(): Promise<Locale> {
   const kv = env.STATUS_KV
   if (kv) {
-    const raw = await kv.get('config')
-    if (raw) {
-      try {
+    try {
+      // The KV read is inside the try too: a transient KV error must degrade to
+      // the default locale, not throw — `/`'s middleware fallback depends on
+      // this never failing the redirect.
+      const raw = await kv.get('config')
+      if (raw) {
         return resolveLocale(parseConfig(raw).theme.locale)
       }
-      catch (err) {
-        // Malformed config: fall back rather than fail the whole page render,
-        // but log it (matching cache.ts/notify.ts) so the operator can debug
-        // why `/` isn't honoring their configured `theme.locale`.
-        console.warn('getLocale: malformed config in KV, falling back to default locale', err)
+      // KV is bound but has no `config` key — the deploy step never uploaded it
+      // (or the key name is wrong). Warn (once per isolate) so the
+      // misconfiguration is debuggable, instead of silently serving the default.
+      if (!warnedNoConfigKey) {
+        warnedNoConfigKey = true
+        console.warn('getLocale: no `config` key in KV, falling back to default locale')
       }
+    }
+    catch (err) {
+      // KV read failure or malformed config: fall back rather than fail the
+      // whole page render, but log it (matching cache.ts/notify.ts) so the
+      // operator can debug why `/` isn't honoring their configured `theme.locale`.
+      console.warn('getLocale: KV read failed or malformed config, falling back to default locale', err)
     }
   }
   return DEFAULT_LOCALE

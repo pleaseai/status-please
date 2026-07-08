@@ -14,7 +14,7 @@ host TZ happens to already be UTC (the common case for GitHub Actions runners).
 
 **Why:** verified experimentally in this review (bun respects runtime `process.env.TZ` mutation for
 `Intl.DateTimeFormat`):
-```
+```js
 process.env.TZ = 'America/Los_Angeles'
 Intl.DateTimeFormat(..., { timeZone: 'UTC' }).format(Date.UTC(2026,6,5))   // "Jul 5, 2026" (correct)
 Intl.DateTimeFormat(..., /* no timeZone */).format(Date.UTC(2026,6,5))     // "Jul 4, 2026" (bug)
