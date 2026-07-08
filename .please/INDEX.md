@@ -16,7 +16,7 @@
 | `state/` | Runtime session state (progress) — not tracked in git |
 | `docs/tracks/` | Implementation tracks (spec + plan) → [Tracks](docs/tracks.jsonl) |
 | `docs/product-specs/` | Product-level specifications → [Product Specs Index](docs/product-specs/index.md) |
-| `docs/decisions/` | Architecture Decision Records → [Decisions Index](docs/decisions/index.md) |
+| `../docs/adr/` | Architecture Decision Records → [Decisions Index](../docs/adr/index.md) |
 | `docs/investigations/` | Bug investigation reports |
 | `docs/research/` | Research documents |
 | `docs/references/` | External reference materials (-llms.txt etc.) |

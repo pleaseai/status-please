@@ -22,7 +22,7 @@ language: en # Output language (ko | en)
 docs:
   tracks: .please/docs/tracks
   product-specs: .please/docs/product-specs
-  decisions: .please/docs/decisions
+  decisions: docs/adr
   investigations: .please/docs/investigations
   research: .please/docs/research
   references: .please/docs/references
