@@ -1,0 +1,23 @@
+scripts/setup.sh
+  s_4c415a5cbd1502::t_90568be5c932fb 97-100,102-108,113-119
+  s_4c415a5cbd1502::t_5963bfcca73b0f 171-173
+  s_4c415a5cbd1502::t_bcb64a461a66a0 84-86
+scripts/apply-config.ts
+  s_4c415a5cbd1502::t_5a6e9f7fa6549f 16-18,20,22-23,27-28,30,33-34,36-37,42-50,63,71,75-78,81-84,87-90,94-97,103-105,109-112,114,118-119,121,124-125
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "88f1a5f9bca36dc73e89efd9f0649f749413b400",
+  "prompts": {},
+  "sessions": {
+    "s_4c415a5cbd1502": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1b38d19-cd9c-4932-8900-7fd130c3e7f3",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
