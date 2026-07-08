@@ -8,16 +8,18 @@ import { Aside } from '@astrojs/starlight/components';
 This site is built to be consumed by LLMs and coding agents, not just humans.
 Three mechanisms are always available.
 
-## `/llms.txt` and `/llms-full.txt`
+## `/llms.txt`, `/llms-small.txt`, and `/llms-full.txt`
 
 Following the [llms.txt standard](https://llmstxt.org/), the site publishes:
 
 - **[`/llms.txt`](/llms.txt)** — a structured overview: title, description, and a
   curated list of links to every page.
+- **[`/llms-small.txt`](/llms-small.txt)** — a compact variant of the overview,
+  trimmed for smaller context windows.
 - **[`/llms-full.txt`](/llms-full.txt)** — the entire documentation concatenated
   into one Markdown file, ready to paste into a model's context.
 
-Point an assistant at either URL to give it the whole product's docs at once.
+Point an assistant at any of these URLs to give it the whole product's docs at once.
 
 _Generated at build time by [`starlight-llms-txt`](https://github.com/delucis/starlight-llms-txt)._
 

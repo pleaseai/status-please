@@ -9,7 +9,7 @@ on:
     branches: [main]
     paths:
       - 'apps/docs/**'
-      - '.github/workflows/deploy-docs.yml'
+      - .github/workflows/deploy-docs.yml
 
 # Least privilege — Wrangler authenticates with the API token, not the GITHUB_TOKEN.
 permissions:

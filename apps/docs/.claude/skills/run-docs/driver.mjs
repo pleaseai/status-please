@@ -61,17 +61,18 @@ let failed = false
 try {
   if (!(await waitForServer())) {
     console.error(`✗ preview server never came up on ${BASE}`)
-    process.exit(1)
-  }
-  for (const [label, path, assert] of checks) {
-    const res = await fetch(BASE + path, { redirect: 'follow' })
-    const body = await res.text()
-    const verdict = assert(res.status, body)
-    if (verdict === true) {
-      console.log(`✓ ${label}  (${path})`)
-    } else {
-      console.error(`✗ ${label}  (${path}) — ${verdict}`)
-      failed = true
+    failed = true
+  } else {
+    for (const [label, path, assert] of checks) {
+      const res = await fetch(BASE + path, { redirect: 'follow' })
+      const body = await res.text()
+      const verdict = assert(res.status, body)
+      if (verdict === true) {
+        console.log(`✓ ${label}  (${path})`)
+      } else {
+        console.error(`✗ ${label}  (${path}) — ${verdict}`)
+        failed = true
+      }
     }
   }
 } finally {
