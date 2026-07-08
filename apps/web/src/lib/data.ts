@@ -119,6 +119,37 @@ export async function getLocale(): Promise<Locale> {
   return DEFAULT_LOCALE
 }
 
+// Warn once per isolate on a missing `config` key (see `warnedNoConfigKey`).
+let warnedNoConfigKeyForName = false
+
+/**
+ * The status page's display name from the `config` YAML in KV — used as the feed
+ * title. Falls back to a sensible default so `astro dev` and a misconfigured
+ * deploy still render a valid feed, and never throws (mirrors {@link getLocale}).
+ */
+export async function getPageName(): Promise<string> {
+  const kv = env.STATUS_KV
+  if (kv) {
+    try {
+      const raw = await kv.get('config')
+      if (raw) {
+        return parseConfig(raw).name
+      }
+      // KV bound but no `config` key: warn once per isolate, mirroring
+      // `getLocale` — otherwise a deploy that never uploaded config serves the
+      // default feed title on every hit with nothing pointing at the cause.
+      if (!warnedNoConfigKeyForName) {
+        warnedNoConfigKeyForName = true
+        console.warn('getPageName: no `config` key in KV, falling back to default name')
+      }
+    }
+    catch (err) {
+      console.warn('getPageName: KV read failed or malformed config, falling back to default name', err)
+    }
+  }
+  return 'statusbeam'
+}
+
 /** ISO timestamp `hours` before now — keeps sample incidents fresh for `astro dev`. */
 function hoursAgo(hours: number): string {
   return new Date(Date.now() - hours * 3600_000).toISOString()
