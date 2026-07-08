@@ -99,7 +99,7 @@ bun run deploy       # worker + web via wrangler
 ### Unit Testing
 
 - Every module must have corresponding tests (`bun test`)
-- Mock external dependencies (Cloudflare bindings: D1, KV, Queues)
+- Mock external dependencies (Cloudflare bindings: D1, KV)
 - Test both success and failure cases; validate Zod schema edge cases in `@statusbeam/core`
 
 ### Integration Testing

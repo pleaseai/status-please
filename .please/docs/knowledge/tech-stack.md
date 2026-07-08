@@ -50,7 +50,9 @@ TypeScript throughout. Three workspaces under `apps/*` and `packages/*`.
 
 - **D1** (SQLite) — durable time-series of check results.
 - **KV** — current-status snapshot for fast reads.
-- **Queues** — decouple notification fan-out from checks.
+- **Queues** _(planned)_ — would decouple notification fan-out from checks; not
+  yet implemented (dispatch is currently synchronous inline `fetch` via
+  `ctx.waitUntil`).
 - **Cron Triggers** — reliable scheduling for the check worker.
 - **Cache-Tag / edge cache** — page & badge caching with purge-on-change.
 

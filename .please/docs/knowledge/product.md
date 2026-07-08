@@ -43,12 +43,13 @@ Split into three independent layers, each deployable and replaceable on its own:
 1. **Check layer** — Cloudflare Cron Worker. Pings every configured service on
    schedule, derives up / degraded / down from status + response time, writes
    time-series to D1 and the current snapshot to KV, and on a status change
-   enqueues a notification event and purges the page/badge cache by tag.
+   dispatches notifications and purges the page/badge cache by tag.
 2. **Display layer** — Astro site with a shadcn/ui component set and a severity
    token system. Renders 90-day adaptive uptime bars, per-component
    response-time charts, and an incident timeline — all at the edge.
-3. **Notify layer** — Slack + generic webhooks on status change, decoupled via
-   Cloudflare Queues.
+3. **Notify layer** — Slack + generic webhooks dispatched inline on status
+   change (via `ctx.waitUntil`); a Cloudflare Queues upgrade path is planned but
+   not yet wired up (see ARCHITECTURE.md).
 
 Shipped: HTTP checks, D1 time-series + KV snapshot, uptime bars & charts,
 incident lifecycle (Investigating → Identified → Monitoring → Resolved), Slack +
