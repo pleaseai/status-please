@@ -36,8 +36,16 @@ const STATE_LABEL: Record<IncidentState, string> = {
  * HTML content blob embedded in `<content type="html">` / `<description>`. HTML's
  * and XML's special-character sets coincide here, so one function serves both and
  * the double application produces the correct entity-in-entity encoding.
+ *
+ * A nullish value yields the empty string: KV incident records are only
+ * type-asserted, never validated (see `getIncidents`), so a missing `title`/
+ * `body` must degrade to empty rather than crash the whole feed with a
+ * `TypeError` on `undefined.replace`.
  */
-export function escapeXml(value: string): string {
+export function escapeXml(value: string | null | undefined): string {
+  if (value == null) {
+    return ''
+  }
   return value
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -49,13 +57,18 @@ export function escapeXml(value: string): string {
 /**
  * Format an ISO timestamp as `Mon DD, YYYY - HH:MM UTC` (the compact, UTC form
  * Statuspage.io uses inside each update line). Built from UTC getters rather than
- * `Intl` so the output is stable across runtimes and locales. Returns the input
- * unchanged when it isn't a parseable date.
+ * `Intl` so the output is stable across runtimes and locales. Returns the
+ * (escaped) input when it isn't a parseable date.
  */
 function formatUpdateTime(iso: string): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) {
-    return iso
+    // This value is embedded in the HTML content blob alongside the (escaped)
+    // body, so escape it too — otherwise a malformed `createdAt` containing
+    // `<`/`>`/`&` would surface as raw markup once a reader entity-decodes the
+    // `type="html"` content. The builder's outer escape only guards XML
+    // well-formedness, not the post-decode HTML.
+    return escapeXml(iso)
   }
   const mon = MONTHS[d.getUTCMonth()]
   const day = String(d.getUTCDate()).padStart(2, '0')
