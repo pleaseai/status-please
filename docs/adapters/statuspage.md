@@ -111,18 +111,22 @@ something is off without ever silently reporting `up`.
 Every outcome below produces a normal `CheckResult`, so it flows into the D1
 time-series, KV snapshot, badges, and notifications like any other check.
 
-| Situation                                   | `status` | `code`       | `error`                                        |
-| ------------------------------------------- | -------- | ------------ | ---------------------------------------------- |
-| Component/page reads healthy                | `up`     | `200`        | —                                              |
-| Component/page reads degraded/down          | mapped   | `200`        | —                                              |
-| `component` not found on the page           | `down`   | `200`        | `Statuspage component not found: <name>`       |
-| API returns non-2xx                         | `down`   | actual (e.g. `503`) | `Statuspage API returned 503`           |
-| Body isn't a JSON object (e.g. `null`, HTML)| `down`   | `200`        | `Statuspage summary.json was not a JSON object` / parse error |
-| Request never completes (DNS/TLS/timeout)   | `down`   | `0`          | the thrown error message                       |
+| Situation                                   | `status` | `code`              | `error`                                        |
+| ------------------------------------------- | -------- | ------------------- | ---------------------------------------------- |
+| Component/page reads healthy                | `up`     | 2xx (normally `200`)| —                                              |
+| Component/page reads degraded/down          | mapped   | 2xx (normally `200`)| —                                              |
+| `component` not found on the page           | `down`   | 2xx (normally `200`)| `Statuspage component not found: <name>`       |
+| API returns non-2xx                         | `down`   | actual (e.g. `503`) | `Statuspage API returned 503`                  |
+| Body isn't a JSON object (e.g. `null`, HTML)| `down`   | 2xx (normally `200`)| `Statuspage summary.json was not a JSON object` / parse error |
+| Request never completes (DNS/TLS/timeout)   | `down`   | `0`                 | the thrown error message                       |
+
+The `code` column holds the response's real HTTP status (`res.status`); it is
+`200` for a normal healthy page but reflects whatever 2xx the API actually
+returned.
 
 The key distinction: `code` reflects **whether the HTTP request completed**.
-A misconfigured `component` (a typo) fails _after_ a successful `200` response,
-so it records `code: 200` — deterministic and repeatable on every cron run —
+A misconfigured `component` (a typo) fails _after_ a successful response, so it
+records the real 2xx code — deterministic and repeatable on every cron run —
 whereas a genuine network outage records `code: 0`. This keeps a persistent
 config mistake from masquerading as transient flakiness in your history.
 
