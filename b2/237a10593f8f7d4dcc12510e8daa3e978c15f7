@@ -1,0 +1,25 @@
+.please/INDEX.md
+  s_984df4a422abe4::t_ecf64db40199c0 19
+docs/adr/index.md
+  s_984df4a422abe4::t_4fcc5c958dbcc1 1-8
+CLAUDE.md
+  s_984df4a422abe4::t_1f9cf9d88d16d9 26
+.please/config.yml
+  s_984df4a422abe4::t_590dd01f611766 25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b2237a10593f8f7d4dcc12510e8daa3e978c15f7",
+  "prompts": {},
+  "sessions": {
+    "s_984df4a422abe4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a57dacee-b99d-47ef-be17-6a159feb5833",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
