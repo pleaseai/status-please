@@ -166,8 +166,21 @@ export function uptimeBadge(site: SiteSummary, period: UptimePeriod = 'month'): 
   }
 }
 
-/** Response-time badge for one site: `response time | <n>ms`. */
+/**
+ * Response-time badge for one site: `response time | <n>ms`. A down site's
+ * check never received a response, so `responseTime` is `0` — reported as-is
+ * it would read as the fastest possible response instead of an outage, so a
+ * down site gets a `down`/red badge instead of `0ms`/brightgreen.
+ */
 export function responseBadge(site: SiteSummary): ShieldsEndpoint {
+  if (site.status === 'down') {
+    return {
+      schemaVersion: 1,
+      label: 'response time',
+      message: 'down',
+      color: 'red',
+    }
+  }
   return {
     schemaVersion: 1,
     label: 'response time',

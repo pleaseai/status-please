@@ -139,4 +139,13 @@ describe('responseBadge', () => {
       color: 'brightgreen',
     })
   })
+
+  it('reports "down" instead of "0ms" when the site is down', () => {
+    expect(responseBadge(site({ status: 'down', responseTime: 0 }))).toEqual({
+      schemaVersion: 1,
+      label: 'response time',
+      message: 'down',
+      color: 'red',
+    })
+  })
 })
