@@ -13,6 +13,9 @@ export interface NotificationMessage {
   body: unknown
 }
 
+/** Cloudflare Queues caps a single `sendBatch` at 100 messages. */
+const QUEUE_BATCH_LIMIT = 100
+
 /**
  * Fan a status-change payload out into one {@link NotificationMessage} per
  * configured target. Shared by both delivery modes so they dispatch to exactly
@@ -64,7 +67,13 @@ export async function notify(
         return
       }
       try {
-        await env.NOTIFY_QUEUE.sendBatch(messages.map(body => ({ body })))
+        // Chunk to the sendBatch limit so a large target list still takes the
+        // queue path instead of erroring straight into the inline fallback.
+        for (let i = 0; i < messages.length; i += QUEUE_BATCH_LIMIT) {
+          await env.NOTIFY_QUEUE.sendBatch(
+            messages.slice(i, i + QUEUE_BATCH_LIMIT).map(body => ({ body })),
+          )
+        }
         return
       }
       catch (err) {

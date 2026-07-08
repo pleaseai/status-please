@@ -136,6 +136,17 @@ describe('notify (transport selection)', () => {
     expect(sent).toHaveLength(0)
   })
 
+  it('chunks a large target list into <=100-message sendBatch calls', async () => {
+    const { env, sent } = queueEnv('record')
+    // 150 webhooks + 1 slack = 151 messages → two batches (100 + 51).
+    const webhooks = Array.from({ length: 150 }, (_, i) => ({ url: `https://example.com/${i}` }))
+    await notify(env, { delivery: 'queue', slack: { webhookUrl: 'https://hooks.slack.com/services/T/B/X' }, webhooks }, payload)
+    // 100 + 51 = 151 → every message enqueued exactly once, no chunk-boundary loss.
+    expect(sent).toHaveLength(2)
+    expect(sent[0]).toHaveLength(100)
+    expect(sent[1]).toHaveLength(51)
+  })
+
   it('routes to inline dispatch for the default (inline) delivery mode', async () => {
     const { env, sent } = queueEnv('record')
     const { impl, calls } = fakeFetch(() => ({ ok: true, status: 200 }))
