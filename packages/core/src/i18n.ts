@@ -47,7 +47,9 @@ export type DayKey = 'up' | 'degraded' | 'down' | 'nodata'
 export interface Dict {
   page: { title: string }
   /** Accessible names for UI chrome (not visible copy), e.g. the switcher nav. */
-  a11y: { languageNav: string }
+  a11y: { languageNav: string, themeToggle: string }
+  /** Theme-toggle mode labels (system-following, forced light, forced dark). */
+  theme: { light: string, dark: string, system: string }
   /** Roll-up banner headline, keyed by overall severity. */
   banner: Record<Severity, string>
   /** Short badge label, keyed by severity. */
@@ -72,7 +74,8 @@ export interface Dict {
 
 const en: Dict = {
   page: { title: 'Status' },
-  a11y: { languageNav: 'Language' },
+  a11y: { languageNav: 'Language', themeToggle: 'Theme' },
+  theme: { light: 'Light', dark: 'Dark', system: 'System' },
   banner: {
     operational: 'All Systems Operational',
     degraded: 'Degraded Performance',
@@ -123,7 +126,8 @@ const en: Dict = {
 
 const zh: Dict = {
   page: { title: '服务状态' },
-  a11y: { languageNav: '语言' },
+  a11y: { languageNav: '语言', themeToggle: '主题' },
+  theme: { light: '浅色', dark: '深色', system: '跟随系统' },
   banner: {
     operational: '所有系统正常',
     degraded: '性能下降',
@@ -174,7 +178,8 @@ const zh: Dict = {
 
 const ja: Dict = {
   page: { title: 'ステータス' },
-  a11y: { languageNav: '言語' },
+  a11y: { languageNav: '言語', themeToggle: 'テーマ' },
+  theme: { light: 'ライト', dark: 'ダーク', system: 'システム' },
   banner: {
     operational: 'すべてのシステムが正常',
     degraded: 'パフォーマンス低下',
@@ -225,7 +230,8 @@ const ja: Dict = {
 
 const ko: Dict = {
   page: { title: '상태' },
-  a11y: { languageNav: '언어' },
+  a11y: { languageNav: '언어', themeToggle: '테마' },
+  theme: { light: '라이트', dark: '다크', system: '시스템' },
   banner: {
     operational: '모든 시스템 정상',
     degraded: '성능 저하',

@@ -6,6 +6,7 @@ import '../styles/global.css'
 import { IncidentList } from './IncidentList'
 import { StatusBanner } from './StatusBanner'
 import { StatusList } from './StatusList'
+import { ThemeToggle } from './ThemeToggle'
 
 // The locale is fixed by the page's URL prefix (/en/, /ja/, …). Each localized
 // page under src/pages/<locale>/ loads the data + cache headers (see
@@ -39,6 +40,19 @@ const localeHref = (l: string): string => new URL(`/${l}/`, Astro.site ?? Astro.
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
     <title>{t.page.title}</title>
+    {/*
+      Anti-FOUC: apply the visitor's remembered theme to <html> before first
+      paint so a forced light/dark choice never flashes the system default.
+      Kept in sync with ThemeToggle.tsx (same storage key + class contract).
+    */}
+    <script is:inline>
+      try {
+        var t = localStorage.getItem('theme')
+        if (t === 'light' || t === 'dark') {
+          document.documentElement.classList.add(t)
+        }
+      } catch (e) {}
+    </script>
     {/* Multilingual SEO: tell crawlers these four URLs are translations of each
         other, with English as the x-default landing. */}
     {LOCALES.map(l => (
@@ -48,6 +62,12 @@ const localeHref = (l: string): string => new URL(`/${l}/`, Astro.site ?? Astro.
   </head>
   <body class="min-h-full">
     <main class="mx-auto max-w-3xl px-4 py-10">
+      {/* Interactive (theme cycle): hydrates as a React island. Right-aligned
+          above the banner, the conventional spot for a theme control. */}
+      <div class="mb-4 flex justify-end">
+        <ThemeToggle locale={locale} client:load />
+      </div>
+
       {/* Static: renders to HTML with 0 JS (shadcn Alert via React SSR). */}
       <div class="mb-8">
         <StatusBanner severity={overall} locale={locale} />

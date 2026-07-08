@@ -1,8 +1,11 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* shadcn dark variant (class-based override for a future theme toggle). */
+/* shadcn dark variant + explicit light variant, so the theme toggle can show
+ * the right icon straight from the root class the inline script sets — no JS
+ * state, hence no post-hydration icon flash. `system` = neither class. */
 @custom-variant dark (&:is(.dark, .dark *));
+@custom-variant light (&:is(.light, .light *));
 
 /*
  * Map design tokens to Tailwind's theme so utilities like `bg-background`,
