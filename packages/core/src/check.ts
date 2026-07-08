@@ -106,7 +106,14 @@ export function statuspageSummaryUrl(url: string): string {
   if (/\/api\/v2\/[^/]+\.json$/.test(url)) {
     return url
   }
-  return `${url.replace(/\/+$/, '')}/api/v2/summary.json`
+  // Strip trailing slashes with a linear character scan rather than a
+  // backtracking regex (`/\/+$/` is a polynomial-ReDoS pattern on inputs with
+  // many trailing slashes — flagged by CodeQL js/polynomial-redos).
+  let end = url.length
+  while (end > 0 && url.charCodeAt(end - 1) === 47 /* '/' */) {
+    end--
+  }
+  return `${url.slice(0, end)}/api/v2/summary.json`
 }
 
 /**

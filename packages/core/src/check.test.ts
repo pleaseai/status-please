@@ -68,6 +68,11 @@ describe('statuspageSummaryUrl', () => {
       .toBe('https://www.vercel-status.com/api/v2/summary.json')
   })
 
+  it('strips multiple trailing slashes', () => {
+    expect(statuspageSummaryUrl('https://status.claude.com///'))
+      .toBe('https://status.claude.com/api/v2/summary.json')
+  })
+
   it('leaves an explicit api/v2 endpoint untouched', () => {
     const url = 'https://status.claude.com/api/v2/status.json'
     expect(statuspageSummaryUrl(url)).toBe(url)
