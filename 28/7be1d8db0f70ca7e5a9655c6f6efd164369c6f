@@ -1,0 +1,27 @@
+DEPLOYMENT.md
+  s_4e4d323763b7b6::t_05772d8c5bf9db 3-6,8-10,12,14,16-17,19-22,24,27-30,33-39,41-43,45,47-51,53-54,56,58-59,62-63,66-68,70-76,78,80-86,88,90-91,94-95,98-99,101,104-105,108-109,115-138
+README.md
+  s_4e4d323763b7b6::t_66397046da0434 312-313
+  s_4e4d323763b7b6::t_a329adf8a2e25b 277-281,284-286,288,291-293
+docs/adr/0002-package-based-distribution.md
+  s_4e4d323763b7b6::t_23a635d1db0e59 3
+  s_4e4d323763b7b6::t_ce0e2f4fe79aca 129-153
+docs/adr/0001-tech-stack.md
+  s_4e4d323763b7b6::t_272074ac78a129 7-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "287be1d8db0f70ca7e5a9655c6f6efd164369c6f",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
