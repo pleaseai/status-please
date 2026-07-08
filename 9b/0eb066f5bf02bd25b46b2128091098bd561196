@@ -1,0 +1,20 @@
+packages/core/src/statuspage-webhook.test.ts
+  s_189e1eba66b0cd::t_4b8640eeb6ebf2 124-134
+  s_189e1eba66b0cd::t_eef8e610087e94 99-109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9b0eb066f5bf02bd25b46b2128091098bd561196",
+  "prompts": {},
+  "sessions": {
+    "s_189e1eba66b0cd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ce6ea7ae-22a6-4106-a72b-0f5c0a7914e9",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
