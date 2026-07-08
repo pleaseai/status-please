@@ -21,6 +21,11 @@ export async function ask(prompt: string, def: string, opts: AskOptions): Promis
     const reply = (await rl.question(label)).trim()
     return reply || def
   }
+  catch {
+    // Ctrl-D / EOF closes the stream mid-prompt — treat it as an empty reply and
+    // fall back to the default (matches setup.sh's `read`-returns-nonzero behavior).
+    return def
+  }
   finally {
     rl.close()
   }

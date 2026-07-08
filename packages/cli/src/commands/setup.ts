@@ -7,7 +7,7 @@ import type { Wrangler } from '../lib/wrangler'
  */
 import { existsSync } from 'node:fs'
 import process from 'node:process'
-import { edit, injectIds, readJsoncString, setCron, setNetworking } from '../lib/apply-config'
+import { edit, injectIds, normalizeDomain, readJsoncString, setCron, setNetworking } from '../lib/apply-config'
 import { die, info, ok, step, success } from '../lib/log'
 import { resolveBin, resolvePackage, userProject } from '../lib/project'
 import { ask, pause } from '../lib/prompt'
@@ -72,7 +72,7 @@ export async function setup(opts: SetupOptions): Promise<void> {
   ok(`KV namespace id: ${kv}`)
 
   step('Wrangler settings')
-  const domain = await ask('Custom domain for the status page (blank = use *.workers.dev)', '', { nonInteractive })
+  const domain = normalizeDomain(await ask('Custom domain for the status page (blank = use *.workers.dev)', '', { nonInteractive }))
   const cron = await ask('Cron schedule for checks', '*/5 * * * *', { nonInteractive })
   info(domain ? `Domain: ${domain}` : 'No custom domain — the page will use its *.workers.dev URL.')
   info(`Cron:   ${cron}`)

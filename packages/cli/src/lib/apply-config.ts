@@ -28,8 +28,10 @@ const esc = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
  */
 export function injectIds(s: string, d1?: string, kv?: string): string {
   if (d1) {
-    // `database_id` is a unique key, so match it directly.
-    s = s.replace(/("database_id"\s*:\s*")[^"]*(")/, (_m, p, q) => `${p}${d1}${q}`)
+    // Scope to the StatusBeam `DB` binding (its `"binding"` precedes its
+    // `"database_id"` in the template) so a d1 database listed before it in a
+    // customized config can't be the one whose id gets overwritten.
+    s = s.replace(/("binding"\s*:\s*"DB"[\s\S]*?"database_id"\s*:\s*")[^"]*(")/, (_m, p, q) => `${p}${d1}${q}`)
   }
   if (kv) {
     // Scope to the STATUS_KV binding specifically (its `"binding"` precedes its
@@ -38,6 +40,15 @@ export function injectIds(s: string, d1?: string, kv?: string): string {
     s = s.replace(/("binding"\s*:\s*"STATUS_KV"[\s\S]*?"id"\s*:\s*")[^"]*(")/, (_m, p, q) => `${p}${kv}${q}`)
   }
   return s
+}
+
+/**
+ * Reduce a custom-domain answer to the bare host wrangler's `routes` pattern
+ * wants: strip a leading `https://`/`http://`, any path, and surrounding
+ * whitespace. `https://status.example.com/` → `status.example.com`; '' stays ''.
+ */
+export function normalizeDomain(input: string): string {
+  return input.trim().replace(/^[a-z][a-z0-9+.-]*:\/\//i, '').replace(/\/.*$/, '').trim()
 }
 
 function networkingBlock(domain: string): string {

@@ -44,7 +44,9 @@ jobs:
       - name: Set up bun
         uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
         with:
-          bun-version: latest
+          # Pin to the repo's declared packageManager so release-to-release builds
+          # don't drift with a moving `latest`.
+          bun-version: 1.3.14
           # This workflow is release-triggered and publishes to npm; a poisoned
           # cache could taint the tarball, so disable caching (zizmor cache-poisoning).
           # node + npm (used for the provenance publish) come from the runner's
@@ -58,6 +60,15 @@ jobs:
         # still works — esbuild/workerd resolve their platform binaries via
         # optionalDependencies, not postinstall.
         run: bun install --frozen-lockfile --ignore-scripts
+
+      - name: Quality gate
+        # A GitHub Release can be cut from any commit (e.g. a manual release off a
+        # branch), not only release-please's main-gated one — so re-run the same
+        # checks here before publishing, so a red build can never reach npm.
+        run: |
+          bun run lint
+          bun run typecheck
+          bun run test
 
       - name: Build
         # Builds the workspace so core/cli/create-statusbeam emit their dist/.

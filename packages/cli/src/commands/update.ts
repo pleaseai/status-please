@@ -3,7 +3,7 @@
  * manager. This is the whole point of ADR-0002: upgrading is a dependency bump,
  * not an upstream fork-merge.
  */
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { dim, step, success } from '../lib/log'
 import { userProject } from '../lib/project'
@@ -15,8 +15,10 @@ export interface UpdateOptions {
   cwd: string
 }
 
+export type PackageManager = 'bun' | 'pnpm' | 'yarn' | 'npm'
+
 /** Detect the package manager from the lockfile present in the user's project. */
-function detectPackageManager(root: string): 'bun' | 'pnpm' | 'yarn' | 'npm' {
+export function detectPackageManager(root: string): PackageManager {
   if (existsSync(join(root, 'bun.lock')) || existsSync(join(root, 'bun.lockb'))) {
     return 'bun'
   }
@@ -29,13 +31,41 @@ function detectPackageManager(root: string): 'bun' | 'pnpm' | 'yarn' | 'npm' {
   return 'npm'
 }
 
+/**
+ * Yarn Berry (>= 2) uses `yarn up`; Classic uses `yarn upgrade`. Berry lockfiles
+ * carry a `__metadata:` block, which Classic ones don't — a reliable discriminator.
+ */
+export function isYarnBerry(root: string): boolean {
+  if (existsSync(join(root, '.yarnrc.yml'))) {
+    return true
+  }
+  try {
+    return readFileSync(join(root, 'yarn.lock'), 'utf8').includes('__metadata:')
+  }
+  catch {
+    return false
+  }
+}
+
+/**
+ * The upgrade subcommand + packages for each package manager. `yarn update`
+ * doesn't exist — Classic uses `upgrade`, Berry uses `up`. bun/pnpm/npm all use
+ * `update`. `yarnBerry` only matters when `pm === 'yarn'`.
+ */
+export function upgradeArgs(pm: PackageManager, yarnBerry = false): string[] {
+  if (pm === 'yarn') {
+    return [yarnBerry ? 'up' : 'upgrade', ...PACKAGES]
+  }
+  return ['update', ...PACKAGES]
+}
+
 export async function update(opts: UpdateOptions): Promise<void> {
   const project = userProject(opts.cwd)
   const pm = detectPackageManager(project.root)
 
   step(`Updating @statusbeam/* via ${pm}`)
-  // `update` on every PM honors the ranges in package.json and rewrites the lockfile.
-  await run(pm, ['update', ...PACKAGES], { cwd: project.root })
+  // Each PM's upgrade command honors the ranges in package.json and rewrites the lockfile.
+  await run(pm, upgradeArgs(pm, pm === 'yarn' && isYarnBerry(project.root)), { cwd: project.root })
 
   success('Updated. Run `statusbeam deploy` to ship the new version.')
   dim('Tip: automate this with Renovate or Dependabot on your repo.')

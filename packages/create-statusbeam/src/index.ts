@@ -46,6 +46,10 @@ function parseArgs(argv: string[]): Args {
       i += 1
       args.name = argv[i]
     }
+    else if (a?.startsWith('--name=')) {
+      // Accept the `--name=value` form too, the standard CLI convention.
+      args.name = a.slice('--name='.length)
+    }
     else if (a && !a.startsWith('-') && !sawDir) {
       args.dir = a
       sawDir = true
