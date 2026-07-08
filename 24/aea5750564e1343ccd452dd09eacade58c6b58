@@ -1,0 +1,23 @@
+apps/worker/src/notify.test.ts
+  s_3ddd8e8777c597::t_2a429c0e7f03d8 139-143,145-149
+  s_3ddd8e8777c597::t_6f0cfc23bfca0d 144
+apps/worker/src/notify.ts
+  s_3ddd8e8777c597::t_aa2163c47d0ee8 70-76
+  s_3ddd8e8777c597::t_d47648a957ae44 16-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "24aea5750564e1343ccd452dd09eacade58c6b58",
+  "prompts": {},
+  "sessions": {
+    "s_3ddd8e8777c597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fd456b48-a21d-4549-b0c9-bff0e1f5036b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
