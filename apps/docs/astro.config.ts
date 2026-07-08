@@ -18,7 +18,7 @@ export default defineConfig({
     starlight({
       title: 'StatusBeam',
       description:
-        'Open-source, CDN-native status page generator — a modern successor to upptime.',
+        'Open-source, CDN-native status page generator — a modern take on upptime.',
       logo: { src: './src/assets/logo.svg', alt: 'StatusBeam' },
       social: [
         {
@@ -59,7 +59,7 @@ export default defineConfig({
         starlightLlmsTxt({
           projectName: 'StatusBeam',
           description:
-            'Open-source, CDN-native status page generator — a modern successor to upptime. Runs on Cloudflare (Workers, Cron Triggers, D1, KV).',
+            'Open-source, CDN-native status page generator — a modern take on upptime. Runs on Cloudflare (Workers, Cron Triggers, D1, KV).',
         }),
         // Exposes every page as clean, AST-transformed raw Markdown for agents
         // and crawlers. Pinned to `.md.txt` so it owns a namespace distinct from
