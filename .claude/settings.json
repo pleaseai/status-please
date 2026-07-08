@@ -13,6 +13,14 @@
       "autoUpdate": true
     }
   },
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./.dev.vars)",
+      "Read(./.dev.vars.*)"
+    ]
+  },
   "env": {
     "ENABLE_TOOL_SEARCH": "true",
     "CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS": "40000"
