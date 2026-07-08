@@ -12,6 +12,13 @@ export interface Env {
   CF_API_TOKEN?: string
   /** Zone id whose cache is purged by tag. Optional; pairs with CF_API_TOKEN. */
   CF_ZONE_ID?: string
+  /**
+   * Shared secret authenticating inbound Statuspage webhooks. Compared
+   * constant-time against the request's `?token=` by {@link handleStatuspageWebhook}.
+   * When unset, the webhook endpoint fails closed (every request → 401), so the
+   * endpoint is never open. Set with `wrangler secret put WEBHOOK_SECRET`.
+   */
+  WEBHOOK_SECRET?: string
 }
 
 /** KV keys used by statusbeam. */
