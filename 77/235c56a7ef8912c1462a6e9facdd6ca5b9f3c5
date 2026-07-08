@@ -1,0 +1,21 @@
+packages/core/src/badge.test.ts
+  s_01b0c145345dec::t_39d5d5823b62de 142-150
+packages/core/src/badge.ts
+  s_01b0c145345dec::t_ddb1b147ee832e 169-174,176-183
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "77235c56a7ef8912c1462a6e9facdd6ca5b9f3c5",
+  "prompts": {},
+  "sessions": {
+    "s_01b0c145345dec": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "afe7b155-76f3-42fa-8651-f41686e167f2",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
