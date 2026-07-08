@@ -191,6 +191,22 @@ theme:
   locale: en # fallback UI language: en | zh | ja | ko (default en)
 ```
 
+### Check types
+
+Each site sets a `check` kind:
+
+| `check`      | What it does                                                                 |
+| ------------ | --------------------------------------------------------------------------- |
+| `http`       | Fetches `url`; `up`/`degraded`/`down` from the status code and response time.|
+| `tcp`        | Reserved — currently falls through to `http` ([roadmap](#roadmap)).          |
+| `ssl`        | Reserved — currently falls through to `http` ([roadmap](#roadmap)).          |
+| `statuspage` | Mirrors an Atlassian Statuspage's own verdict. See the [Statuspage adapter guide](./docs/adapters/statuspage.md).|
+
+The **Statuspage adapter** reads a vendor's `/api/v2/summary.json` (Claude,
+Vercel, `*.statuspage.io`, …) and maps their overall indicator — or a single
+component you name — to a status. Full reference, status-mapping tables, and
+edge behavior: [`docs/adapters/statuspage.md`](./docs/adapters/statuspage.md).
+
 ### Internationalization
 
 The status page UI is translated into English (`en`), Simplified Chinese (`zh`),
@@ -301,6 +317,7 @@ deploy — is in **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 - [x] **Notify layer (part 1)** — Slack + generic webhook on status change, decoupled via Queues.
 - [x] **Edge cache** — `Cache-Tag` emit + purge-on-change loop between the check and display layers.
 - [x] **Badges & public API** — [shields.io endpoint](#badges--public-api) badges + JSON status API, edge-cached.
+- [x] **Statuspage adapter** — mirror any Atlassian Statuspage by page or component ([guide](./docs/adapters/statuspage.md)).
 
 **In progress / planned**
 
