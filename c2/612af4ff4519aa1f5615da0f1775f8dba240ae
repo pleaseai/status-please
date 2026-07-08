@@ -1,0 +1,19 @@
+.claude/agent-memory/review-review-comment-analyzer/statusbeam-queue-notify-comments.md
+  s_3ddd8e8777c597::t_147a0fe89394c8 1-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c2612af4ff4519aa1f5615da0f1775f8dba240ae",
+  "prompts": {},
+  "sessions": {
+    "s_3ddd8e8777c597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fd456b48-a21d-4549-b0c9-bff0e1f5036b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
