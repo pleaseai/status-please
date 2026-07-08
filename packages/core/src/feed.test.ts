@@ -50,6 +50,20 @@ describe('sortIncidentsForFeed', () => {
     const withUpdate = incident({ id: 4 })
     expect(sortIncidentsForFeed([withUpdate, noUpdates]).map(i => i.id)).toEqual([3, 4])
   })
+
+  it('sorts an updateless incident by resolvedAt over startedAt', () => {
+    // startedAt is old, but resolvedAt is the most recent activity → sorts first.
+    const resolved = incident({ id: 5, updates: [], startedAt: '2026-01-01T00:00:00.000Z', resolvedAt: '2026-03-01T00:00:00.000Z' })
+    const other = incident({ id: 6, updates: [update(1, 'investigating', '2026-02-01T00:00:00.000Z')] })
+    expect(sortIncidentsForFeed([other, resolved]).map(i => i.id)).toEqual([5, 6])
+  })
+
+  it('keeps the comparator total when a timestamp is unparseable (no NaN poisoning)', () => {
+    const bad = incident({ id: 7, updates: [update(1, 'investigating', 'not-a-date')] })
+    const good = incident({ id: 8 })
+    // The malformed one sorts to the epoch (last), the valid one stays ahead.
+    expect(sortIncidentsForFeed([bad, good]).map(i => i.id)).toEqual([8, 7])
+  })
 })
 
 describe('incidentContentHtml', () => {
@@ -102,5 +116,44 @@ describe('buildRssFeed', () => {
     expect(xml).toContain('<pubDate>Thu, 01 Jan 2026 01:00:00 GMT</pubDate>')
     expect(xml).toContain('<description>&lt;p&gt;')
     expect(xml).toContain('<link>https://demo.statusbeam.dev/</link>')
+  })
+})
+
+describe('feed robustness', () => {
+  it('escapes XML metacharacters in the incident title and page name (not just the body)', () => {
+    const meta = { ...META, name: 'Acme & <Co>' }
+    const inc = incident({ title: 'API & DB "outage" <down>' })
+    for (const xml of [buildAtomFeed([inc], meta), buildRssFeed([inc], meta)]) {
+      expect(xml).toContain('API &amp; DB &quot;outage&quot; &lt;down&gt;')
+      expect(xml).not.toContain('API & DB "outage" <down>')
+      expect(xml).toContain('Acme &amp; &lt;Co&gt;')
+    }
+  })
+
+  it('does not throw or emit "Invalid Date" when an incident timestamp is unparseable', () => {
+    const broken = incident({ startedAt: 'not-a-date', resolvedAt: null, updates: [update(1, 'investigating', 'nonsense')] })
+    // Atom's toISOString() would RangeError, RSS's toUTCString() would emit
+    // "Invalid Date" — both fall back to the feed build time instead.
+    const atom = buildAtomFeed([broken], META)
+    expect(atom).not.toContain('Invalid Date')
+    expect(atom).toContain('<published>2026-01-02T00:00:00.000Z</published>')
+    const rss = buildRssFeed([broken], { ...META, feedUrl: 'https://demo.statusbeam.dev/feed.rss' })
+    expect(rss).not.toContain('Invalid Date')
+    expect(rss).toContain('<pubDate>Fri, 02 Jan 2026 00:00:00 GMT</pubDate>')
+  })
+
+  it('does not throw on a non-finite `now`, falling back to the current build time', () => {
+    expect(() => buildAtomFeed([incident()], { ...META, now: Number.NaN })).not.toThrow()
+    const rss = buildRssFeed([incident()], { ...META, now: Number.NaN })
+    expect(rss).not.toContain('Invalid Date')
+  })
+
+  it('produces a valid, entry-less envelope for an empty incident list', () => {
+    const atom = buildAtomFeed([], META)
+    expect(atom).toContain('<feed xmlns="http://www.w3.org/2005/Atom">')
+    expect(atom).not.toContain('<entry>')
+    const rss = buildRssFeed([], META)
+    expect(rss).toContain('<channel>')
+    expect(rss).not.toContain('<item>')
   })
 })

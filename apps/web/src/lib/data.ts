@@ -119,6 +119,9 @@ export async function getLocale(): Promise<Locale> {
   return DEFAULT_LOCALE
 }
 
+// Warn once per isolate on a missing `config` key (see `warnedNoConfigKey`).
+let warnedNoConfigKeyForName = false
+
 /**
  * The status page's display name from the `config` YAML in KV — used as the feed
  * title. Falls back to a sensible default so `astro dev` and a misconfigured
@@ -131,6 +134,13 @@ export async function getPageName(): Promise<string> {
       const raw = await kv.get('config')
       if (raw) {
         return parseConfig(raw).name
+      }
+      // KV bound but no `config` key: warn once per isolate, mirroring
+      // `getLocale` — otherwise a deploy that never uploaded config serves the
+      // default feed title on every hit with nothing pointing at the cause.
+      if (!warnedNoConfigKeyForName) {
+        warnedNoConfigKeyForName = true
+        console.warn('getPageName: no `config` key in KV, falling back to default name')
       }
     }
     catch (err) {

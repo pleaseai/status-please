@@ -66,6 +66,19 @@ function formatUpdateTime(iso: string): string {
 }
 
 /**
+ * Parse an ISO timestamp to epoch ms, or `fallback` when it isn't a valid date.
+ * KV incident records are only type-asserted, never validated (see
+ * `getIncidents`), so a single malformed timestamp must not throw
+ * (`Date#toISOString()` raises `RangeError`) or corrupt the output — every date
+ * that reaches the feed goes through here first, mirroring the NaN guard
+ * {@link formatUpdateTime} already applies to the display timestamps.
+ */
+function toMs(iso: string, fallback: number): number {
+  const ms = new Date(iso).getTime()
+  return Number.isNaN(ms) ? fallback : ms
+}
+
+/**
  * The timestamp a feed reader should sort/display the incident by: its most
  * recent update, falling back to resolution then start. Drives both feed
  * ordering and each item's `pubDate` / `<updated>`.
@@ -76,8 +89,10 @@ function incidentUpdatedAt(incident: Incident): string {
 
 /** Incidents newest-activity-first (by {@link incidentUpdatedAt}), non-mutating. */
 export function sortIncidentsForFeed(incidents: Incident[]): Incident[] {
+  // `toMs(..., 0)` keeps the comparator total: a malformed timestamp sorts to
+  // the epoch instead of poisoning the sort with a `NaN` return.
   return [...incidents].sort(
-    (a, b) => new Date(incidentUpdatedAt(b)).getTime() - new Date(incidentUpdatedAt(a)).getTime(),
+    (a, b) => toMs(incidentUpdatedAt(b), 0) - toMs(incidentUpdatedAt(a), 0),
   )
 }
 
@@ -114,7 +129,12 @@ function feedHost(siteUrl: string): string {
  * Statuspage uses verbatim; it only needs to be constant for the URI to stay stable.
  */
 function tagUri(host: string, id?: number): string {
-  return id === undefined ? `tag:${host},2005:/history` : `tag:${host},2005:Incident/${id}`
+  // A WHATWG-parsed `.host` can't contain XML metacharacters, but `feedHost`
+  // falls back to the raw `siteUrl` on a parse failure — escape here so this
+  // (the one output the builders don't escape at the call site) can't break
+  // well-formedness, keeping the "everything reaching output is escaped" invariant total.
+  const safeHost = escapeXml(host)
+  return id === undefined ? `tag:${safeHost},2005:/history` : `tag:${safeHost},2005:Incident/${id}`
 }
 
 /**
@@ -124,15 +144,18 @@ function tagUri(host: string, id?: number): string {
  */
 export function buildAtomFeed(incidents: Incident[], meta: FeedMeta): string {
   const host = feedHost(meta.siteUrl)
-  const updated = new Date(meta.now ?? Date.now()).toISOString()
+  // `?? Date.now()` only covers an absent `now`; `Number.isFinite` also rejects
+  // a `NaN`/`Infinity` value, which would otherwise throw in `toISOString()`.
+  const buildMs = Number.isFinite(meta.now) ? (meta.now as number) : Date.now()
+  const updated = new Date(buildMs).toISOString()
 
   const entries = sortIncidentsForFeed(incidents).map(inc =>
     [
       '  <entry>',
       `    <id>${tagUri(host, inc.id)}</id>`,
       `    <title>${escapeXml(inc.title)}</title>`,
-      `    <published>${new Date(inc.startedAt).toISOString()}</published>`,
-      `    <updated>${new Date(incidentUpdatedAt(inc)).toISOString()}</updated>`,
+      `    <published>${new Date(toMs(inc.startedAt, buildMs)).toISOString()}</published>`,
+      `    <updated>${new Date(toMs(incidentUpdatedAt(inc), buildMs)).toISOString()}</updated>`,
       `    <link rel="alternate" type="text/html" href="${escapeXml(`${meta.siteUrl}/`)}"/>`,
       `    <content type="html">${escapeXml(incidentContentHtml(inc))}</content>`,
       '  </entry>',
@@ -161,7 +184,10 @@ export function buildAtomFeed(incidents: Incident[], meta: FeedMeta): string {
  */
 export function buildRssFeed(incidents: Incident[], meta: FeedMeta): string {
   const host = feedHost(meta.siteUrl)
-  const buildDate = new Date(meta.now ?? Date.now()).toUTCString()
+  // See `buildAtomFeed`: guard against a non-finite `now` that would otherwise
+  // surface as the literal string "Invalid Date" in `toUTCString()`.
+  const buildMs = Number.isFinite(meta.now) ? (meta.now as number) : Date.now()
+  const buildDate = new Date(buildMs).toUTCString()
 
   const items = sortIncidentsForFeed(incidents).map(inc =>
     [
@@ -169,7 +195,7 @@ export function buildRssFeed(incidents: Incident[], meta: FeedMeta): string {
       `      <title>${escapeXml(inc.title)}</title>`,
       `      <link>${escapeXml(`${meta.siteUrl}/`)}</link>`,
       `      <guid isPermaLink="false">${tagUri(host, inc.id)}</guid>`,
-      `      <pubDate>${new Date(incidentUpdatedAt(inc)).toUTCString()}</pubDate>`,
+      `      <pubDate>${new Date(toMs(incidentUpdatedAt(inc), buildMs)).toUTCString()}</pubDate>`,
       `      <description>${escapeXml(incidentContentHtml(inc))}</description>`,
       '    </item>',
     ].join('\n'),
