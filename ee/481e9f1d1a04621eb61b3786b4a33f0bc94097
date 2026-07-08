@@ -1,0 +1,21 @@
+.claude/agent-memory/review-review-code-reviewer/MEMORY.md
+  s_4e4d323763b7b6::t_0d0d6745b9e98d 4
+.claude/agent-memory/review-review-code-reviewer/pr30-cli-package-distribution-review.md
+  s_4e4d323763b7b6::t_b19c6e55000c51 1-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ee481e9f1d1a04621eb61b3786b4a33f0bc94097",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
