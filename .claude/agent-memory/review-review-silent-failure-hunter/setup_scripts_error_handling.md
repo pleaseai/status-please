@@ -48,3 +48,15 @@ warn-on-mismatch branch.
 kv:config / db:apply:remote / deploy steps (setup.sh:173,177,181) run without
 `|| true` under `set -euo pipefail` — failures there ARE surfaced correctly,
 confirmed by reading, not assumed.
+
+## Update — all three resolved in PR #22 (review pass 2)
+
+The behavior described above is the pre-fix state. Current code:
+
+- **D1/KV lookup swallow → FIXED.** `lookup_d1`/`lookup_kv` capture only stdout and
+  `return 1` on a non-zero `wr` exit; the call sites dropped `|| true` and `die` with an
+  auth hint. A failed wrangler call now aborts instead of being misread as "not found".
+- **setNetworking warn-only fallback → FIXED.** The all-three-miss branch now `throw`s,
+  so setup.sh's `set -e` aborts before the deploy steps instead of shipping the demo domain.
+- **setCron no-warning → FIXED.** `setCron` now `throw`s on a shape mismatch too, matching
+  setNetworking. A dropped schedule can no longer look applied.

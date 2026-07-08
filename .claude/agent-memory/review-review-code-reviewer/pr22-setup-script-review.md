@@ -36,3 +36,15 @@ call (used for the custom-domain/cron/page-name prompts) has no EOF guard under
 does have `|| true`. Ctrl-D at one of those three prompts aborts the whole script via
 errexit instead of hitting the script's `die()` path. Minor UX issue, not a data-correctness
 bug.
+
+## Update — resolved in PR #22 (review pass 2)
+
+Most of the above was fixed in the same PR; only the collision limitation remains open:
+
+- **ask() EOF gap → FIXED.** `ask()`'s `read` now ends with `|| true`, so Ctrl-D falls
+  back to the default instead of aborting via errexit.
+- **D1/KV lookup swallow → FIXED.** `lookup_d1`/`lookup_kv` now capture only stdout and
+  return non-zero on a failed `wr` call, so the caller aborts with an auth hint instead
+  of masking the failure and taking the wrong create branch.
+- **D1/KV name-collision (account-wide match) → STILL OPEN (accepted).** Unchanged; the
+  single-deployment-per-account assumption still holds. Revisit if multi-env support lands.
