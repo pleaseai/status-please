@@ -59,6 +59,11 @@ const localeHref = (l: string): string => new URL(`/${l}/`, Astro.site ?? Astro.
       <link rel="alternate" hreflang={l} href={localeHref(l)} />
     ))}
     <link rel="alternate" hreflang="x-default" href={localeHref(DEFAULT_LOCALE)} />
+    {/* Incident-history feed autodiscovery (RSS + Atom), so readers and browsers
+        find the feed from any localized page. Both live at the origin root,
+        outside the locale prefix. */}
+    <link rel="alternate" type="application/rss+xml" title={`${t.page.title} — Incident History`} href={new URL('/feed.rss', Astro.site ?? Astro.url).href} />
+    <link rel="alternate" type="application/atom+xml" title={`${t.page.title} — Incident History`} href={new URL('/feed.atom', Astro.site ?? Astro.url).href} />
   </head>
   <body class="min-h-full">
     <main class="mx-auto max-w-3xl px-4 py-10">
