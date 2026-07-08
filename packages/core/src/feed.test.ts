@@ -148,6 +148,17 @@ describe('feed robustness', () => {
     expect(rss).not.toContain('Invalid Date')
   })
 
+  it('escapes the tag: URI host when siteUrl is unparseable (feedHost raw fallback)', () => {
+    // An unparseable siteUrl makes feedHost return the raw string; without
+    // escaping in tagUri, `&`/`<` would break the <id>/<guid> XML.
+    const meta = { ...META, siteUrl: 'not-a-url & <x>' }
+    const atom = buildAtomFeed([incident()], meta)
+    expect(atom).toContain('<id>tag:not-a-url &amp; &lt;x&gt;,2005:/history</id>')
+    expect(atom).not.toContain('not-a-url & <x>,2005')
+    const rss = buildRssFeed([incident()], meta)
+    expect(rss).toContain('<guid isPermaLink="false">tag:not-a-url &amp; &lt;x&gt;,2005:Incident/2</guid>')
+  })
+
   it('produces a valid, entry-less envelope for an empty incident list', () => {
     const atom = buildAtomFeed([], META)
     expect(atom).toContain('<feed xmlns="http://www.w3.org/2005/Atom">')
