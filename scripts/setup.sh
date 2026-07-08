@@ -112,7 +112,7 @@ lookup_d1() {
       const a = JSON.parse(text);
       const d = Array.isArray(a) ? a.find(x => x.name === process.env.DB_NAME) : null;
       process.stdout.write(d ? String(d.uuid || d.id || "") : "");
-    } catch { process.exit(0); }
+    } catch { process.exit(1); } // non-empty but unparseable → fail, do not misread as "not found"
   '
 }
 lookup_kv() {
@@ -125,7 +125,7 @@ lookup_kv() {
       const a = JSON.parse(text);
       const k = Array.isArray(a) ? a.find(x => String(x.title || "").endsWith("STATUS_KV")) : null;
       process.stdout.write(k ? String(k.id) : "");
-    } catch { process.exit(0); }
+    } catch { process.exit(1); } // non-empty but unparseable → fail, do not misread as "not found"
   '
 }
 
