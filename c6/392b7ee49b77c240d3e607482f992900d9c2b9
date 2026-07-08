@@ -1,0 +1,40 @@
+.please/docs/knowledge/workflow.md
+  s_984df4a422abe4::t_d2440d3ce21b7f 1-136
+.please/docs/knowledge/tech-stack.md
+  s_984df4a422abe4::t_fc8022bc51486f 1-77
+.please/docs/knowledge/product-guidelines.md
+  s_984df4a422abe4::t_ef9a6e5f9ab911 1-45
+.please/INDEX.md
+  s_984df4a422abe4::t_12ff03ef3e03c3 1-37
+CLAUDE.md
+  s_984df4a422abe4::t_ca4122bc3c0e43 1-29
+.please/docs/decisions/index.md
+  s_984df4a422abe4::t_4d1e58ddb050fa 1-6
+.please/docs/product-specs/index.md
+  s_984df4a422abe4::t_2571dfbffabd6f 1-6
+.please/config.yml
+  s_984df4a422abe4::t_487642713a721a 32-47
+  s_984df4a422abe4::t_566802e5b95fac 1-31
+ARCHITECTURE.md
+  s_984df4a422abe4::t_4f19094d6feb0d 1-230
+.please/docs/tracks/tech-debt-tracker.md
+  s_984df4a422abe4::t_236a99add9c74b 1-13
+.please/docs/knowledge/product.md
+  s_984df4a422abe4::t_0a6877c8954bd5 1-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c6392b7ee49b77c240d3e607482f992900d9c2b9",
+  "prompts": {},
+  "sessions": {
+    "s_984df4a422abe4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a57dacee-b99d-47ef-be17-6a159feb5833",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
