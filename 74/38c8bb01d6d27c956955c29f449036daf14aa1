@@ -1,0 +1,22 @@
+apps/docs/.claude/skills/run-docs/SKILL.md
+  s_3d7ab525d3b2b5::t_07ff2e4928f6b1 1-113
+apps/docs/.claude/skills/run-docs/driver.mjs
+  s_3d7ab525d3b2b5::t_ce42e26283bce9 1-34,38-82
+  s_3d7ab525d3b2b5::t_9cf5310647030d 35-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7438c8bb01d6d27c956955c29f449036daf14aa1",
+  "prompts": {},
+  "sessions": {
+    "s_3d7ab525d3b2b5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9530332c-81a5-4319-841a-84a211ae7dde",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
