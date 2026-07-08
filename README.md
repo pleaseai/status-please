@@ -205,6 +205,46 @@ choice.
 
 ---
 
+## Badges & public API
+
+Every deployment exposes a small public JSON surface at `/api/*`, served from the
+same edge-cached KV snapshot as the status page (and purged on the same status
+changes, so badges never lag the page).
+
+### Badges
+
+The badge routes speak the [shields.io endpoint](https://shields.io/badges/endpoint-badge)
+protocol — point shields.io at one and it renders the SVG; status-please only
+emits the JSON. Replace `<origin>` with your status page's URL and `<slug>` with
+a component's slug (the `slug` from `status.config.yml`, or the slugified name):
+
+| Badge          | Endpoint                                             |
+| -------------- | ---------------------------------------------------- |
+| Overall status | `/api/badge.json`                                    |
+| Site status    | `/api/badge/<slug>.json`                             |
+| Site uptime    | `/api/badge/<slug>/uptime.json` (`?period=day\|week\|month`, default `month`) |
+| Response time  | `/api/badge/<slug>/response-time.json`               |
+
+```markdown
+![status](https://img.shields.io/endpoint?url=https://status.example.com/api/badge.json)
+![uptime](https://img.shields.io/endpoint?url=https://status.example.com/api/badge/api/uptime.json)
+```
+
+Colors are derived from severity (green → operational, yellow → degraded, red →
+down), uptime ratio, and response time. Add any shields.io query (`?style=flat-square`,
+`?label=API`, `?logo=cloudflare`) to restyle the rendered badge.
+
+### Status API
+
+- `GET /api/status.json` — the whole dashboard: rolled-up `status` plus a lean
+  per-site summary (status, response time, day/week/month uptime).
+- `GET /api/status/<slug>.json` — one site's full record, including the 90-day
+  history and response-time samples.
+
+Both send `Access-Control-Allow-Origin: *`, so a browser can fetch them directly.
+
+---
+
 ## Deployment
 
 `status-please` deploys to any Cloudflare account (Workers + D1 + KV + Pages). Vercel
@@ -253,12 +293,12 @@ deploy — is in **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 - [x] **Incidents** — lifecycle model (Investigating → Identified → Monitoring → Resolved) + timeline UI.
 - [x] **Notify layer (part 1)** — Slack + generic webhook on status change, decoupled via Queues.
 - [x] **Edge cache** — `Cache-Tag` emit + purge-on-change loop between the check and display layers.
+- [x] **Badges & public API** — [shields.io endpoint](#badges--public-api) badges + JSON status API, edge-cached.
 
 **In progress / planned**
 
 - [ ] **TCP/SSL checks** — extend the Cron Worker beyond HTTP (config + schema already accept them).
 - [ ] **Scheduled maintenance** — distinct, forward-looking incident entries.
-- [ ] **Badges & public API** — shields.io-compatible JSON endpoints.
 - [ ] **Notify layer (part 2)** — email + RSS/Atom feeds.
 - [ ] **Migration guide** — importing an existing `.upptimerc.yml`.
 - [ ] **Vercel adapter path** — documented alternative to Cloudflare.

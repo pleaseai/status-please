@@ -71,6 +71,12 @@ export async function getSummary(): Promise<SiteSummary[]> {
   return SAMPLE
 }
 
+/** Find one site in the snapshot by slug, or `undefined` if it isn't tracked. */
+export async function getSite(slug: string): Promise<SiteSummary | undefined> {
+  const summary = await getSummary()
+  return summary.find(s => s.slug === slug)
+}
+
 // A missing `config` key is a steady-state deploy misconfiguration, so
 // `getLocale()` (invoked on every bare-`/` request) would log it on every hit.
 // Warn once per Worker isolate instead — enough to surface the problem without
