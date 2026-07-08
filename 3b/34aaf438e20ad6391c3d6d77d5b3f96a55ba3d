@@ -1,0 +1,32 @@
+docs/adapters/statuspage.md
+  s_38e361e995aff1::t_d29d36c47cfaae 44
+packages/core/src/config.ts
+  s_38e361e995aff1::t_d8d2c05e77bf6e 30-31,41-51
+  s_f9e0f378bf7017::t_8754c9a5ac1c91 52
+packages/core/src/config.test.ts
+  s_38e361e995aff1::t_52446996f8b9cf 45-50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3b34aaf438e20ad6391c3d6d77d5b3f96a55ba3d",
+  "prompts": {},
+  "sessions": {
+    "s_38e361e995aff1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3f486a74-d75b-47c9-9057-842d28238405",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    },
+    "s_f9e0f378bf7017": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a50ff18b-eb64-40a3-96d6-dbd56f2a137f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
