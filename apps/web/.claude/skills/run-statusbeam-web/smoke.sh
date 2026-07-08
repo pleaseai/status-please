@@ -73,9 +73,24 @@ EOF
   [[ -s "$outfile" ]]
 }
 
+# Close only the Orca tabs pointing at our own dev server — never a tab the user
+# had open (shoot() may `orca goto` an existing tab). Targets the stable
+# browserPageId, so it's index-shift-safe.
+close_orca_tabs() {
+  [[ -n "${URL:-}" ]] || return 0
+  orca tab list --json 2>/dev/null \
+    | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const r=JSON.parse(s).result||{};for(const t of (r.tabs||[]))if((t.url||"").startsWith(process.argv[1]))console.log(t.browserPageId)})' "$URL" \
+    | while read -r pid; do orca tab close --page "$pid" >/dev/null 2>&1 || true; done
+}
+
 cleanup() {
-  [[ "${BACKEND:-}" == agent-browser ]] && agent-browser close >/dev/null 2>&1 || true
-  [[ "${KEEP_SERVER:-0}" == 1 ]] || bunx astro dev stop >/dev/null 2>&1 || true
+  # KEEP_SERVER leaves everything up — the browser session too, not just the server.
+  [[ "${KEEP_SERVER:-0}" == 1 ]] && return 0
+  case "${BACKEND:-}" in
+    agent-browser) agent-browser close >/dev/null 2>&1 || true ;;
+    orca)          close_orca_tabs ;;
+  esac
+  bunx astro dev stop >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
 
