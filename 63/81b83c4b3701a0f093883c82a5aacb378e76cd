@@ -1,0 +1,23 @@
+.please/docs/knowledge/workflow.md
+  s_984df4a422abe4::t_9bab214d4b3ae3 102
+.please/docs/knowledge/product.md
+  s_984df4a422abe4::t_719ffd33a55c50 46,50-52
+.please/docs/knowledge/tech-stack.md
+  s_984df4a422abe4::t_228c9f65f50760 53-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6381b83c4b3701a0f093883c82a5aacb378e76cd",
+  "prompts": {},
+  "sessions": {
+    "s_984df4a422abe4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a57dacee-b99d-47ef-be17-6a159feb5833",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
