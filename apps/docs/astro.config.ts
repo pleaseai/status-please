@@ -1,3 +1,4 @@
+import mdx from '@astrojs/mdx'
 import starlight from '@astrojs/starlight'
 import { defineConfig } from 'astro/config'
 import starlightLlmsTxt from 'starlight-llms-txt'
@@ -82,5 +83,9 @@ export default defineConfig({
         }),
       ],
     }),
+    // Enables `.mdx` pages (import + JSX components like <Aside>, <Steps>,
+    // <Card>). Must come AFTER starlight(). Without it Astro renders `.mdx`
+    // as plain Markdown and shows the `import` line as literal text.
+    mdx(),
   ],
 })
