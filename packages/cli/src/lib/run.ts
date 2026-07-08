@@ -11,6 +11,15 @@ export interface RunOptions {
   env?: NodeJS.ProcessEnv
   /** When true, swallow a non-zero exit and return it instead of rejecting. */
   allowFailure?: boolean
+  /**
+   * Run through a shell. Needed only to launch a **bare** command name (a package
+   * manager, `git`) on Windows, where those resolve to `.cmd`/`.ps1` shims Node's
+   * spawn won't run directly. Off by default — the wrangler/astro spawns use an
+   * absolute `node` path (`execPath`) that needs no shell, so their config-derived
+   * args (e.g. a D1 `database_name`) never reach `cmd.exe` for reinterpretation.
+   * Only set it where every argument is a compile-time constant.
+   */
+  shell?: boolean
 }
 
 export interface RunResult {
@@ -19,12 +28,6 @@ export interface RunResult {
   stderr: string
 }
 
-// On Windows, package managers and git resolve to `.cmd`/`.ps1` shims that
-// Node's spawn won't launch without a shell. All commands here are first-party
-// (fixed subcommands + the user's own local config values, run on their own
-// machine — no privilege boundary), so shelling out on win32 is safe.
-const useShell = process.platform === 'win32'
-
 /** Run a command, inheriting stdio so the user sees wrangler/astro output live. */
 export function run(cmd: string, args: string[], opts: RunOptions = {}): Promise<number> {
   return new Promise((resolve, reject) => {
@@ -32,7 +35,7 @@ export function run(cmd: string, args: string[], opts: RunOptions = {}): Promise
       cwd: opts.cwd,
       env: opts.env ?? process.env,
       stdio: 'inherit',
-      shell: useShell,
+      shell: opts.shell ?? false,
     })
     child.on('error', reject)
     child.on('close', (code) => {
@@ -53,7 +56,7 @@ export function capture(cmd: string, args: string[], opts: RunOptions = {}): Pro
       cwd: opts.cwd,
       env: opts.env ?? process.env,
       stdio: ['ignore', 'pipe', 'pipe'],
-      shell: useShell,
+      shell: opts.shell ?? false,
     })
     let stdout = ''
     let stderr = ''

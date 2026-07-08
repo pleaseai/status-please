@@ -55,12 +55,14 @@ export async function createD1(w: Wrangler, name: string): Promise<void> {
 }
 
 /**
- * KV namespace id for the `STATUS_KV` binding, or undefined. `createKv` runs
- * `kv namespace create STATUS_KV` with no --env/--preview, so wrangler titles the
- * namespace exactly `STATUS_KV` (title = `${env}${binding}${preview}`, see
- * wrangler's kv-namespace-create handler) — not `${workerName}-STATUS_KV`. Match
- * the title exactly so an unrelated namespace like `MY_STATUS_KV` can't be picked
- * up. Throws on a non-JSON wrangler response rather than crashing on parse.
+ * KV namespace id for the `STATUS_KV` binding, or undefined. The title wrangler
+ * gives the namespace `createKv` makes varies by version: current wrangler uses
+ * just the binding (`STATUS_KV`, from `${env}${binding}${preview}` in its
+ * kv-namespace-create handler), while older wrangler and the Cloudflare KV docs
+ * prepend the worker name (`${workerName}-STATUS_KV`). Match both so `setup`
+ * finds the namespace it just created regardless of the installed wrangler — but
+ * require the `-` before a prefixed `STATUS_KV` so an unrelated `MY_STATUS_KV`
+ * isn't picked up. Throws on a non-JSON wrangler response rather than crashing.
  */
 export async function lookupKv(w: Wrangler): Promise<string | undefined> {
   const [cmd, a] = args(w, ['kv', 'namespace', 'list', '--json'])
@@ -76,7 +78,9 @@ export async function lookupKv(w: Wrangler): Promise<string | undefined> {
   catch {
     throw new Error(`could not parse the KV namespace list from wrangler (expected JSON). Output:\n${text}`)
   }
-  const ns = Array.isArray(list) ? list.find(x => x.title === 'STATUS_KV') : undefined
+  const ns = Array.isArray(list)
+    ? list.find(x => x.title === 'STATUS_KV' || (x.title?.endsWith('-STATUS_KV') ?? false))
+    : undefined
   return ns?.id
 }
 

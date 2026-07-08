@@ -131,8 +131,9 @@ async function main(): Promise<void> {
   }
   await writeFile(join(target, 'package.json'), `${JSON.stringify(pkg, null, 2)}\n`)
 
-  // 5. git init (best-effort — a scaffold without git is still usable).
-  spawnSync('git', ['init', '--quiet'], { cwd: target, stdio: 'ignore' })
+  // 5. git init (best-effort — a scaffold without git is still usable). `shell`
+  // on Windows resolves git's shim; args are constant so there's no injection.
+  spawnSync('git', ['init', '--quiet'], { cwd: target, stdio: 'ignore', shell: process.platform === 'win32' })
 
   const rel = args.dir === '.' ? '.' : args.dir
   process.stdout.write(`\n✓ Scaffolded a StatusBeam project in ${target}\n\nNext:\n`)

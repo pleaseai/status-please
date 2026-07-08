@@ -5,6 +5,7 @@
  */
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import process from 'node:process'
 import { dim, step, success } from '../lib/log'
 import { userProject } from '../lib/project'
 import { run } from '../lib/run'
@@ -64,8 +65,13 @@ export async function update(opts: UpdateOptions): Promise<void> {
   const pm = detectPackageManager(project.root)
 
   step(`Updating @statusbeam/* via ${pm}`)
-  // Each PM's upgrade command honors the ranges in package.json and rewrites the lockfile.
-  await run(pm, upgradeArgs(pm, pm === 'yarn' && isYarnBerry(project.root)), { cwd: project.root })
+  // Each PM's upgrade command honors the ranges in package.json and rewrites the
+  // lockfile. `pm` is a bare command name → needs a shell on Windows to resolve
+  // its `.cmd` shim; safe because every argument here is a compile-time constant.
+  await run(pm, upgradeArgs(pm, pm === 'yarn' && isYarnBerry(project.root)), {
+    cwd: project.root,
+    shell: process.platform === 'win32',
+  })
 
   success('Updated. Run `statusbeam deploy` to ship the new version.')
   dim('Tip: automate this with Renovate or Dependabot on your repo.')
