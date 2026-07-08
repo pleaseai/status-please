@@ -33,6 +33,11 @@ describe('escapeXml', () => {
   it('escapes the five predefined entities', () => {
     expect(escapeXml(`a & b < c > d " e ' f`)).toBe('a &amp; b &lt; c &gt; d &quot; e &apos; f')
   })
+
+  it('returns an empty string for a nullish value (type-asserted KV records)', () => {
+    expect(escapeXml(null)).toBe('')
+    expect(escapeXml(undefined)).toBe('')
+  })
 })
 
 describe('sortIncidentsForFeed', () => {
@@ -77,6 +82,22 @@ describe('incidentContentHtml', () => {
   it('places the most recent update first', () => {
     const html = incidentContentHtml(incident())
     expect(html.indexOf('Identified')).toBeLessThan(html.indexOf('Investigating'))
+  })
+
+  it('escapes a malformed createdAt in the timestamp slot (no raw markup after decode)', () => {
+    // An unparseable createdAt containing markup must be escaped like the body,
+    // not passed through raw into the <small> slot.
+    const html = incidentContentHtml(incident({
+      updates: [update(1, 'investigating', '<script>&', 'body')],
+    }))
+    expect(html).toContain('<small>&lt;script&gt;&amp;</small>')
+    expect(html).not.toContain('<small><script>&</small>')
+  })
+
+  it('does not crash when an update body is missing (nullish from bad KV)', () => {
+    const broken = incident({ updates: [{ id: 1, incidentId: 2, state: 'investigating', body: undefined as unknown as string, createdAt: '2026-01-01T00:00:00.000Z' }] })
+    expect(() => incidentContentHtml(broken)).not.toThrow()
+    expect(incidentContentHtml(broken)).toContain('<strong>Investigating</strong> - </p>')
   })
 })
 
@@ -128,6 +149,13 @@ describe('feed robustness', () => {
       expect(xml).not.toContain('API & DB "outage" <down>')
       expect(xml).toContain('Acme &amp; &lt;Co&gt;')
     }
+  })
+
+  it('does not crash when an incident title is missing (nullish from bad KV)', () => {
+    const broken = incident({ title: undefined as unknown as string })
+    expect(() => buildAtomFeed([broken], META)).not.toThrow()
+    expect(() => buildRssFeed([broken], META)).not.toThrow()
+    expect(buildAtomFeed([broken], META)).toContain('<title></title>')
   })
 
   it('does not throw or emit "Invalid Date" when an incident timestamp is unparseable', () => {

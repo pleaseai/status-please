@@ -1,4 +1,4 @@
-import type { CheckStatus, DayStat, Incident, Locale, ResponsePoint, SiteSummary } from '@statusbeam/core'
+import type { CheckStatus, DayStat, Incident, Locale, ResponsePoint, SiteSummary, StatusConfig } from '@statusbeam/core'
 import { DEFAULT_LOCALE, parseConfig, resolveLocale } from '@statusbeam/core'
 import { env } from 'cloudflare:workers'
 
@@ -78,49 +78,60 @@ export async function getSite(slug: string): Promise<SiteSummary | undefined> {
 }
 
 // A missing `config` key is a steady-state deploy misconfiguration, so
-// `getLocale()` (invoked on every bare-`/` request) would log it on every hit.
-// Warn once per Worker isolate instead — enough to surface the problem without
-// flooding the logs. (The catch below logs unconditionally: a thrown KV/parse
-// error is exceptional, not steady-state, so each occurrence is worth a line.)
+// `getConfig()` (read on every bare-`/` request via `getLocale`) would log it on
+// every hit. Warn once per Worker isolate instead — enough to surface the
+// problem without flooding the logs. (The catch below logs unconditionally: a
+// thrown KV/parse error is exceptional, not steady-state, so each is worth a line.)
 let warnedNoConfigKey = false
 
 /**
- * Resolve the status page's UI locale from the `config` YAML in KV (the same
- * document the check Worker reads). Falls back to the default locale so `astro
- * dev` renders without Cloudflare bindings, and never throws — a malformed
- * config degrades to English rather than breaking the render.
+ * Read and parse the `config` YAML from KV (the same document the check Worker
+ * reads), or `null` when KV is unbound, the key is missing, or the read/parse
+ * fails. The single config-fetch seam behind {@link getLocale} and
+ * {@link getPageName}, so one request that needs both reads KV once. Never
+ * throws — every caller degrades to a sensible default rather than breaking the
+ * edge render.
  */
-export async function getLocale(): Promise<Locale> {
+async function getConfig(): Promise<StatusConfig | null> {
   const kv = env.STATUS_KV
-  if (kv) {
-    try {
-      // The KV read is inside the try too: a transient KV error must degrade to
-      // the default locale, not throw — `/`'s middleware fallback depends on
-      // this never failing the redirect.
-      const raw = await kv.get('config')
-      if (raw) {
-        return resolveLocale(parseConfig(raw).theme.locale)
-      }
-      // KV is bound but has no `config` key — the deploy step never uploaded it
-      // (or the key name is wrong). Warn (once per isolate) so the
-      // misconfiguration is debuggable, instead of silently serving the default.
-      if (!warnedNoConfigKey) {
-        warnedNoConfigKey = true
-        console.warn('getLocale: no `config` key in KV, falling back to default locale')
-      }
+  if (!kv) {
+    return null
+  }
+  try {
+    // The KV read is inside the try too: a transient KV error must degrade to a
+    // caller default, not throw — `/`'s middleware locale fallback depends on
+    // this never failing the redirect.
+    const raw = await kv.get('config')
+    if (raw) {
+      return parseConfig(raw)
     }
-    catch (err) {
-      // KV read failure or malformed config: fall back rather than fail the
-      // whole page render, but log it (matching cache.ts/notify.ts) so the
-      // operator can debug why `/` isn't honoring their configured `theme.locale`.
-      console.warn('getLocale: KV read failed or malformed config, falling back to default locale', err)
+    // KV is bound but has no `config` key — the deploy step never uploaded it
+    // (or the key name is wrong). Warn (once per isolate) so the
+    // misconfiguration is debuggable, instead of silently serving defaults.
+    if (!warnedNoConfigKey) {
+      warnedNoConfigKey = true
+      console.warn('getConfig: no `config` key in KV, callers fall back to defaults')
     }
   }
-  return DEFAULT_LOCALE
+  catch (err) {
+    // KV read failure or malformed config: fall back rather than fail the whole
+    // render, but log it (matching cache.ts/notify.ts) so the operator can
+    // debug why their configured `theme.locale`/`name` isn't honored.
+    console.warn('getConfig: KV read failed or malformed config, callers fall back to defaults', err)
+  }
+  return null
 }
 
-// Warn once per isolate on a missing `config` key (see `warnedNoConfigKey`).
-let warnedNoConfigKeyForName = false
+/**
+ * Resolve the status page's UI locale from the `config` YAML in KV. Falls back
+ * to the default locale so `astro dev` renders without Cloudflare bindings, and
+ * never throws — a malformed config degrades to English rather than breaking
+ * the render.
+ */
+export async function getLocale(): Promise<Locale> {
+  const config = await getConfig()
+  return config ? resolveLocale(config.theme.locale) : DEFAULT_LOCALE
+}
 
 /**
  * The status page's display name from the `config` YAML in KV — used as the feed
@@ -128,26 +139,8 @@ let warnedNoConfigKeyForName = false
  * deploy still render a valid feed, and never throws (mirrors {@link getLocale}).
  */
 export async function getPageName(): Promise<string> {
-  const kv = env.STATUS_KV
-  if (kv) {
-    try {
-      const raw = await kv.get('config')
-      if (raw) {
-        return parseConfig(raw).name
-      }
-      // KV bound but no `config` key: warn once per isolate, mirroring
-      // `getLocale` — otherwise a deploy that never uploaded config serves the
-      // default feed title on every hit with nothing pointing at the cause.
-      if (!warnedNoConfigKeyForName) {
-        warnedNoConfigKeyForName = true
-        console.warn('getPageName: no `config` key in KV, falling back to default name')
-      }
-    }
-    catch (err) {
-      console.warn('getPageName: KV read failed or malformed config, falling back to default name', err)
-    }
-  }
-  return 'statusbeam'
+  const config = await getConfig()
+  return config?.name ?? 'statusbeam'
 }
 
 /** ISO timestamp `hours` before now — keeps sample incidents fresh for `astro dev`. */
