@@ -22,7 +22,8 @@ import { handleStatuspageWebhook } from './webhook'
  *
  * - `queue` (Cloudflare Queues): dispatch each enqueued notification with the
  *   queue's automatic retries + dead-lettering. Inert unless the operator wires
- *   the `queues` bindings in wrangler.jsonc (Workers Paid plan).
+ *   the `queues` bindings in wrangler.jsonc (Queues runs on the free plan; the
+ *   Paid plan raises limits and retention).
  */
 export default {
   async scheduled(_event: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {

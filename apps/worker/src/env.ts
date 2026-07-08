@@ -8,9 +8,10 @@ export interface Env {
   /**
    * Optional Cloudflare Queue for reliable notification delivery. Bound only
    * when the operator opts into `notifications.delivery: queue` and wires the
-   * `queues.producers` binding in wrangler.jsonc (Workers Paid plan). When
-   * unset, dispatch falls back to inline `fetch` (see {@link notify} in
-   * notify.ts). The `queue()` consumer in index.ts drains it with retries + DLQ.
+   * `queues.producers` binding in wrangler.jsonc (Queues is on the free plan;
+   * the Paid plan raises limits and retention). When unset, dispatch falls back
+   * to inline `fetch` (see {@link notify} in notify.ts). The `queue()` consumer
+   * in index.ts drains it with retries + DLQ.
    */
   NOTIFY_QUEUE?: Queue<NotificationMessage>
   /**

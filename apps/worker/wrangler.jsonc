@@ -43,8 +43,10 @@
   // `notifications` block in status.config.yml, so no binding is required for
   // the default (free-plan) inline path.
   //
-  // Reliable delivery (opt-in, Workers Paid plan): set `notifications.delivery:
-  // queue` in status.config.yml and uncomment the block below. On a status
+  // Reliable delivery (opt-in): set `notifications.delivery: queue` in
+  // status.config.yml and uncomment the block below. Cloudflare Queues is on the
+  // Workers Free plan (10k ops/day, 24h dead-letter retention); the Paid plan
+  // raises those limits and extends retention to 14 days. On a status
   // change (from either the `scheduled` cron or an inbound Statuspage webhook),
   // the producer enqueues one message per target onto NOTIFY_QUEUE and the
   // `queue` consumer (src/index.ts) does the HTTP dispatch — gaining automatic

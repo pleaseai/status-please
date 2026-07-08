@@ -27,8 +27,9 @@ notifications:
   #   inline (default) — POST each target directly. Best-effort, no retries.
   #                       Works on the free Workers plan.
   #   queue           — enqueue to a Cloudflare Queue with automatic retries +
-  #                     dead-lettering. Requires the Workers PAID plan and the
-  #                     `queues` bindings in wrangler.worker.jsonc.
+  #                     dead-lettering. Needs the `queues` bindings in
+  #                     wrangler.worker.jsonc. Queues is on the free Workers plan
+  #                     (10k ops/day, 24h retention); Paid raises those.
   delivery: inline
   slack:
     webhookUrl: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX

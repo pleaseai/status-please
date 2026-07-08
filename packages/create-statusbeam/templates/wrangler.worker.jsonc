@@ -37,9 +37,11 @@
   //   wrangler secret put CF_ZONE_ID   --config wrangler.worker.jsonc
   // When unset, a status change still shows within the 60s edge TTL.
 
-  // Reliable notification delivery (opt-in, Workers PAID plan). Default delivery
-  // is inline `fetch` (no binding needed). To gain retries + dead-lettering, set
-  // `notifications.delivery: queue` in status.config.yml, create the queues:
+  // Reliable notification delivery (opt-in). Default delivery is inline `fetch`
+  // (no binding needed). To gain retries + dead-lettering, set
+  // `notifications.delivery: queue` in status.config.yml, create the queues
+  // (Cloudflare Queues is on the free plan — 10k ops/day, 24h retention; Paid
+  // raises those limits and extends retention to 14 days):
   //   wrangler queues create statusbeam-notifications --config wrangler.worker.jsonc
   //   wrangler queues create statusbeam-notifications-dlq --config wrangler.worker.jsonc
   // then add a comma after the `kv_namespaces` `]` above and uncomment:

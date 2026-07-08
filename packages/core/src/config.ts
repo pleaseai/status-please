@@ -66,8 +66,10 @@ export type Site = z.infer<typeof siteSchema>
  *   Best-effort — a failed POST is logged, never retried. Works on the free
  *   Workers plan; adequate for the low volume of status-change alerts.
  * - `queue`: enqueue each target onto a Cloudflare Queue whose consumer does
- *   the POST, gaining automatic retries + backoff and dead-lettering. Requires
- *   the Workers Paid plan and the `queues` bindings in wrangler.jsonc.
+ *   the POST, gaining automatic retries + backoff and dead-lettering. Needs the
+ *   `queues` bindings in wrangler.jsonc. Cloudflare Queues is available on the
+ *   Workers Free plan (10k ops/day, 24h dead-letter retention); the Paid plan
+ *   raises those limits and extends retention to 14 days.
  */
 export const notificationDeliverySchema = z.enum(['inline', 'queue'])
 export type NotificationDelivery = z.infer<typeof notificationDeliverySchema>
