@@ -124,17 +124,21 @@ export type StatuspageSummary = z.infer<typeof statuspageSummarySchema>
  * a URL already pointing at an `/api/v2/*.json` endpoint is used verbatim.
  */
 export function statuspageSummaryUrl(url: string): string {
-  if (/\/api\/v2\/[^/]+\.json$/.test(url)) {
-    return url
-  }
-  // Strip trailing slashes with a linear character scan rather than a
+  // Strip trailing slashes first, with a linear character scan rather than a
   // backtracking regex (`/\/+$/` is a polynomial-ReDoS pattern on inputs with
-  // many trailing slashes — flagged by CodeQL js/polynomial-redos).
+  // many trailing slashes — flagged by CodeQL js/polynomial-redos). Testing the
+  // cleaned URL against the endpoint pattern also handles an explicit
+  // `/api/v2/*.json` URL that carries a trailing slash (otherwise the guard
+  // would miss it and produce a doubled `.../summary.json/api/v2/summary.json`).
   let end = url.length
   while (end > 0 && url.charCodeAt(end - 1) === 47 /* '/' */) {
     end--
   }
-  return `${url.slice(0, end)}/api/v2/summary.json`
+  const cleaned = url.slice(0, end)
+  if (/\/api\/v2\/[^/]+\.json$/.test(cleaned)) {
+    return cleaned
+  }
+  return `${cleaned}/api/v2/summary.json`
 }
 
 /**
@@ -146,9 +150,10 @@ export function statuspageSummaryUrl(url: string): string {
  */
 export function deriveStatuspageStatus(summary: StatuspageSummary, component?: string): CheckStatus {
   if (component !== undefined) {
-    const target = component.trim().toLowerCase()
+    const trimmed = component.trim()
+    const target = trimmed.toLowerCase()
     const match = summary.components?.find(
-      c => c.id === component || c.name?.trim().toLowerCase() === target,
+      c => c.id === trimmed || c.name?.trim().toLowerCase() === target,
     )
     if (!match) {
       throw new Error(`Statuspage component not found: ${component}`)

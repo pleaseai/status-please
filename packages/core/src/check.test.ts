@@ -77,6 +77,11 @@ describe('statuspageSummaryUrl', () => {
     const url = 'https://status.claude.com/api/v2/status.json'
     expect(statuspageSummaryUrl(url)).toBe(url)
   })
+
+  it('leaves an explicit api/v2 endpoint untouched even with trailing slashes', () => {
+    expect(statuspageSummaryUrl('https://status.claude.com/api/v2/status.json///'))
+      .toBe('https://status.claude.com/api/v2/status.json')
+  })
 })
 
 describe('deriveStatuspageStatus', () => {
@@ -104,6 +109,11 @@ describe('deriveStatuspageStatus', () => {
 
   it('reads a specific component by id', () => {
     expect(deriveStatuspageStatus(claudeSummary, 'abc')).toBe('down')
+  })
+
+  it('trims surrounding whitespace before matching id or name', () => {
+    expect(deriveStatuspageStatus(claudeSummary, '  abc  ')).toBe('down')
+    expect(deriveStatuspageStatus(claudeSummary, '  claude.ai  ')).toBe('degraded')
   })
 
   it('throws when a named component is missing', () => {
