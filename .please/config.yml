@@ -1,6 +1,6 @@
-schema_version: 5          # Config schema version (do not edit manually)
+schema_version: 5 # Config schema version (do not edit manually)
 
-language: en               # Output language (ko | en)
+language: en # Output language (ko | en)
 
 # GitHub integration (optional)
 # github:
@@ -34,14 +34,14 @@ docs:
 review:
   cubic:
     enabled: true
-    default-flags: "--json -b"
+    default-flags: --json -b
   agy:
     enabled: false
   coderabbit:
-    enabled: false     # tracking marker; review delegates to Skill("coderabbit:code-review")
+    enabled: false # tracking marker; review delegates to Skill("coderabbit:code-review")
   greptile:
-    enabled: true      # tracking marker; review delegates to Skill("greptile:cli-review")
+    enabled: true # tracking marker; review delegates to Skill("greptile:cli-review")
   codex:
     enabled: true
   gemini:
-    enabled: false     # tracking marker only; behavior is driven by .gemini/config.yaml
+    enabled: false # tracking marker only; behavior is driven by .gemini/config.yaml
