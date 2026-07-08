@@ -173,6 +173,13 @@ sites:
   - name: API
     url: https://api.example.com/health
     check: http
+  - name: Claude # mirror an Atlassian Statuspage (status.claude.com, *.statuspage.io, …)
+    url: https://status.claude.com # base URL; /api/v2/summary.json is appended for you
+    check: statuspage
+  - name: Claude API # or track one service on that page by component name/id
+    url: https://status.claude.com
+    check: statuspage
+    component: Claude API (api.anthropic.com)
 notifications: # all optional; keep the real Slack URL (a secret) in your KV config
   slack:
     webhookUrl: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX
