@@ -1,0 +1,21 @@
+.claude/agent-memory/review-review-silent-failure-hunter/MEMORY.md
+  s_189e1eba66b0cd::t_2e543967a7197f 8
+.claude/agent-memory/review-review-silent-failure-hunter/statuspage_webhook_ingest_2026_07.md
+  s_189e1eba66b0cd::t_1da9e7b8a3e09a 1-49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "361a7399eb58e97c5f2b1ad081e7485feda784b1",
+  "prompts": {},
+  "sessions": {
+    "s_189e1eba66b0cd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ce6ea7ae-22a6-4106-a72b-0f5c0a7914e9",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
