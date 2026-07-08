@@ -35,6 +35,12 @@ describe('parseConfig', () => {
     expect(config.sites[0]?.component).toBe('Claude API')
   })
 
+  it('accepts the incidentio check kind with a component', () => {
+    const config = parseConfig(`${baseYaml}    check: incidentio\n    component: API\n`)
+    expect(config.sites[0]?.check).toBe('incidentio')
+    expect(config.sites[0]?.component).toBe('API')
+  })
+
   it('rejects an unknown check kind', () => {
     expect(() => parseConfig(`${baseYaml}    check: carrier-pigeon\n`)).toThrow()
   })

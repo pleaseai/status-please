@@ -1,0 +1,31 @@
+{
+  "name": "create-statusbeam",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Scaffold a StatusBeam status page project — the thin repo that deploys via the statusbeam CLI.",
+  "license": "MIT",
+  "homepage": "https://github.com/pleaseai/statusbeam/tree/main/packages/create-statusbeam#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pleaseai/statusbeam.git",
+    "directory": "packages/create-statusbeam"
+  },
+  "bin": {
+    "create-statusbeam": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir dist --target node --format esm --banner '#!/usr/bin/env node' && chmod +x dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24"
+  }
+}

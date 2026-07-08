@@ -1,8 +1,20 @@
 ---
 name: feed-ts-now-guard-gap
-description: statusbeam packages/core/src/feed.ts commit 33dfec5 — Number.isFinite(meta.now) guard is reproducibly incomplete; a finite-but-out-of-Date-range now still reintroduces both original bugs (RangeError crash in buildAtomFeed, literal "Invalid Date" text in buildRssFeed)
+description: statusbeam packages/core/src/feed.ts — RESOLVED in 82617f9. History of the now-guard gap where Number.isFinite(meta.now) was incomplete; a finite-but-out-of-Date-range now (e.g. 1e20) reintroduced RangeError (buildAtomFeed) / literal "Invalid Date" (buildRssFeed). Now fixed via resolveBuildMs, which validates the resulting Date.
 metadata:
   type: project
+---
+
+## RESOLVED in commit 82617f9
+
+The gap below was fixed on branch `amondnet/feed` (commit `82617f9`): a
+`resolveBuildMs(now)` helper now validates the resulting `Date`
+(`Number.isNaN(new Date(now).getTime())`) rather than the raw number, so
+out-of-range finite `now` no longer crashes/emits "Invalid Date". The
+malformed *incident*-timestamp fallback was also aligned to the epoch in both
+builders. Tests cover `NaN`/`Infinity`/`1e20` `now` and the epoch fallback. The
+historical analysis is retained below for context.
+
 ---
 
 ## `Number.isFinite(meta.now)` is not the same check as "constructing a Date from it won't blow up"

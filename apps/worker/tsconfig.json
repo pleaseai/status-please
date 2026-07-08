@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": false,
-    "types": ["@cloudflare/workers-types"],
+    "types": ["@cloudflare/workers-types", "bun"],
     "noEmit": true
   },
   "include": ["src/**/*.ts"]

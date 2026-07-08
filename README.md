@@ -170,7 +170,7 @@ name: Acme Status
 sites:
   - name: Website
     url: https://example.com
-    check: http # http | tcp | ssl | statuspage
+    check: http # http | tcp | ssl | statuspage | incidentio
     expectedStatusCodes: [200]
     maxResponseTime: 2000 # ms → "degraded" above this
   - name: API
@@ -183,6 +183,9 @@ sites:
     url: https://status.claude.com
     check: statuspage
     component: Claude API (api.anthropic.com)
+  - name: OpenAI # incident.io status pages read the same way (Statuspage-compatible)
+    url: https://status.openai.com
+    check: incidentio
 notifications: # all optional; keep the real Slack URL (a secret) in your KV config
   slack:
     webhookUrl: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX
@@ -204,11 +207,18 @@ Each site sets a `check` kind:
 | `tcp`        | Reserved — currently falls through to `http` ([roadmap](#roadmap)).          |
 | `ssl`        | Reserved — currently falls through to `http` ([roadmap](#roadmap)).          |
 | `statuspage` | Mirrors an Atlassian Statuspage's own verdict. See the [Statuspage adapter guide](./docs/adapters/statuspage.md).|
+| `incidentio` | Mirrors an [incident.io](https://incident.io) status page (Statuspage-compatible). See the [incident.io adapter guide](./docs/adapters/incidentio.md).|
 
 The **Statuspage adapter** reads a vendor's `/api/v2/summary.json` (Claude,
 Vercel, `*.statuspage.io`, …) and maps their overall indicator — or a single
 component you name — to a status. Full reference, status-mapping tables, and
 edge behavior: [`docs/adapters/statuspage.md`](./docs/adapters/statuspage.md).
+
+The **incident.io adapter** reads the same Statuspage-compatible
+`/api/v2/summary.json` that incident.io status pages (`status.openai.com`,
+`status.incident.io`, …) serve — so `incidentio` and `statuspage` behave
+identically; use whichever names your vendor:
+[`docs/adapters/incidentio.md`](./docs/adapters/incidentio.md).
 
 ### Internationalization
 
@@ -276,34 +286,23 @@ Both send `Access-Control-Allow-Origin: *`, so a browser can fetch them directly
 StatusBeam deploys to any Cloudflare account (Workers + D1 + KV + Pages). Vercel
 is also supported for the display layer via Astro's Vercel adapter.
 
-**Fastest path — the guided script.** A one-click "Deploy to Cloudflare" button can't
-handle this monorepo (two Workers + a shared workspace package), so `bun run setup` is
-the equivalent: it provisions D1 + KV, interactively asks for your custom domain and cron
-schedule, wires them into both `wrangler.jsonc` files, seeds `status.config.yml`, and
-deploys both Workers — all idempotent, safe to re-run.
+**You deploy StatusBeam as a package, not a fork** ([ADR-0002](docs/adr/0002-package-based-distribution.md)):
+your repo holds only your config, and the app is a versioned dependency. Scaffold a thin
+project, then let the `statusbeam` CLI provision D1 + KV, wire your custom domain and cron,
+apply the schema, upload `status.config.yml`, and deploy both Workers — idempotent, safe to
+re-run.
 
 ```bash
-# after cloning your fork
-bunx wrangler login   # or export CLOUDFLARE_API_TOKEN
+bunx create-statusbeam my-status   # or "Use this template" on statusbeam-template
+cd my-status
+bunx wrangler login                # or export CLOUDFLARE_API_TOKEN
 bun install
-bun run setup         # -- --skip-deploy to configure without deploying
+bunx statusbeam setup              # provisions, configures, deploys (--skip-deploy to stop before deploy)
 ```
 
-<details>
-<summary>Prefer to do it by hand?</summary>
-
-```bash
-# 1. Use this template / clone it
-# 2. Provision Cloudflare resources
-bunx wrangler d1 create statusbeam
-bunx wrangler kv namespace create STATUS_KV
-
-# 3. Configure your services in status.config.yml, then deploy
-bun install
-bun run deploy
-```
-
-</details>
+Upgrading is `bunx statusbeam update` — no upstream merge. Prefer to modify the app source?
+You can still fork and deploy the monorepo directly; see the appendix in
+[DEPLOYMENT.md](./DEPLOYMENT.md).
 
 ### Instant cache invalidation (optional)
 
@@ -322,8 +321,8 @@ bunx wrangler secret put CF_ZONE_ID     # the zone serving your status page
 When these are unset the purge is skipped (logged, not fatal) and the page simply
 refreshes on its 60s TTL.
 
-**Full runbook** — provisioning, config, secrets, and the manual GitHub Actions
-deploy — is in **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
+**Full runbook** — the CLI, provisioning, config, secrets, CI deploy, and the
+fork-from-source appendix — is in **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 
 ---
 
@@ -339,6 +338,8 @@ deploy — is in **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 - [x] **Edge cache** — `Cache-Tag` emit + purge-on-change loop between the check and display layers.
 - [x] **Badges & public API** — [shields.io endpoint](#badges--public-api) badges + JSON status API, edge-cached.
 - [x] **Statuspage adapter** — mirror any Atlassian Statuspage by page or component ([guide](./docs/adapters/statuspage.md)).
+- [x] **incident.io adapter** — mirror any incident.io status page by page or component ([guide](./docs/adapters/incidentio.md)).
+- [x] **Statuspage webhooks** — real-time ingest via `POST /webhooks/statuspage/:slug`, cron as the backstop ([guide](./docs/adapters/statuspage.md#real-time-updates-via-webhooks)).
 
 **In progress / planned**
 

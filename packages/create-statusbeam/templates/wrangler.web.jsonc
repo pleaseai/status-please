@@ -1,0 +1,36 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "statusbeam-web",
+  // `main` and `assets` are injected by the @astrojs/cloudflare adapter at build
+  // time (the statusbeam CLI runs the build with this file as its config), so
+  // don't set them here.
+  "compatibility_date": "2026-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Custom domain: `statusbeam setup` rewrites this block from your answer — a
+  // value attaches a proxied custom-domain route (the zone must be in this
+  // Cloudflare account); blank falls back to the generated *.workers.dev URL.
+  "routes": [{ "pattern": "status.example.com", "custom_domain": true }],
+
+  // Workers Cache: a tiered edge cache in front of the page. Hits skip the Worker
+  // and D1; the check Worker purges by tag on a status change for near-instant updates.
+  "cache": {
+    "enabled": true
+  },
+
+  // Same bindings as the check Worker — the page reads the snapshot/history.
+  // `statusbeam setup` fills the ids in.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "statusbeam",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "STATUS_KV",
+      "id": "REPLACE_WITH_KV_NAMESPACE_ID"
+    }
+  ]
+}

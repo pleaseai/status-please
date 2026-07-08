@@ -22,7 +22,7 @@ name: Acme Status
 sites:
   - name: Website
     url: https://example.com
-    check: http # http | tcp | ssl | statuspage
+    check: http # http | tcp | ssl | statuspage | incidentio
     expectedStatusCodes: [200]
     maxResponseTime: 2000 # ms; slower responses are marked "degraded"
   - name: API
@@ -39,6 +39,12 @@ sites:
     url: https://status.claude.com
     check: statuspage
     component: Claude API (api.anthropic.com)
+
+  # incident.io status pages serve the same Statuspage-compatible summary.json,
+  # so `incidentio` reads them identically — use whichever names your vendor.
+  - name: OpenAI
+    url: https://status.openai.com
+    check: incidentio
 
 notifications:
   slack:
@@ -59,11 +65,11 @@ theme:
 | Field                 | Type       | Notes                                                              |
 | --------------------- | ---------- | ------------------------------------------------------------------ |
 | `name`                | string     | Display name for the service.                                      |
-| `url`                 | string     | Endpoint to check (or Statuspage base URL for `check: statuspage`).|
-| `check`               | enum       | `http` \| `tcp` \| `ssl` \| `statuspage`.                          |
+| `url`                 | string     | Endpoint to check (or status-page base URL for `statuspage`/`incidentio`).|
+| `check`               | enum       | `http` \| `tcp` \| `ssl` \| `statuspage` \| `incidentio`.          |
 | `expectedStatusCodes` | number[]   | Codes treated as healthy (HTTP checks).                            |
 | `maxResponseTime`     | number     | Milliseconds; slower responses are marked **degraded**.            |
-| `component`           | string     | For `statuspage`: track one component by name (case-insensitive) or id. |
+| `component`           | string     | For `statuspage`/`incidentio`: track one component by name (case-insensitive) or id. |
 
 ### `notifications`
 

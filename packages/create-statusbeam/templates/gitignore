@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+*.tsbuildinfo
+
+# Keep secrets out of the repo — set them as Cloudflare Worker secrets or CI
+# secrets, not in files.
+.dev.vars
+.env

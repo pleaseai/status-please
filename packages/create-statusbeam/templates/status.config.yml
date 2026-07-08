@@ -1,0 +1,36 @@
+# Your StatusBeam config — this single file is the service list you edit. The
+# statusbeam CLI uploads it to the Worker's KV `config` key at deploy time.
+
+name: Acme Status
+
+sites:
+  - name: Website
+    url: https://example.com
+    check: http # http | tcp | ssl | statuspage
+    expectedStatusCodes: [200]
+    maxResponseTime: 2000 # ms; slower responses are marked "degraded"
+  - name: API
+    url: https://api.example.com/health
+    check: http
+
+  # Read status straight from an Atlassian Statuspage (status.claude.com,
+  # *.statuspage.io, vercel-status.com, …). `url` is the page's base URL;
+  # statusbeam appends /api/v2/summary.json automatically.
+  - name: Claude
+    url: https://status.claude.com
+    check: statuspage
+
+# All optional. Keep the real Slack URL out of version control (it's a secret) —
+# upload a private copy, or use a repo secret, rather than committing it here.
+notifications:
+  slack:
+    webhookUrl: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX
+  webhooks:
+    - url: https://example.com/status-hook
+
+theme:
+  logoUrl: /logo.svg
+  darkMode: true
+  # Fallback UI language, used only when a visitor's browser language isn't one
+  # of the supported locales (en | zh | ja | ko). Defaults to en.
+  locale: en

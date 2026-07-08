@@ -1,0 +1,5 @@
+# mise.toml — pinned toolchain for your StatusBeam project.
+# Usage: `mise trust && mise install`
+[tools]
+node = "24"
+bun = "1.3.14"
