@@ -168,12 +168,19 @@ name: Acme Status
 sites:
   - name: Website
     url: https://example.com
-    check: http # http | tcp | ssl
+    check: http # http | tcp | ssl | statuspage
     expectedStatusCodes: [200]
     maxResponseTime: 2000 # ms → "degraded" above this
   - name: API
     url: https://api.example.com/health
     check: http
+  - name: Claude # mirror an Atlassian Statuspage (status.claude.com, *.statuspage.io, …)
+    url: https://status.claude.com # base URL; /api/v2/summary.json is appended for you
+    check: statuspage
+  - name: Claude API # or track one service on that page by component name/id
+    url: https://status.claude.com
+    check: statuspage
+    component: Claude API (api.anthropic.com)
 notifications: # all optional; keep the real Slack URL (a secret) in your KV config
   slack:
     webhookUrl: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX
@@ -184,6 +191,22 @@ theme:
   darkMode: true
   locale: en # fallback UI language: en | zh | ja | ko (default en)
 ```
+
+### Check types
+
+Each site sets a `check` kind:
+
+| `check`      | What it does                                                                 |
+| ------------ | --------------------------------------------------------------------------- |
+| `http`       | Fetches `url`; `up`/`degraded`/`down` from the status code and response time.|
+| `tcp`        | Reserved — currently falls through to `http` ([roadmap](#roadmap)).          |
+| `ssl`        | Reserved — currently falls through to `http` ([roadmap](#roadmap)).          |
+| `statuspage` | Mirrors an Atlassian Statuspage's own verdict. See the [Statuspage adapter guide](./docs/adapters/statuspage.md).|
+
+The **Statuspage adapter** reads a vendor's `/api/v2/summary.json` (Claude,
+Vercel, `*.statuspage.io`, …) and maps their overall indicator — or a single
+component you name — to a status. Full reference, status-mapping tables, and
+edge behavior: [`docs/adapters/statuspage.md`](./docs/adapters/statuspage.md).
 
 ### Internationalization
 
@@ -313,6 +336,7 @@ deploy — is in **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 - [x] **Notify layer (part 1)** — Slack + generic webhook on status change, decoupled via Queues.
 - [x] **Edge cache** — `Cache-Tag` emit + purge-on-change loop between the check and display layers.
 - [x] **Badges & public API** — [shields.io endpoint](#badges--public-api) badges + JSON status API, edge-cached.
+- [x] **Statuspage adapter** — mirror any Atlassian Statuspage by page or component ([guide](./docs/adapters/statuspage.md)).
 
 **In progress / planned**
 

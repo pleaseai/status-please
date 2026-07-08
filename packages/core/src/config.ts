@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { DEFAULT_LOCALE, LOCALES } from './i18n'
 
 /** How a single service is checked. */
-export const checkKindSchema = z.enum(['http', 'tcp', 'ssl'])
+export const checkKindSchema = z.enum(['http', 'tcp', 'ssl', 'statuspage'])
 export type CheckKind = z.infer<typeof checkKindSchema>
 
 /** Turn a human name into a stable, URL-safe slug. */
@@ -25,11 +25,30 @@ export const siteSchema = z
     /** Response time above this (ms) marks the site `degraded` rather than `up`. */
     maxResponseTime: z.number().int().positive().default(5000),
     /**
+     * For `check: statuspage` only. Reads one Atlassian Statuspage component by
+     * name (case-insensitive) or id; when omitted, the page's overall indicator
+     * is used. Rejected at parse time for other check kinds (see superRefine
+     * below) so a mistyped `check` doesn't silently ignore the field.
+     */
+    component: z.string().min(1).optional(),
+    /**
      * Optional explicit slug; defaults to slugify(name). Constrained to the
      * same charset slugify emits so it's safe to embed in a `Cache-Tag` (no
      * commas/whitespace, which would corrupt the header — see cache.ts).
      */
     slug: z.string().regex(/^[a-z0-9-]+$/, 'slug must be lowercase letters, digits, and hyphens').optional(),
+  })
+  .superRefine((site, ctx) => {
+    // `component` only means something for statuspage checks; surface a mistyped
+    // `check` (or a stray `component:` line) as a parse error instead of quietly
+    // ignoring it at runtime.
+    if (site.component !== undefined && site.check !== 'statuspage') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['component'],
+        message: `component is only valid with check: statuspage (got check: ${site.check})`,
+      })
+    }
   })
   .transform(site => ({ ...site, slug: site.slug ?? slugify(site.name) }))
 

@@ -6,12 +6,25 @@ name: Acme Status
 sites:
   - name: Website
     url: https://example.com
-    check: http # http | tcp | ssl
+    check: http # http | tcp | ssl | statuspage
     expectedStatusCodes: [200]
     maxResponseTime: 2000 # ms; slower responses are marked "degraded"
   - name: API
     url: https://api.example.com/health
     check: http
+
+  # Read status straight from an Atlassian Statuspage (status.claude.com,
+  # *.statuspage.io, vercel-status.com, …). `url` is the page's base URL;
+  # status-please appends /api/v2/summary.json automatically.
+  - name: Claude
+    url: https://status.claude.com
+    check: statuspage
+  # Add `component` to track one service on the page instead of the whole page.
+  # Match by component name (case-insensitive) or id.
+  - name: Claude API
+    url: https://status.claude.com
+    check: statuspage
+    component: Claude API (api.anthropic.com)
 
 # All optional. Keep the real Slack URL in the private config you upload to KV,
 # not in this committed example (the webhook URL is a secret).
