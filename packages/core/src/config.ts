@@ -2,8 +2,12 @@ import { parse as parseYaml } from 'yaml'
 import { z } from 'zod'
 import { DEFAULT_LOCALE, LOCALES } from './i18n'
 
-/** How a single service is checked. */
-export const checkKindSchema = z.enum(['http', 'tcp', 'ssl', 'statuspage'])
+/**
+ * How a single service is checked. `incidentio` reads an incident.io status
+ * page, which serves a Statuspage-compatible `summary.json`, so it shares the
+ * `statuspage` code path (see check.ts).
+ */
+export const checkKindSchema = z.enum(['http', 'tcp', 'ssl', 'statuspage', 'incidentio'])
 export type CheckKind = z.infer<typeof checkKindSchema>
 
 /** Turn a human name into a stable, URL-safe slug. */
@@ -25,10 +29,11 @@ export const siteSchema = z
     /** Response time above this (ms) marks the site `degraded` rather than `up`. */
     maxResponseTime: z.number().int().positive().default(5000),
     /**
-     * For `check: statuspage` only. Reads one Atlassian Statuspage component by
-     * name (case-insensitive) or id; when omitted, the page's overall indicator
-     * is used. Rejected at parse time for other check kinds (see superRefine
-     * below) so a mistyped `check` doesn't silently ignore the field.
+     * For `check: statuspage` / `incidentio` only (both read the same
+     * Statuspage-format payload). Reads one component by name (case-insensitive)
+     * or id; when omitted, the page's overall indicator is used. Rejected at
+     * parse time for other check kinds (see superRefine below) so a mistyped
+     * `check` doesn't silently ignore the field.
      */
     component: z.string().min(1).optional(),
     /**
@@ -39,14 +44,14 @@ export const siteSchema = z
     slug: z.string().regex(/^[a-z0-9-]+$/, 'slug must be lowercase letters, digits, and hyphens').optional(),
   })
   .superRefine((site, ctx) => {
-    // `component` only means something for statuspage checks; surface a mistyped
-    // `check` (or a stray `component:` line) as a parse error instead of quietly
-    // ignoring it at runtime.
-    if (site.component !== undefined && site.check !== 'statuspage') {
+    // `component` only means something for statuspage/incidentio checks; surface
+    // a mistyped `check` (or a stray `component:` line) as a parse error instead
+    // of quietly ignoring it at runtime.
+    if (site.component !== undefined && site.check !== 'statuspage' && site.check !== 'incidentio') {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['component'],
-        message: `component is only valid with check: statuspage (got check: ${site.check})`,
+        message: `component is only valid with check: statuspage or incidentio (got check: ${site.check})`,
       })
     }
   })

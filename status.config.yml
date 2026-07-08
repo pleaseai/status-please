@@ -25,6 +25,10 @@ sites:
     url: https://1.1.1.1
     check: http
     expectedStatusCodes: [200]
+  - name: OpenAI
+    # incident.io status page — read via its Statuspage-compatible summary.json.
+    url: https://status.openai.com
+    check: incidentio
 
 theme:
   darkMode: true

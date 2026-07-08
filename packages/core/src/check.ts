@@ -29,8 +29,10 @@ export function deriveStatus(
  * testable; the Worker passes the platform `fetch`.
  *
  * Dispatches on `site.check`: `statuspage` reads an Atlassian Statuspage JSON
- * API; every other kind (`http`/`tcp`/`ssl`) currently falls through to a plain
- * HTTP fetch. `tcp`/`ssl` runtime probing is tracked in the roadmap.
+ * API, and `incidentio` reads an incident.io status page — which serves a
+ * Statuspage-compatible `summary.json`, so it shares the same code path. Every
+ * other kind (`http`/`tcp`/`ssl`) currently falls through to a plain HTTP
+ * fetch. `tcp`/`ssl` runtime probing is tracked in the roadmap.
  */
 export async function checkSite(
   site: Site,
@@ -38,7 +40,7 @@ export async function checkSite(
 ): Promise<CheckResult> {
   const fetchImpl = deps.fetchImpl ?? fetch
   const now = deps.now ?? Date.now
-  if (site.check === 'statuspage') {
+  if (site.check === 'statuspage' || site.check === 'incidentio') {
     return checkStatuspage(site, fetchImpl, now)
   }
   return checkHttp(site, fetchImpl, now)
@@ -166,13 +168,17 @@ export function deriveStatuspageStatus(summary: StatuspageSummary, component?: s
 /**
  * Statuspage check: fetch the page's `summary.json` and map the overall
  * indicator (or a single configured `component`) to a {@link CheckStatus}.
- * `responseTime` measures the API call, not the monitored service, so it does
- * not affect the verdict — the status comes entirely from the payload.
+ * Shared by `check: statuspage` and `check: incidentio` — incident.io serves
+ * the same Statuspage-compatible payload — with only the error label differing
+ * so a user sees the provider they configured. `responseTime` measures the API
+ * call, not the monitored service, so it does not affect the verdict — the
+ * status comes entirely from the payload.
  */
 async function checkStatuspage(site: Site, fetchImpl: FetchLike, now: () => number): Promise<CheckResult> {
   const start = now()
   const url = statuspageSummaryUrl(site.url)
   const checkedAt = new Date(start).toISOString()
+  const provider = site.check === 'incidentio' ? 'incident.io' : 'Statuspage'
 
   // Phase 1: the network round-trip. A throw here means the request never
   // completed, so `code: 0` is the honest signal (per CheckResult.code).
@@ -193,7 +199,7 @@ async function checkStatuspage(site: Site, fetchImpl: FetchLike, now: () => numb
 
   const responseTime = now() - start
   if (!res.ok) {
-    return { slug: site.slug, status: 'down', code: res.status, responseTime, checkedAt, error: `Statuspage API returned ${res.status}` }
+    return { slug: site.slug, status: 'down', code: res.status, responseTime, checkedAt, error: `${provider} API returned ${res.status}` }
   }
 
   // Phase 2: parse and grade. The request already completed, so preserve the
@@ -207,7 +213,7 @@ async function checkStatuspage(site: Site, fetchImpl: FetchLike, now: () => numb
     // is reported rather than silently graded.
     const parsed = statuspageSummarySchema.safeParse(await res.json())
     if (!parsed.success) {
-      return { slug: site.slug, status: 'down', code: res.status, responseTime, checkedAt, error: `Statuspage summary.json failed validation: ${parsed.error.message}` }
+      return { slug: site.slug, status: 'down', code: res.status, responseTime, checkedAt, error: `${provider} summary.json failed validation: ${parsed.error.message}` }
     }
     return {
       slug: site.slug,
