@@ -5,6 +5,7 @@
 [![codecov](https://codecov.io/gh/pleaseai/status-please/graph/badge.svg)](https://codecov.io/gh/pleaseai/status-please)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Live demo](https://img.shields.io/badge/live%20demo-demo.status.pleaseai.dev-brightgreen)](https://demo.status.pleaseai.dev)
+[![Deploy on Cloudflare](https://img.shields.io/badge/deploy%20on-Cloudflare-F38020?logo=cloudflare&logoColor=white)](./DEPLOYMENT.md)
 
 > An open-source, CDN-native **status page** generator — the modern successor to [upptime](https://github.com/upptime/upptime).
 
@@ -250,6 +251,22 @@ Both send `Access-Control-Allow-Origin: *`, so a browser can fetch them directly
 `status-please` deploys to any Cloudflare account (Workers + D1 + KV + Pages). Vercel
 is also supported for the display layer via Astro's Vercel adapter.
 
+**Fastest path — the guided script.** A one-click "Deploy to Cloudflare" button can't
+handle this monorepo (two Workers + a shared workspace package), so `bun run setup` is
+the equivalent: it provisions D1 + KV, interactively asks for your custom domain and cron
+schedule, wires them into both `wrangler.jsonc` files, seeds `status.config.yml`, and
+deploys both Workers — all idempotent, safe to re-run.
+
+```bash
+# after cloning your fork
+bunx wrangler login   # or export CLOUDFLARE_API_TOKEN
+bun install
+bun run setup         # -- --skip-deploy to configure without deploying
+```
+
+<details>
+<summary>Prefer to do it by hand?</summary>
+
 ```bash
 # 1. Use this template / clone it
 # 2. Provision Cloudflare resources
@@ -260,6 +277,8 @@ bunx wrangler kv namespace create STATUS_KV
 bun install
 bun run deploy
 ```
+
+</details>
 
 ### Instant cache invalidation (optional)
 
