@@ -1,0 +1,31 @@
+apps/docs/astro.config.ts
+  s_4e4d323763b7b6::t_57819869d1301c 1,86-89
+apps/docs/package.json
+  s_3d7ab525d3b2b5::t_4ef43b15c0c3be 15
+bun.lock
+  s_3d7ab525d3b2b5::t_eea12b438f76f6 19,987,1861,1885-1888
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e8596e1e61d3985841ff03959d94439f6722792e",
+  "prompts": {},
+  "sessions": {
+    "s_3d7ab525d3b2b5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9530332c-81a5-4319-841a-84a211ae7dde",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    },
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
