@@ -1,7 +1,21 @@
 {
-  // Build-only config: excludes tests so the emitted `dist/` carries no
-  // `*.test.js`. Type-checking (tsc --noEmit via tsconfig.json) still covers
-  // the test files.
+  // Declarations-only build: the runtime `dist/index.js` is produced by
+  // `bun build` (a single self-contained ESM bundle, so the published package has
+  // no extensionless relative imports that Node's ESM loader would reject). tsc's
+  // job here is only to emit the `.d.ts` files. Tests are excluded so `dist/`
+  // carries no `*.test.d.ts`; type-checking of tests still happens via
+  // `tsconfig.json` (tsc --noEmit).
+  //
+  // `types: []` overrides the base's `["bun"]` so the published declarations don't
+  // pull Bun globals into general npm consumers; `lib: [..., DOM]` restores the web
+  // `fetch`/`Response`/`RequestInit` globals check.ts relies on (previously supplied
+  // by @types/bun), so the emitted types depend only on web types every edge/browser
+  // consumer already has.
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM"],
+    "types": [],
+    "emitDeclarationOnly": true
+  },
   "exclude": ["src/**/*.test.ts"]
 }

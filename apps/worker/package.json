@@ -2,7 +2,29 @@
   "name": "@statusbeam/worker",
   "type": "module",
   "version": "0.0.0",
-  "private": true,
+  "description": "StatusBeam check Worker — probes your services on a cron and writes results to D1 + KV.",
+  "license": "MIT",
+  "homepage": "https://github.com/pleaseai/statusbeam/tree/main/apps/worker#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pleaseai/statusbeam.git",
+    "directory": "apps/worker"
+  },
+  "files": [
+    "schema.sql",
+    "src",
+    "wrangler.jsonc"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "statusbeam": {
+    "kind": "worker",
+    "entry": "./src/index.ts",
+    "wrangler": "./wrangler.jsonc",
+    "schema": "./schema.sql"
+  },
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",

@@ -1,16 +1,54 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "group-pull-request-title-pattern": "chore: release ${version}",
+  "pull-request-title-pattern": "chore${scope}: release${component} ${version}",
+  "separate-pull-requests": false,
+  "release-search-depth": 500,
+  "plugins": [
+    {
+      "type": "node-workspace"
+    }
+  ],
   "packages": {
-    ".": {
+    "packages/core": {
       "release-type": "node",
-      "package-name": "statusbeam",
+      "component": "core",
+      "package-name": "@statusbeam/core",
       "changelog-path": "CHANGELOG.md",
-      "release-as": "0.1.0",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false
+    },
+    "apps/worker": {
+      "release-type": "node",
+      "component": "worker",
+      "package-name": "@statusbeam/worker",
+      "changelog-path": "CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false
+    },
+    "apps/web": {
+      "release-type": "node",
+      "component": "web",
+      "package-name": "@statusbeam/web",
+      "changelog-path": "CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false
+    },
+    "packages/cli": {
+      "release-type": "node",
+      "component": "cli",
+      "package-name": "@statusbeam/cli",
+      "changelog-path": "CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false
+    },
+    "packages/create-statusbeam": {
+      "release-type": "node",
+      "component": "create-statusbeam",
+      "package-name": "create-statusbeam",
+      "changelog-path": "CHANGELOG.md",
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": false
     }
-  },
-  "pull-request-title-pattern": "chore: release ${version}",
-  "separate-pull-requests": false,
-  "release-search-depth": 500
+  }
 }

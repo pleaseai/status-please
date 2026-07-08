@@ -1,6 +1,6 @@
 # ADR 0002 — Package-based distribution
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-07-08
 - **Deciders:** StatusBeam maintainers
 
@@ -125,6 +125,31 @@ the same scaffold:
 - **Template repo only, no CLI.** Covers GitHub users but leaves local/terminal users and
   non-GitHub CI without a first-class path, and still needs a deploy engine — which is the
   CLI. Rejected in favor of shipping both from one codebase.
+
+## Amendment (accepted with refinements)
+
+Implementation settled two points the original proposal left open or slightly overstated:
+
+- **Separate app packages, not a bundled blob.** `@statusbeam/worker` and
+  `@statusbeam/web` are published as independent versioned packages; the new
+  `@statusbeam/cli` (bin `statusbeam`) and the thin user repo consume them. There is
+  no single CLI package that vendors a prebuilt worker + Astro output — the deploy
+  engine and the app artifacts version separately.
+- **"Config-independent bundle" holds for code, not for the web *deploy config*.**
+  The claim is exactly right for the **worker** (wrangler bundles its TS at deploy;
+  nothing user-specific is compiled in) and for the **web JS bundle** (services,
+  incidents, and locale are all runtime-from-KV). But `@astrojs/cloudflare` fuses the
+  wrangler config — D1/KV ids, routes, cache — into the generated deploy config *at
+  `astro build` time*. A prebuilt `dist/` would therefore carry the maintainer's
+  placeholder ids. So `@statusbeam/web` **ships source and builds per-user**: the CLI
+  runs `astro build` with `STATUSBEAM_WRANGLER_CONFIG` pointed at the user's own
+  wrangler config, then `wrangler deploy`. The "no per-user build step" benefit applies
+  to the worker; the web layer takes a fast per-user build. This is the accepted, honest
+  shape of the tradeoff, not a regression.
+
+The thin user repo therefore holds `status.config.yml` + **two** wrangler configs
+(`wrangler.worker.jsonc`, `wrangler.web.jsonc`) + a `deploy.yml` that runs
+`statusbeam deploy`, and a `devDependency` on `@statusbeam/cli`.
 
 ## Follow-up (implementation, not part of this decision)
 

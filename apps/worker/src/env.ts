@@ -12,6 +12,19 @@ export interface Env {
   CF_API_TOKEN?: string
   /** Zone id whose cache is purged by tag. Optional; pairs with CF_API_TOKEN. */
   CF_ZONE_ID?: string
+  /**
+   * Shared secret authenticating inbound Statuspage webhooks. Compared
+   * constant-time against the request's `?token=` by {@link handleStatuspageWebhook}.
+   * When unset, the webhook endpoint fails closed (every request → 401), so the
+   * endpoint is never open.
+   *
+   * Use a long, random value — generate one with `openssl rand -hex 32` — and
+   * set it with `wrangler secret put WEBHOOK_SECRET`. The comparison short-circuits
+   * on a length mismatch (like Node's `crypto.timingSafeEqual`), so the secret's
+   * length is not itself secret; a 32-byte random value keeps the brute-force
+   * search space astronomically large regardless.
+   */
+  WEBHOOK_SECRET?: string
 }
 
 /** KV keys used by statusbeam. */

@@ -76,8 +76,12 @@ async function checkHttp(site: Site, fetchImpl: FetchLike, now: () => number): P
   }
 }
 
-/** Atlassian Statuspage component `status` → our {@link CheckStatus}. */
-const STATUSPAGE_COMPONENT_STATUS: Record<string, CheckStatus> = {
+/**
+ * Atlassian Statuspage component `status` → our {@link CheckStatus}.
+ * Exported so the webhook mapper ({@link ./statuspage-webhook}) grades pushed
+ * component updates with the exact same table the polling adapter uses.
+ */
+export const STATUSPAGE_COMPONENT_STATUS: Record<string, CheckStatus> = {
   operational: 'up',
   degraded_performance: 'degraded',
   partial_outage: 'degraded',
@@ -86,7 +90,7 @@ const STATUSPAGE_COMPONENT_STATUS: Record<string, CheckStatus> = {
 }
 
 /** Atlassian Statuspage overall page `indicator` → our {@link CheckStatus}. */
-const STATUSPAGE_INDICATOR_STATUS: Record<string, CheckStatus> = {
+export const STATUSPAGE_INDICATOR_STATUS: Record<string, CheckStatus> = {
   none: 'up',
   minor: 'degraded',
   major: 'down',

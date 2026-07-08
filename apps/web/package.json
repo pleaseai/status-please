@@ -2,7 +2,30 @@
   "name": "@statusbeam/web",
   "type": "module",
   "version": "0.0.0",
-  "private": true,
+  "description": "StatusBeam status page — Astro SSR on Cloudflare Workers, rendering the snapshot from D1/KV.",
+  "license": "MIT",
+  "homepage": "https://github.com/pleaseai/statusbeam/tree/main/apps/web#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pleaseai/statusbeam.git",
+    "directory": "apps/web"
+  },
+  "files": [
+    "astro.config.ts",
+    "components.json",
+    "src",
+    "tsconfig.json",
+    "wrangler.jsonc"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "statusbeam": {
+    "kind": "web",
+    "wrangler": "./wrangler.jsonc",
+    "astroConfig": "./astro.config.ts"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -12,26 +35,26 @@
     "typecheck": "astro check"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^14",
+    "@astrojs/react": "^6",
     "@base-ui/react": "^1.6.0",
     "@statusbeam/core": "workspace:*",
+    "@tailwindcss/vite": "^4",
     "astro": "^7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.23.0",
+    "react": "^19",
+    "react-dom": "^19",
     "recharts": "^3.8.0",
     "tailwind-merge": "^3.6.0",
-    "tw-animate-css": "^1.4.0"
+    "tailwindcss": "^4",
+    "tw-animate-css": "^1.4.0",
+    "wrangler": "^4"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9",
-    "@astrojs/cloudflare": "^14",
-    "@astrojs/react": "^6",
-    "@tailwindcss/vite": "^4",
     "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "react": "^19",
-    "react-dom": "^19",
-    "tailwindcss": "^4",
-    "wrangler": "^4"
+    "@types/react-dom": "^19"
   }
 }

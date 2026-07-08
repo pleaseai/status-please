@@ -25,6 +25,9 @@ sites:
     url: https://status.claude.com
     check: statuspage
     component: Claude API (api.anthropic.com)
+  # Tip: statuspage sites can also update in real time via inbound webhooks
+  # (POST /webhooks/statuspage/<slug>), with cron as the backstop. Set a
+  # WEBHOOK_SECRET on the Worker — see docs/adapters/statuspage.md.
 
   # incident.io status pages (status.openai.com, …) serve the same
   # Statuspage-compatible summary.json, so `incidentio` reads them identically.
