@@ -8,6 +8,28 @@ snapshot at the edge, fronted by Workers Cache.
 This guide takes you from an empty Cloudflare account to a live status page, then wires
 the manual GitHub Actions deploy for repeat deploys.
 
+## Quick start (scripted)
+
+The monorepo can't use a one-click "Deploy to Cloudflare" button (two Workers + a shared
+workspace package), so there's a guided script instead. After cloning your fork:
+
+```bash
+mise trust && mise install && bun install
+bunx wrangler login          # or export CLOUDFLARE_API_TOKEN
+bun run setup                # provisions, prompts, configures, deploys
+```
+
+`bun run setup` runs everything below for you, idempotently: it provisions D1 + KV,
+asks a couple of wrangler questions (custom domain, cron schedule), wires the resource
+IDs and your answers into both `wrangler.jsonc` files, seeds `status.config.yml`, applies
+the schema, uploads the config, and deploys both Workers. Flags: `--skip-deploy`
+(provision + configure only) and `--yes` (non-interactive, accept every default). Re-run
+it any time to change the domain/cron or redeploy. Commit the updated `wrangler.jsonc`
+and `status.config.yml` to your fork afterwards.
+
+The rest of this document is the **manual** path — do it by hand, or read it to
+understand exactly what the script does.
+
 ## Prerequisites
 
 - A Cloudflare account (any plan — [cache purge-by-tag is available on all plans](https://developers.cloudflare.com/changelog/post/2025-04-01-purge-for-all/) since April 2025).
