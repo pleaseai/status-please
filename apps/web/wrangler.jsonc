@@ -7,7 +7,7 @@
   "compatibility_flags": ["nodejs_compat"],
 
   // Custom domain: Cloudflare provisions the proxied DNS record + edge cert
-  // automatically (the `pleaseai.dev` zone lives in this account). The page is
+  // automatically (the `statusbeam.dev` zone lives in this account). The page is
   // still reachable at the *.workers.dev URL too.
   "routes": [{ "pattern": "demo.statusbeam.dev", "custom_domain": true }],
 
