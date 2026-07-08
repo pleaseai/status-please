@@ -1,0 +1,20 @@
+packages/cli/src/lib/apply-config.ts
+  s_4e4d323763b7b6::t_c0313bc7572d91 22,24-27,31-32,35-37
+  s_4e4d323763b7b6::t_b67ff08e2a3420 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c401b3c7e4a103b482e3cb752d8113a03d5e1201",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
