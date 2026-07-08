@@ -22,9 +22,9 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
+    "!src/**/*.test.ts",
     "dist",
-    "src",
-    "!src/**/*.test.ts"
+    "src"
   ],
   "publishConfig": {
     "access": "public",
