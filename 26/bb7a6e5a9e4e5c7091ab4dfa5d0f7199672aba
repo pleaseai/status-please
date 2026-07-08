@@ -1,0 +1,19 @@
+apps/worker/src/webhook.ts
+  s_189e1eba66b0cd::t_0cf40d4da456ce 72-73,80-81,90,95-96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "26bb7a6e5a9e4e5c7091ab4dfa5d0f7199672aba",
+  "prompts": {},
+  "sessions": {
+    "s_189e1eba66b0cd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ce6ea7ae-22a6-4106-a72b-0f5c0a7914e9",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
