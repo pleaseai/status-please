@@ -10,25 +10,26 @@ strings: (1) `${provider} API returned ${res.status}`, (2) `${provider}
 summary.json failed validation: ...`, and (3) a component-not-found error thrown
 from `deriveStatuspageStatus` (`Statuspage component not found: ${component}`).
 
-The `incident.io` adapter (added 2026-07, commit 5959a0d, "feat(core): add
-incident.io status-page check adapter") introduced a `provider` local
-(`'incident.io'` vs `'Statuspage'`) and substituted it into paths (1) and (2),
-but `deriveStatuspageStatus` still hardcodes `"Statuspage component not found"`
-regardless of `site.check`. Verified live: an `incidentio` site with a
-mistyped/missing `component` returns `error: "Statuspage component not found:
-..."`, contradicting both the check.ts doc comment ("only the error label
-differing so a user sees the provider they configured") and
-`docs/adapters/incidentio.md` ("error messages name the provider you
-configured").
+The `incident.io` adapter (added 2026-07) first introduced a `provider` local
+(`'incident.io'` vs `'Statuspage'`) and substituted it into paths (1) and (2)
+only — commit 5959a0d left `deriveStatuspageStatus` hardcoding `"Statuspage
+component not found"` regardless of `site.check`. That gap was caught in review
+and **closed in the same PR** (commit dd91438): `deriveStatuspageStatus` now
+takes a `provider = 'Statuspage'` parameter and `checkStatuspage` passes it, so
+all three error paths carry the configured provider. At HEAD an `incidentio`
+site with a missing `component` correctly returns `"incident.io component not
+found: ..."` (covered by a test in `check.test.ts`).
 
 **Why:** `deriveStatuspageStatus` is a small pure function reused by both check
-kinds; it's easy to update the two inline template strings in `checkStatuspage`
-and forget the third message that lives one function away and is surfaced via
-a caught exception rather than a literal in the same function body.
+kinds; the two inline template strings in `checkStatuspage` are easy to update
+while forgetting the third message, which lives one function away and is
+surfaced via a caught exception rather than a literal in the same function body.
+That's exactly the trap 5959a0d fell into before dd91438 fixed it.
 
 **How to apply:** When reviewing a future PR that adds another
 `checkStatuspage`-sharing check kind, or touches `deriveStatuspageStatus`,
-explicitly check whether the component-not-found message was updated too. If a
-third provider is added without fixing this, treat it as the same pre-existing
-gap, not a new one (unless the PR's own commit message/docs claim full
-provider-label coverage, in which case it's a fresh discrepancy worth flagging).
+verify the component-not-found path threads `provider` too (call
+`deriveStatuspageStatus(summary, component, provider)`, not the two-arg form).
+Because the gap is now closed, a new check kind that omits the provider label on
+*any* of the three paths — including component-not-found — is a **fresh
+regression**, not a pre-existing gap to wave through.
