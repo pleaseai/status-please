@@ -1,0 +1,20 @@
+apps/worker/package.json
+  s_4e4d323763b7b6::t_64da11c79a16ed 7,15
+  s_4e4d323763b7b6::t_a29701cb496325 5-6,8-14,16-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "90ef5c9fd575d5f4ad6c4a450df34c27aca7e497",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
