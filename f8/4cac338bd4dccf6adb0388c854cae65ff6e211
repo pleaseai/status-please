@@ -1,0 +1,22 @@
+docs/adapters/statuspage.md
+  s_38e361e995aff1::t_778f971323a064 1-156
+README.md
+  s_38e361e995aff1::t_111f235ba477b6 320
+  s_38e361e995aff1::t_4b0d24f21f8787 194-209
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f84cac338bd4dccf6adb0388c854cae65ff6e211",
+  "prompts": {},
+  "sessions": {
+    "s_38e361e995aff1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3f486a74-d75b-47c9-9057-842d28238405",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
