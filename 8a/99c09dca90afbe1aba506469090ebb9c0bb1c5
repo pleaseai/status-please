@@ -1,0 +1,19 @@
+.claude/agent-memory/review-review-type-design-analyzer/status-please-badge-conventions.md
+  s_4c169f7378c91e::t_cffb6c6f23af77 46-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8a99c09dca90afbe1aba506469090ebb9c0bb1c5",
+  "prompts": {},
+  "sessions": {
+    "s_4c169f7378c91e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fb16ae35-85bd-4bbc-a43d-e554ccf84856",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
