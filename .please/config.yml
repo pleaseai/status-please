@@ -1,0 +1,47 @@
+schema_version: 5          # Config schema version (do not edit manually)
+
+language: en               # Output language (ko | en)
+
+# GitHub integration (optional)
+# github:
+#   project: 5              # GitHub Project number (from URL: /orgs/{org}/projects/5)
+#   owner: pleaseai         # GitHub org or user owning the project
+#   issue_required: true     # Create GitHub Issue for every track (default: false)
+
+# Workflow policies (optional)
+# Populated by /please:setup when a stack tool is detected and user opts in.
+# The `tool` field selects which CLI drives the stack (currently only `graphite`).
+# workflow:
+#   stacked_pr:
+#     enabled: true                  # Use stacked PR workflow (one PR per branch in stack)
+#     tool: graphite                 # graphite | git-spice | none
+#     split_phases: true             # If plan.md has `### Phase N:` headings, create a stacked branch per phase
+#     branch_prefix: tracks/         # Branch prefix (single-phase: tracks/{track_id}; multi-phase: tracks/{track_id}/phase-N-{slug})
+
+# Document path overrides (optional — defaults shown)
+docs:
+  tracks: .please/docs/tracks
+  product-specs: .please/docs/product-specs
+  decisions: .please/docs/decisions
+  investigations: .please/docs/investigations
+  research: .please/docs/research
+  references: .please/docs/references
+  knowledge: .please/docs/knowledge
+  brainstorms: .please/docs/brainstorms
+  ideation: .please/docs/ideation
+
+# Review plugin settings (managed by /review:setup)
+review:
+  cubic:
+    enabled: true
+    default-flags: "--json -b"
+  agy:
+    enabled: false
+  coderabbit:
+    enabled: false     # tracking marker; review delegates to Skill("coderabbit:code-review")
+  greptile:
+    enabled: true      # tracking marker; review delegates to Skill("greptile:cli-review")
+  codex:
+    enabled: true
+  gemini:
+    enabled: false     # tracking marker only; behavior is driven by .gemini/config.yaml
