@@ -19,15 +19,15 @@ comment:
 # not unit tests (mirrors sonar.coverage.exclusions). The pure logic it wraps
 # (apply-config, update's PM/upgrade selection) is unit-tested and stays counted.
 ignore:
-  - 'packages/cli/src/cli.ts'
-  - 'packages/cli/src/commands/setup.ts'
-  - 'packages/cli/src/commands/deploy.ts'
-  - 'packages/cli/src/lib/wrangler.ts'
-  - 'packages/cli/src/lib/run.ts'
-  - 'packages/cli/src/lib/project.ts'
-  - 'packages/cli/src/lib/log.ts'
-  - 'packages/cli/src/lib/prompt.ts'
-  - 'packages/create-statusbeam/src/index.ts'
+  - packages/cli/src/cli.ts
+  - packages/cli/src/commands/setup.ts
+  - packages/cli/src/commands/deploy.ts
+  - packages/cli/src/lib/wrangler.ts
+  - packages/cli/src/lib/run.ts
+  - packages/cli/src/lib/project.ts
+  - packages/cli/src/lib/log.ts
+  - packages/cli/src/lib/prompt.ts
+  - packages/create-statusbeam/src/index.ts
 
 # Public repo: uploads are tokenless via OIDC (use_oidc: true in the workflow).
 # Test Analytics is driven entirely by the CI upload step
