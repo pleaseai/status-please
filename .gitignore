@@ -53,5 +53,4 @@ tmp/
 .please/state/
 
 # Local Claude Code config (not shared in this public repo)
-.claude/settings.json
 .claude/settings.local.json
