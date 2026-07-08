@@ -1,0 +1,57 @@
+packages/cli/src/lib/project.ts
+  s_4e4d323763b7b6::t_f76d53ea2cd388 2-62
+  s_4e4d323763b7b6::t_8779a8e155bd22 1
+packages/cli/src/lib/prompt.ts
+  s_4e4d323763b7b6::t_8779a8e155bd22 23-24,37-38
+  s_4e4d323763b7b6::t_b54fea91538199 1-22,25-36,39-41
+packages/cli/src/lib/apply-config.ts
+  s_4e4d323763b7b6::t_8779a8e155bd22 21-24,56-60,87-90
+  s_4e4d323763b7b6::t_e64e56dc555c1e 1-20,25-55,61-86,91-118
+packages/cli/tsconfig.json
+  s_4e4d323763b7b6::t_8779a8e155bd22 5-6
+  s_4e4d323763b7b6::t_cfac6fc373ec15 1-4,7-9
+packages/cli/src/lib/wrangler.ts
+  s_4e4d323763b7b6::t_8779a8e155bd22 27-28,30-31
+  s_4e4d323763b7b6::t_21ebbb327d64c6 1-26,29,32-83
+packages/cli/src/lib/run.ts
+  s_4e4d323763b7b6::t_9c804548b8b6ca 5
+  s_4e4d323763b7b6::t_8ab9032a1f7999 7
+  s_4e4d323763b7b6::t_0960eab2b9da58 1-4,6,8-64
+packages/cli/src/cli.ts
+  s_4e4d323763b7b6::t_360b4ae14431d4 1-10,12-64,67-77,80-113
+  s_4e4d323763b7b6::t_8779a8e155bd22 11,65-66,78-79
+packages/cli/src/lib/log.ts
+  s_4e4d323763b7b6::t_22db23ba3dc1af 1-47
+packages/cli/src/commands/update.ts
+  s_4e4d323763b7b6::t_f237f095bf836e 1-7,10-42
+  s_4e4d323763b7b6::t_93e28b3d4a1c51 8-9
+packages/cli/src/commands/deploy.ts
+  s_4e4d323763b7b6::t_8779a8e155bd22 1
+  s_4e4d323763b7b6::t_d54bc465366390 2-64
+packages/cli/package.json
+  s_4e4d323763b7b6::t_4bba26806f3549 1-6,8-35
+  s_4e4d323763b7b6::t_8779a8e155bd22 7
+packages/cli/src/commands/setup.ts
+  s_4e4d323763b7b6::t_8779a8e155bd22 1,51-52,65-66
+  s_4e4d323763b7b6::t_ae308afd7e9a9c 2-12,14-50,53-64,67-89,94-96
+  s_4e4d323763b7b6::t_0a35aafc519ccb 13
+  s_4e4d323763b7b6::t_e9912d5e23c9ae 90-93
+bun.lock
+  s_4e4d323763b7b6::t_e9e8dc04fc99b2 53-67,476-477,578,1434,1598-1599,1656-1657
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a63c408677c1fd86329e372df1314198e98e356a",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
