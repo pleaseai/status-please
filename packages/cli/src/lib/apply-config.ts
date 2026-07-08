@@ -19,15 +19,22 @@ const MARK_END = '// <<< networking (managed by statusbeam) <<<'
 const esc = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 /**
- * Replace the committed REPLACE_WITH_* placeholders. Also updates a previously
- * injected value when a placeholder is no longer present (id changed).
+ * Set the D1 database_id and KV namespace id in a wrangler config. Replaces the
+ * field's value whether it's still the committed REPLACE_WITH placeholder or a
+ * previously injected id — so re-running `setup` after a resource is recreated
+ * updates the stale id instead of silently leaving it (the placeholder-only
+ * approach would no-op once the placeholder was gone). Values are spliced via a
+ * replacer function so a `$` in the id can't be read as a `$&`/`$1` pattern.
  */
 export function injectIds(s: string, d1?: string, kv?: string): string {
   if (d1) {
-    s = s.replaceAll('REPLACE_WITH_D1_DATABASE_ID', () => d1)
+    // `database_id` is a unique key, so match it directly.
+    s = s.replace(/("database_id"\s*:\s*")[^"]*(")/, (_m, p, q) => `${p}${d1}${q}`)
   }
   if (kv) {
-    s = s.replaceAll('REPLACE_WITH_KV_NAMESPACE_ID', () => kv)
+    // Scope to the kv_namespaces block so the generic `"id"` key can't match
+    // some other `"id"` elsewhere in the config.
+    s = s.replace(/("kv_namespaces"\s*:\s*\[[\s\S]*?"id"\s*:\s*")[^"]*(")/, (_m, p, q) => `${p}${kv}${q}`)
   }
   return s
 }
