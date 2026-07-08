@@ -1,0 +1,43 @@
+packages/create-statusbeam/tsconfig.json
+  s_4e4d323763b7b6::t_c3403fd0fac34f 1-9
+packages/create-statusbeam/templates/status.config.yml
+  s_4e4d323763b7b6::t_44cae04c424696 1-36
+packages/create-statusbeam/package.json
+  s_4e4d323763b7b6::t_dc8487879d0c20 1-6,8-31
+  s_4e4d323763b7b6::t_1fa41fbf97d237 7
+packages/create-statusbeam/templates/.github/workflows/deploy.yml
+  s_4e4d323763b7b6::t_d6e47e8eaccd7c 1-44,47-55
+  s_4e4d323763b7b6::t_e045ce4d4dceb2 45-46
+packages/create-statusbeam/templates/wrangler.worker.jsonc
+  s_4e4d323763b7b6::t_23d11de1464b2f 1-39
+packages/create-statusbeam/templates/gitignore
+  s_4e4d323763b7b6::t_abae95787658e0 1-10
+packages/create-statusbeam/templates/README.md
+  s_4e4d323763b7b6::t_19416b0f88b594 1-34
+packages/create-statusbeam/templates/wrangler.web.jsonc
+  s_4e4d323763b7b6::t_3c983694af2d7e 1-36
+packages/create-statusbeam/templates/mise.toml
+  s_4e4d323763b7b6::t_ae2d3500b4b68c 1-5
+packages/create-statusbeam/src/index.ts
+  s_4e4d323763b7b6::t_264650c60ee8b9 1-10,13-19,21-22,24,27-43,46-47,50-71,74-144
+  s_4e4d323763b7b6::t_1fa41fbf97d237 25-26,44-45,48-49,72-73
+  s_4e4d323763b7b6::t_2bdee5255299de 11-12,20,23
+bun.lock
+  s_4e4d323763b7b6::t_af47e99a82054f 76-85,748-749
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "789180243463a1d4d1a40bf372cba71a0190a244",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
