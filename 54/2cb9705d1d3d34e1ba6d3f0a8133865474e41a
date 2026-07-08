@@ -1,0 +1,49 @@
+apps/docs/.claude/skills/run-docs/driver.mjs
+  s_4e4d323763b7b6::t_eba89ae740f127 1-83
+apps/docs/src/content/docs/guides/configuration.mdx
+  s_4e4d323763b7b6::t_eba89ae740f127 1-83
+apps/docs/.claude/skills/run-docs/SKILL.md
+  s_4e4d323763b7b6::t_eba89ae740f127 1-113
+apps/docs/src/content/docs/guides/deployment.mdx
+  s_4e4d323763b7b6::t_eba89ae740f127 1-62
+apps/docs/src/content/docs/getting-started/introduction.md
+  s_4e4d323763b7b6::t_eba89ae740f127 1-36
+apps/docs/src/content/docs/reference/ai-and-llms.mdx
+  s_4e4d323763b7b6::t_eba89ae740f127 1-55
+apps/docs/astro.config.ts
+  s_4e4d323763b7b6::t_eba89ae740f127 1-91
+apps/docs/package.json
+  s_4e4d323763b7b6::t_eba89ae740f127 1-26
+apps/docs/wrangler.jsonc
+  s_4e4d323763b7b6::t_eba89ae740f127 1-23
+apps/docs/src/assets/logo.svg
+  s_4e4d323763b7b6::t_eba89ae740f127 1-6
+apps/docs/src/content.config.ts
+  s_4e4d323763b7b6::t_eba89ae740f127 1-7
+apps/docs/src/content/docs/getting-started/quick-start.mdx
+  s_4e4d323763b7b6::t_eba89ae740f127 1-56
+.github/workflows/deploy-docs.yml
+  s_4e4d323763b7b6::t_eba89ae740f127 1-61
+apps/docs/src/content/docs/index.mdx
+  s_4e4d323763b7b6::t_eba89ae740f127 1-53
+apps/docs/tsconfig.json
+  s_4e4d323763b7b6::t_eba89ae740f127 1-12
+bun.lock
+  s_4e4d323763b7b6::t_5eb24bf52c9a07 15-30,142-143,146-147,152-155,250-251,350-357,420,438-440,450-465,542-543,602-603,634-635,642-645,656-657,738-739,744-747,750-751,760-765,772-773,794-795,808-809,840-841,902-903,924,932-935,1004-1016,1022-1023,1048-1049,1088-1113,1116-1125,1128-1129,1138-1139,1142-1143,1152-1153,1158-1163,1166-1167,1176-1177,1180-1181,1216-1217,1260-1261,1264-1267,1288-1295,1310-1311,1330-1339,1344-1345,1366-1367,1382-1383,1438-1439,1448-1451,1456-1457,1460-1461,1486-1487,1522-1529,1548-1579,1592-1595,1598-1599,1622-1623,1630-1631,1644-1651,1660-1663,1686-1687,1694-1695,1730-1731,1734-1735,1738-1741,1748-1749,1758-1759,1770-1771,1778-1781,1820-1821,1866-1867,1880-1881,1884-1891,1908-1909,1914-1919,1950-1951,1958-1961,1970-1971,1988-1993,2052-2055,2060
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "542cb9705d1d3d34e1ba6d3f0a8133865474e41a",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
