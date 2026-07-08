@@ -155,7 +155,9 @@ describe('feed robustness', () => {
     const broken = incident({ title: undefined as unknown as string })
     expect(() => buildAtomFeed([broken], META)).not.toThrow()
     expect(() => buildRssFeed([broken], META)).not.toThrow()
+    // Both flavors render an empty title element rather than "undefined".
     expect(buildAtomFeed([broken], META)).toContain('<title></title>')
+    expect(buildRssFeed([broken], META)).toContain('<title></title>')
   })
 
   it('does not throw or emit "Invalid Date" when an incident timestamp is unparseable', () => {

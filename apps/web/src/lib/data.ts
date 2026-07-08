@@ -88,9 +88,9 @@ let warnedNoConfigKey = false
  * Read and parse the `config` YAML from KV (the same document the check Worker
  * reads), or `null` when KV is unbound, the key is missing, or the read/parse
  * fails. The single config-fetch seam behind {@link getLocale} and
- * {@link getPageName}, so one request that needs both reads KV once. Never
- * throws — every caller degrades to a sensible default rather than breaking the
- * edge render.
+ * {@link getPageName} — one place to parse, warn, and degrade instead of two
+ * copies drifting apart. Never throws — every caller falls back to a sensible
+ * default rather than breaking the edge render.
  */
 async function getConfig(): Promise<StatusConfig | null> {
   const kv = env.STATUS_KV
@@ -108,9 +108,11 @@ async function getConfig(): Promise<StatusConfig | null> {
     // KV is bound but has no `config` key — the deploy step never uploaded it
     // (or the key name is wrong). Warn (once per isolate) so the
     // misconfiguration is debuggable, instead of silently serving defaults.
+    // Name both fallback effects, since one shared warning now covers both
+    // callers (locale via getLocale, feed title via getPageName).
     if (!warnedNoConfigKey) {
       warnedNoConfigKey = true
-      console.warn('getConfig: no `config` key in KV, callers fall back to defaults')
+      console.warn('getConfig: no `config` key in KV — locale falls back to default, feed title to "statusbeam"')
     }
   }
   catch (err) {
