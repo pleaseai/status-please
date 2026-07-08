@@ -1,0 +1,46 @@
+apps/docs/src/content/docs/index.mdx
+  s_3d7ab525d3b2b5::t_c4f85b3f2a5ed4 1-53
+apps/docs/src/content/docs/getting-started/introduction.md
+  s_3d7ab525d3b2b5::t_f324669c96f52e 1-36
+apps/docs/package.json
+  s_3d7ab525d3b2b5::t_7a1e583d5266ba 1-25
+apps/docs/src/content/docs/guides/configuration.md
+  s_3d7ab525d3b2b5::t_e1af9f62f12438 1-83
+apps/docs/tsconfig.json
+  s_3d7ab525d3b2b5::t_25e79966a120cb 1-12
+.github/workflows/deploy-docs.yml
+  s_3d7ab525d3b2b5::t_95e35ead5c69fd 1-61
+apps/docs/wrangler.jsonc
+  s_3d7ab525d3b2b5::t_ff541eac8345f0 1-23
+apps/docs/src/content/docs/getting-started/quick-start.md
+  s_3d7ab525d3b2b5::t_a0e07e36ba8089 1-56
+apps/docs/astro.config.ts
+  s_3d7ab525d3b2b5::t_e3d6fc4cdc4b6e 63-68
+  s_3d7ab525d3b2b5::t_22ebb67e302a56 1-62,69-86
+apps/docs/src/content.config.ts
+  s_3d7ab525d3b2b5::t_2829d8095958bb 1-7
+apps/docs/src/content/docs/guides/deployment.md
+  s_3d7ab525d3b2b5::t_fea989aa82d10b 1-62
+apps/docs/src/content/docs/reference/ai-and-llms.md
+  s_3d7ab525d3b2b5::t_ffbdd3227858da 1-53
+apps/docs/src/assets/logo.svg
+  s_3d7ab525d3b2b5::t_533610007d39e0 1-6
+bun.lock
+  s_3d7ab525d3b2b5::t_41cf4021026f34 15-29,116-117,120-121,126-129,224-225,324-331,412-414,424-439,514-515,574-575,606-607,614-617,628-629,710-711,716-719,722-723,732-737,744-745,766-767,780-781,810-811,872-873,894,902-905,974-985,992-993,1018-1019,1058-1083,1086-1095,1098-1099,1108-1109,1112-1113,1122-1123,1128-1133,1136-1137,1146-1147,1150-1151,1186-1187,1230-1231,1234-1237,1258-1265,1280-1281,1300-1309,1314-1315,1336-1337,1352-1353,1408-1409,1418-1421,1426-1427,1430-1431,1456-1457,1492-1499,1518-1549,1562-1565,1568-1569,1592-1593,1600-1601,1614-1621,1630-1633,1656-1657,1664-1665,1700-1701,1704-1705,1708-1711,1718-1719,1728-1729,1740-1741,1748-1751,1790-1791,1836-1837,1856-1861,1882-1883,1904-1905,1914-1915,1922-1925,1928-1929,1936-1937,2012-2013,2016-2019,2023-2024
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a274e701b57d3b907cc6984bdd1cfd2f698e42ee",
+  "prompts": {},
+  "sessions": {
+    "s_3d7ab525d3b2b5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9530332c-81a5-4319-841a-84a211ae7dde",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
