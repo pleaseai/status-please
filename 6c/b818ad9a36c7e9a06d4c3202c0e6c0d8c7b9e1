@@ -1,0 +1,19 @@
+scripts/setup.sh
+  s_4c415a5cbd1502::t_1677bc209cb899 115,128
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6cb818ad9a36c7e9a06d4c3202c0e6c0d8c7b9e1",
+  "prompts": {},
+  "sessions": {
+    "s_4c415a5cbd1502": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1b38d19-cd9c-4932-8900-7fd130c3e7f3",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
