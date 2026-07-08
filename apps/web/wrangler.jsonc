@@ -9,7 +9,7 @@
   // Custom domain: Cloudflare provisions the proxied DNS record + edge cert
   // automatically (the `pleaseai.dev` zone lives in this account). The page is
   // still reachable at the *.workers.dev URL too.
-  "routes": [{ "pattern": "demo.status.pleaseai.dev", "custom_domain": true }],
+  "routes": [{ "pattern": "demo.statusbeam.dev", "custom_domain": true }],
 
   // Workers Cache: a tiered edge cache in front of this Worker. Rendered pages
   // set Cache-Control + stale-while-revalidate; hits skip the Worker and D1,
