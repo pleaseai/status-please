@@ -66,21 +66,26 @@ export async function notify(
       if (messages.length === 0) {
         return
       }
+      // Chunk to the sendBatch limit so a large target list still takes the
+      // queue path instead of erroring straight into the inline fallback.
+      let enqueued = 0
       try {
-        // Chunk to the sendBatch limit so a large target list still takes the
-        // queue path instead of erroring straight into the inline fallback.
         for (let i = 0; i < messages.length; i += QUEUE_BATCH_LIMIT) {
-          await env.NOTIFY_QUEUE.sendBatch(
-            messages.slice(i, i + QUEUE_BATCH_LIMIT).map(body => ({ body })),
-          )
+          const chunk = messages.slice(i, i + QUEUE_BATCH_LIMIT)
+          await env.NOTIFY_QUEUE.sendBatch(chunk.map(body => ({ body })))
+          enqueued += chunk.length
         }
         return
       }
       catch (err) {
-        // Enqueue failed — don't drop the alert. Log with the same `notify:`
-        // style as the rest of the file (target count, never payload contents)
-        // and fall through to inline so delivery is still attempted.
-        console.error(`notify: enqueue of ${messages.length} message(s) failed; falling back to inline dispatch`, err)
+        // A chunk failed to enqueue. `sendBatch` is atomic per call, so
+        // `enqueued` counts only fully-accepted chunks — fall back to inline for
+        // just the un-enqueued remainder. Re-dispatching the already-queued
+        // messages would double-deliver them. Log with the file's `notify:`
+        // style (counts, never payload contents).
+        console.error(`notify: enqueue failed after ${enqueued}/${messages.length} message(s); dispatching the rest inline`, err)
+        await postAll(fetchImpl, messages.slice(enqueued))
+        return
       }
     }
     else {
@@ -106,7 +111,11 @@ export async function dispatchNotifications(
   payload: StatusChangePayload,
   fetchImpl: typeof fetch = fetch,
 ): Promise<void> {
-  const messages = buildNotificationMessages(notifications, payload)
+  await postAll(fetchImpl, buildNotificationMessages(notifications, payload))
+}
+
+/** POST every message inline, swallowing individual failures. */
+async function postAll(fetchImpl: typeof fetch, messages: NotificationMessage[]): Promise<void> {
   await Promise.allSettled(messages.map(m => postJson(fetchImpl, m)))
 }
 
@@ -132,7 +141,15 @@ export async function consumeNotificationBatch(
         // dead-letters. Keep `ack()` out of this try so a post-success ack
         // failure isn't misread as a delivery failure and spuriously retried.
         console.error(`notify: queue delivery failed, retrying`, err)
-        message.retry()
+        try {
+          message.retry()
+        }
+        catch (retryErr) {
+          // A thrown retry() would escape Promise.all and abort the whole
+          // batch (re-delivering already-settled messages). Contain it — Queues
+          // re-delivers an unsettled message on its own.
+          console.error(`notify: retry() failed`, retryErr)
+        }
         return
       }
       try {

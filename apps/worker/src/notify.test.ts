@@ -147,6 +147,31 @@ describe('notify (transport selection)', () => {
     expect(sent[1]).toHaveLength(51)
   })
 
+  it('dispatches only the un-enqueued remainder inline when a later chunk fails', async () => {
+    // First sendBatch (100) succeeds, the second throws — the already-queued
+    // 100 must NOT be re-POSTed inline (that would double-deliver them); only
+    // the 51-message remainder falls back.
+    let call = 0
+    const enqueued: number[] = []
+    const env = {
+      NOTIFY_QUEUE: {
+        sendBatch: async (msgs: unknown[]) => {
+          call += 1
+          if (call === 1) {
+            enqueued.push(msgs.length)
+            return
+          }
+          throw new Error('queue backlog full')
+        },
+      },
+    } as unknown as Env
+    const { impl, calls } = fakeFetch(() => ({ ok: true, status: 200 }))
+    const webhooks = Array.from({ length: 150 }, (_, i) => ({ url: `https://example.com/${i}` }))
+    await notify(env, { delivery: 'queue', slack: { webhookUrl: 'https://hooks.slack.com/services/T/B/X' }, webhooks }, payload, impl)
+    expect(enqueued).toEqual([100]) // first chunk queued
+    expect(calls).toHaveLength(51) // only the remainder POSTed inline — no double-delivery
+  })
+
   it('routes to inline dispatch for the default (inline) delivery mode', async () => {
     const { env, sent } = queueEnv('record')
     const { impl, calls } = fakeFetch(() => ({ ok: true, status: 200 }))
