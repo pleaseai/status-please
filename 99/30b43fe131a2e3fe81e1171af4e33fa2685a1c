@@ -1,0 +1,19 @@
+apps/web/.claude/skills/run-statusbeam-web/smoke.sh
+  s_215504a88d8639::t_911be631e5e165 76-85,87-93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9930b43fe131a2e3fe81e1171af4e33fa2685a1c",
+  "prompts": {},
+  "sessions": {
+    "s_215504a88d8639": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "76080fd8-e3e0-49cb-94a7-a7022df876f4",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
