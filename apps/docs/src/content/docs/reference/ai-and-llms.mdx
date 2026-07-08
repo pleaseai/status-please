@@ -1,0 +1,55 @@
+---
+title: AI & LLM endpoints
+description: How this documentation is made consumable by LLMs and AI agents — llms.txt, raw Markdown endpoints, and per-page AI actions.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+This site is built to be consumed by LLMs and coding agents, not just humans.
+Three mechanisms are always available.
+
+## `/llms.txt`, `/llms-small.txt`, and `/llms-full.txt`
+
+Following the [llms.txt standard](https://llmstxt.org/), the site publishes:
+
+- **[`/llms.txt`](/llms.txt)** — a structured overview: title, description, and a
+  curated list of links to every page.
+- **[`/llms-small.txt`](/llms-small.txt)** — a compact variant of the overview,
+  trimmed for smaller context windows.
+- **[`/llms-full.txt`](/llms-full.txt)** — the entire documentation concatenated
+  into one Markdown file, ready to paste into a model's context.
+
+Point an assistant at any of these URLs to give it the whole product's docs at once.
+
+_Generated at build time by [`starlight-llms-txt`](https://github.com/delucis/starlight-llms-txt)._
+
+## Raw Markdown endpoints (`.md.txt`)
+
+Every page is also served as clean, navigation-free Markdown by appending
+`.md.txt` to its path. For example, this page is available at:
+
+```
+/reference/ai-and-llms.md.txt
+```
+
+Custom components (asides, cards, tabs) are converted to plain Markdown, so an
+agent or crawler gets structured content without HTML, CSS, or scripts.
+
+_Provided by [`starlight-md-txt`](https://www.npmjs.com/package/starlight-md-txt)._
+
+## Per-page AI actions
+
+Every page has, under its title:
+
+- **Copy Markdown** — copies the page's raw Markdown to your clipboard.
+- **Open in …** — a dropdown that opens the current page in **ChatGPT**,
+  **Claude**, or **Cursor** with a prompt referencing the page URL.
+
+_Provided by [`starlight-page-actions`](https://github.com/dlcastillop/starlight-page-actions)._
+
+<Aside type="note">
+  These three plugins are configured in `apps/docs/astro.config.ts`. `llms.txt`
+  is owned solely by `starlight-llms-txt`; `starlight-page-actions` is
+  intentionally configured without a `baseUrl` so it does not emit a competing
+  `llms.txt`.
+</Aside>
