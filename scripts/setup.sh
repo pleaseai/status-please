@@ -69,7 +69,9 @@ die()  { printf '\n%s✗ %s%s\n' "$RED" "$1" "$RST" >&2; exit 1; }
 ask() { # ask <prompt> <default> <var>
   local prompt="$1" def="$2" __var="$3" reply
   if [ "$INTERACTIVE" -eq 0 ]; then printf -v "$__var" '%s' "$def"; return; fi
-  if [ -n "$def" ]; then read -rp "  $prompt [$def]: " reply; else read -rp "  $prompt: " reply; fi
+  # `|| true`: a closed stdin / Ctrl-D returns non-zero from read; fall back to
+  # the default instead of aborting the whole script via `set -e`.
+  if [ -n "$def" ]; then read -rp "  $prompt [$def]: " reply || true; else read -rp "  $prompt: " reply || true; fi
   printf -v "$__var" '%s' "${reply:-$def}"
 }
 

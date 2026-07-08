@@ -81,15 +81,27 @@ function setNetworking(s: string): string {
   const anchor = /("compatibility_flags"\s*:\s*\[[^\]]*\],)/;
   if (anchor.test(s)) return s.replace(anchor, `$1\n\n${block}`);
 
-  console.warn(`  warning: could not place networking block in ${WEB}; edit it by hand`);
-  return s;
+  // Fail loud rather than return `s` unchanged: a silent no-op here would let
+  // setup.sh print "✓ configured" and then deploy the web Worker with the
+  // shipped demo domain (or a stale route) instead of the requested one.
+  throw new Error(
+    `could not place the networking block in ${WEB} (no marker, "// Custom domain:" ` +
+      `comment, or compatibility_flags anchor found). Edit it by hand, then re-run.`,
+  );
 }
 
 function setCron(s: string): string {
   const cron = process.env.CRON;
   if (!cron) return s;
   // Replace the single expression inside "crons": [ "..." ].
-  return s.replace(/("crons"\s*:\s*\[\s*)"[^"]*"(\s*\])/, `$1${JSON.stringify(cron)}$2`);
+  const re = /("crons"\s*:\s*\[\s*)"[^"]*"(\s*\])/;
+  if (!re.test(s)) {
+    // Non-fatal (the committed default cron still works), but warn so a silently
+    // dropped schedule doesn't look applied.
+    console.warn(`  warning: could not set the cron expression in ${WORKER}; edit it by hand`);
+    return s;
+  }
+  return s.replace(re, `$1${JSON.stringify(cron)}$2`);
 }
 
 await edit(WORKER, (s) => setCron(injectIds(s)));
