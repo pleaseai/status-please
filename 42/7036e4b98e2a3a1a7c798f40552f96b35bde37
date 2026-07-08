@@ -1,0 +1,37 @@
+packages/cli/src/lib/run.ts
+  s_4e4d323763b7b6::t_2125c511c1ccab 59
+  s_4e4d323763b7b6::t_9ef0ca2d986104 38
+  s_4e4d323763b7b6::t_0acd0b69248205 14-22
+packages/core/package.json
+  s_4e4d323763b7b6::t_d63fe2bfb463d3 26-27
+eslint.config.ts
+  s_4e4d323763b7b6::t_b24d5a9556c3f1 5-13
+packages/cli/src/commands/update.ts
+  s_4e4d323763b7b6::t_1bbfe0be4cfe6d 8
+  s_4e4d323763b7b6::t_a757f12d604084 68-74
+packages/cli/src/lib/wrangler.ts
+  s_4e4d323763b7b6::t_67bf6d8c39c68f 58-65
+  s_4e4d323763b7b6::t_f05a522ea180cf 81-83
+codecov.yml
+  s_4e4d323763b7b6::t_76a7c2bb7d3c2b 16-31
+packages/create-statusbeam/src/index.ts
+  s_4e4d323763b7b6::t_0245665c7dbe8c 134-136
+sonar-project.properties
+  s_4e4d323763b7b6::t_ce9ee3da69db4f 29-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "427036e4b98e2a3a1a7c798f40552f96b35bde37",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
