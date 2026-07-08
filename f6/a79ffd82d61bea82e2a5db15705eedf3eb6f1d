@@ -1,0 +1,28 @@
+packages/cli/.claude/skills/run-statusbeam-cli/smoke.sh
+  s_215504a88d8639::t_5616e20c7e8316 80
+  s_215504a88d8639::t_12db056d5523e6 99
+  s_215504a88d8639::t_359aee88c4343f 12-13
+packages/cli/.claude/skills/run-statusbeam-cli/SKILL.md
+  s_215504a88d8639::t_2ef38b915ea4d1 46-47
+apps/web/.claude/skills/run-statusbeam-web/smoke.sh
+  s_215504a88d8639::t_3325d57c3d73a6 82
+  s_215504a88d8639::t_a5e04fce941f9c 57
+apps/worker/.claude/skills/run-statusbeam-worker/smoke.sh
+  s_215504a88d8639::t_4915b39cda787d 73-77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f6a79ffd82d61bea82e2a5db15705eedf3eb6f1d",
+  "prompts": {},
+  "sessions": {
+    "s_215504a88d8639": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "76080fd8-e3e0-49cb-94a7-a7022df876f4",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
