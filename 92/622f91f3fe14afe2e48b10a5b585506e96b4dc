@@ -1,0 +1,25 @@
+.claude/agent-memory/review-review-code-reviewer/pr22-setup-script-review.md
+  s_4c415a5cbd1502::t_07bf673a84886f 39-50
+.claude/agent-memory/review-review-silent-failure-hunter/setup_scripts_error_handling.md
+  s_4c415a5cbd1502::t_126383a3e3b75b 51-62
+.claude/agent-memory/review-review-silent-failure-hunter/MEMORY.md
+  s_4c415a5cbd1502::t_2cec8b1f0352ac 6
+.claude/agent-memory/review-review-code-reviewer/MEMORY.md
+  s_4c415a5cbd1502::t_eb48455ff5fd38 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "92622f91f3fe14afe2e48b10a5b585506e96b4dc",
+  "prompts": {},
+  "sessions": {
+    "s_4c415a5cbd1502": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1b38d19-cd9c-4932-8900-7fd130c3e7f3",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
