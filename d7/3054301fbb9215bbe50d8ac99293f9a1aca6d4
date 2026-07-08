@@ -1,0 +1,109 @@
+release-please-config.json
+  s_8e92e3b572342d::t_82fe5abdc34f48 6
+status.config.example.yml
+  s_8e92e3b572342d::t_82fe5abdc34f48 18
+status.config.yml
+  s_8e92e3b572342d::t_82fe5abdc34f48 1,6
+apps/worker/src/env.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 17
+apps/web/src/pages/api/badge/[slug]/response-time.json.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 2
+mise.toml
+  s_8e92e3b572342d::t_82fe5abdc34f48 1
+apps/web/src/components/ResponseChart.tsx
+  s_8e92e3b572342d::t_82fe5abdc34f48 1,3
+apps/web/src/components/StatusPage.astro
+  s_8e92e3b572342d::t_82fe5abdc34f48 2,4,98
+package.json
+  s_8e92e3b572342d::t_82fe5abdc34f48 2,11,21
+apps/worker/src/notify.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 1-2
+apps/worker/package.json
+  s_8e92e3b572342d::t_82fe5abdc34f48 2,11-12,16
+sonar-project.properties
+  s_8e92e3b572342d::t_82fe5abdc34f48 4
+apps/web/src/components/UptimeTimeline.tsx
+  s_8e92e3b572342d::t_82fe5abdc34f48 1-2
+apps/web/src/lib/data.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 1-2
+apps/web/wrangler.jsonc
+  s_8e92e3b572342d::t_82fe5abdc34f48 3,27
+apps/web/src/components/ThemeToggle.tsx
+  s_8e92e3b572342d::t_82fe5abdc34f48 1-2
+apps/web/src/components/IncidentList.tsx
+  s_8e92e3b572342d::t_82fe5abdc34f48 1-2
+apps/web/src/pages/api/badge/[slug]/uptime.json.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 1,3
+apps/worker/wrangler.jsonc
+  s_8e92e3b572342d::t_82fe5abdc34f48 3,18
+apps/worker/schema.sql
+  s_8e92e3b572342d::t_82fe5abdc34f48 1
+apps/web/src/pages/api/badge.json.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 2
+scripts/setup.sh
+  s_8e92e3b572342d::t_82fe5abdc34f48 3,26,37,204,208,216,222
+docs/adapters/statuspage.md
+  s_8e92e3b572342d::t_7b4827266a0ed8 10,53,82,87,97,147
+apps/web/astro.config.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 4
+CONTRIBUTING.md
+  s_8e92e3b572342d::t_82fe5abdc34f48 3,10-11,15
+apps/web/src/lib/page.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 1,3
+apps/web/src/components/StatusBanner.tsx
+  s_8e92e3b572342d::t_82fe5abdc34f48 1-2
+DEPLOYMENT.md
+  s_8e92e3b572342d::t_12742971c85147 3
+  s_8e92e3b572342d::t_82fe5abdc34f48 42,70,141
+apps/web/src/lib/api.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 1
+apps/web/src/pages/api/status.json.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 2
+.github/workflows/deploy.yml
+  s_8e92e3b572342d::t_82fe5abdc34f48 78,89,95,101
+docs/adr/0001-tech-stack.md
+  s_8e92e3b572342d::t_7b4827266a0ed8 5
+  s_8e92e3b572342d::t_12742971c85147 9
+apps/worker/src/index.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 1,3
+apps/web/package.json
+  s_8e92e3b572342d::t_82fe5abdc34f48 2,16
+apps/web/src/middleware.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 1
+apps/web/src/pages/api/badge/[slug].json.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 2
+apps/web/src/components/StatusList.tsx
+  s_8e92e3b572342d::t_82fe5abdc34f48 1-2
+apps/worker/src/cache.ts
+  s_8e92e3b572342d::t_82fe5abdc34f48 4
+.github/ISSUE_TEMPLATE/bug_report.md
+  s_8e92e3b572342d::t_7b4827266a0ed8 26
+.github/ISSUE_TEMPLATE/config.yml
+  s_8e92e3b572342d::t_82fe5abdc34f48 4,7
+README.md
+  s_8e92e3b572342d::t_ae000cd8b70597 1
+  s_8e92e3b572342d::t_767f536f2c575a 241
+  s_8e92e3b572342d::t_07ad7e89eebeef 12
+  s_8e92e3b572342d::t_12742971c85147 14,21,24,27,30,47,274
+  s_8e92e3b572342d::t_82fe5abdc34f48 3-5,139,296
+packages/core/package.json
+  s_8e92e3b572342d::t_82fe5abdc34f48 2
+bun.lock
+  s_8e92e3b572342d::t_dfa1359c276d32 6,16,20,43,46,54,185,187,189,191,193,195,197,219,319,321,323,325,327,329,331,333,335,337,339,341,343,345,347,349,351,353,355,357-359,363-365,367,369,461,463,465,561,675,797,853,967,1057,1157,1281,1307,1327,1363,1503,1505,1521,1555,1557,1559,1609-1610,1639-1642,1647-1692
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d73054301fbb9215bbe50d8ac99293f9a1aca6d4",
+  "prompts": {},
+  "sessions": {
+    "s_8e92e3b572342d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52d08657-14f3-46d7-8ede-abf31ccb1349",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
