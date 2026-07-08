@@ -1,0 +1,19 @@
+apps/web/wrangler.jsonc
+  s_8e92e3b572342d::t_f5f6522216cc01 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b42faa5253d01f576b104cf37c2fec5dc1a864f9",
+  "prompts": {},
+  "sessions": {
+    "s_8e92e3b572342d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52d08657-14f3-46d7-8ede-abf31ccb1349",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
