@@ -1,0 +1,76 @@
+name: Publish
+
+# release-please cuts one GitHub Release per changed package (tags like
+# `core-v0.1.0`, `cli-v0.1.0`). Each published release fires this workflow, which
+# publishes just that package to npm with provenance. See ADR-0002.
+on:
+  release:
+    types: [published]
+
+# Least privilege. id-token: write is required for npm provenance (OIDC).
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish to npm (provenance)
+    runs-on: ubuntu-latest
+    environment: npm # holds NPM_TOKEN; add protection rules in repo settings
+    steps:
+      - name: Resolve package from the release tag
+        id: pkg
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          # tags: <component>-v<version> → strip the -v<version> suffix.
+          component="${TAG%-v*}"
+          case "$component" in
+            core) dir="packages/core" ;;
+            worker) dir="apps/worker" ;;
+            web) dir="apps/web" ;;
+            cli) dir="packages/cli" ;;
+            create-statusbeam) dir="packages/create-statusbeam" ;;
+            *) echo "::error::unknown release component '$component' (tag '$TAG')"; exit 1 ;;
+          esac
+          echo "dir=$dir" >> "$GITHUB_OUTPUT"
+          echo "Publishing $dir for tag $TAG"
+
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up bun
+        uses: oven-sh/setup-bun@735343b667d3e6a283f6904235642b1a3a1072c4 # v2.0.2
+        with:
+          bun-version: latest
+
+      - name: Set up node (npm CLI for provenance publish)
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build
+        # Builds the workspace so core/cli/create-statusbeam emit their dist/.
+        run: bun run build
+
+      - name: Pack + publish with provenance
+        working-directory: ${{ steps.pkg.outputs.dir }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          dest="$RUNNER_TEMP/pack"
+          mkdir -p "$dest"
+          # bun pm pack rewrites workspace:* deps to real versions in the tarball.
+          bun pm pack --destination "$dest"
+          tarball="$(find "$dest" -name '*.tgz' | head -1)"
+          if [ -z "$tarball" ]; then
+            echo "::error::no tarball produced by bun pm pack"; exit 1
+          fi
+          # npm (not bun) publish: only npm emits the provenance attestation.
+          npm publish "$tarball" --provenance --access public
