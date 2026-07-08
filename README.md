@@ -4,12 +4,14 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pleaseai_statusbeam&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pleaseai_statusbeam)
 [![codecov](https://codecov.io/gh/pleaseai/statusbeam/graph/badge.svg)](https://codecov.io/gh/pleaseai/statusbeam)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Live demo](https://img.shields.io/badge/live%20demo-demo.status.pleaseai.dev-brightgreen)](https://demo.status.pleaseai.dev)
+[![Reviewed by Greptile](https://img.shields.io/badge/code%20review-Greptile-2ea44f)](https://www.greptile.com/open-source)
+[![Reviewed by cubic](https://img.shields.io/badge/code%20review-cubic-14b8a6)](https://www.cubic.dev)
+[![Live demo](https://img.shields.io/badge/live%20demo-demo.statusbeam.dev-brightgreen)](https://demo.statusbeam.dev)
 [![Deploy on Cloudflare](https://img.shields.io/badge/deploy%20on-Cloudflare-F38020?logo=cloudflare&logoColor=white)](./DEPLOYMENT.md)
 
 > An open-source, CDN-native **status page** generator — the modern successor to [upptime](https://github.com/upptime/upptime).
 
-🔗 **Live demo:** [demo.status.pleaseai.dev](https://demo.status.pleaseai.dev) — a StatusBeam instance monitoring a few public services, running on Cloudflare.
+🔗 **Live demo:** [demo.statusbeam.dev](https://demo.statusbeam.dev) — a StatusBeam instance monitoring a few public services, running on Cloudflare.
 
 StatusBeam monitors your services, records their uptime as durable time-series
 data, and publishes a fast, good-looking status page to the edge. It keeps the parts
@@ -36,7 +38,7 @@ public JSON API — while fixing upptime's biggest structural weaknesses:
 🚧 **Active development.** The core pipeline is live end-to-end — HTTP checks on
 Cloudflare Cron write to D1/KV, the Astro page renders 90-day uptime bars, response-time
 charts, and an incident timeline at the edge, and status changes fan out to Slack/webhooks
-while purging the edge cache. A [live demo](https://demo.status.pleaseai.dev) runs on
+while purging the edge cache. A [live demo](https://demo.statusbeam.dev) runs on
 Cloudflare. TCP/SSL checks, a public API + badges, and more notification channels are
 next — see the [Roadmap](#roadmap).
 
@@ -351,6 +353,20 @@ fork-from-source appendix — is in **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
   status pages, with a globally distributed checker for latency-aware probing.
 - [CachetHQ/Cachet](https://cachethq.io) — a long-standing open-source status page
   system (PHP/Laravel) centered on incident and component management.
+
+---
+
+## Code review
+
+Pull requests to StatusBeam are reviewed by two AI code reviewers, both free for
+open source:
+
+- **[Greptile](https://www.greptile.com/open-source)** — free for non-commercial
+  MIT/Apache projects under its OSS program.
+- **[cubic](https://www.cubic.dev)** — free for public repositories.
+
+[![Reviewed by Greptile](https://img.shields.io/badge/code%20review-Greptile-2ea44f)](https://www.greptile.com/open-source)
+[![Reviewed by cubic](https://img.shields.io/badge/code%20review-cubic-14b8a6)](https://www.cubic.dev)
 
 ---
 
