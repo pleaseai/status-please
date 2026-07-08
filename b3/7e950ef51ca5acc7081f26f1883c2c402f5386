@@ -1,0 +1,150 @@
+.claude/agent-memory/review-review-silent-failure-hunter/cli_scaffolder_error_handling_pr30.md
+  s_9b8500adb1b171::t_7b60e66480f830 1-70
+packages/create-statusbeam/templates/gitignore
+  s_9b8500adb1b171::t_7b60e66480f830 1-10
+packages/cli/src/lib/read-jsonc.test.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-41
+packages/cli/tsconfig.json
+  s_9b8500adb1b171::t_7b60e66480f830 1-9
+docs/adapters/statuspage.md
+  s_9b8500adb1b171::t_7b60e66480f830 109-169,206-208,222-228
+packages/core/src/index.ts
+  s_9b8500adb1b171::t_7b60e66480f830 8
+packages/core/tsconfig.build.json
+  s_9b8500adb1b171::t_7b60e66480f830 2-13,15-19
+apps/worker/src/webhook.test.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-43
+packages/create-statusbeam/templates/mise.toml
+  s_9b8500adb1b171::t_7b60e66480f830 1-5
+.claude/agent-memory/review-review-code-reviewer/MEMORY.md
+  s_9b8500adb1b171::t_7b60e66480f830 5
+release-please-config.json
+  s_9b8500adb1b171::t_7b60e66480f830 3-11,13-29,31-48,53
+.github/workflows/publish.yml
+  s_9b8500adb1b171::t_7b60e66480f830 1-95
+packages/cli/src/lib/wrangler.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-108
+packages/cli/src/lib/apply-config.test.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-128
+packages/core/src/statuspage-webhook.test.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-136
+packages/cli/src/commands/update.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-78
+packages/cli/src/lib/run.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-75
+packages/cli/src/lib/project.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-62
+packages/create-statusbeam/templates/wrangler.web.jsonc
+  s_9b8500adb1b171::t_7b60e66480f830 1-36
+.claude/settings.json
+  s_9b8500adb1b171::t_7b60e66480f830 3-14,23-26,30
+apps/web/astro.config.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1,9-17,23
+apps/web/package.json
+  s_9b8500adb1b171::t_7b60e66480f830 5-28,38-39,42,47-48,51-53,58
+apps/worker/src/webhook.handler.test.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-168
+apps/worker/src/ingest.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-167
+eslint.config.ts
+  s_9b8500adb1b171::t_7b60e66480f830 5-13
+apps/worker/tsconfig.json
+  s_9b8500adb1b171::t_7b60e66480f830 5
+packages/cli/src/commands/setup.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-96
+packages/create-statusbeam/templates/.github/workflows/deploy.yml
+  s_9b8500adb1b171::t_7b60e66480f830 1-59
+.release-please-manifest.json
+  s_9b8500adb1b171::t_7b60e66480f830 2-6
+.claude/agent-memory/review-review-documentation-analyzer/project_pr30_package_distribution_docs.md
+  s_9b8500adb1b171::t_7b60e66480f830 1-37
+.claude/agent-memory/review-review-code-reviewer/pr30-cli-package-distribution-review.md
+  s_9b8500adb1b171::t_7b60e66480f830 1-45
+apps/worker/src/index.ts
+  s_9b8500adb1b171::t_7b60e66480f830 2-4,7-16,22,25-27
+packages/cli/src/commands/deploy.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-64
+packages/core/package.json
+  s_9b8500adb1b171::t_7b60e66480f830 5-13,15-31,34
+.claude/agent-memory/review-review-security-reviewer/injection-avoidance-conventions.md
+  s_9b8500adb1b171::t_7b60e66480f830 1-17
+packages/create-statusbeam/templates/status.config.yml
+  s_9b8500adb1b171::t_7b60e66480f830 1-36
+apps/worker/wrangler.jsonc
+  s_9b8500adb1b171::t_7b60e66480f830 14-23
+packages/cli/src/cli.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-119
+.claude/agent-memory/review-review-silent-failure-hunter/statuspage_webhook_ingest_2026_07.md
+  s_9b8500adb1b171::t_7b60e66480f830 1-49
+packages/cli/src/commands/update.test.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-63
+packages/create-statusbeam/templates/README.md
+  s_9b8500adb1b171::t_7b60e66480f830 1-34
+codecov.yml
+  s_9b8500adb1b171::t_7b60e66480f830 16-30
+packages/cli/src/lib/prompt.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-46
+packages/create-statusbeam/templates/wrangler.worker.jsonc
+  s_9b8500adb1b171::t_7b60e66480f830 1-39
+packages/cli/src/lib/log.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-47
+.claude/agent-memory/review-review-security-reviewer/MEMORY.md
+  s_9b8500adb1b171::t_7b60e66480f830 1-4
+packages/cli/src/lib/apply-config.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-151
+packages/create-statusbeam/src/index.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-151
+packages/create-statusbeam/package.json
+  s_9b8500adb1b171::t_7b60e66480f830 1-31
+.claude/agent-memory/review-review-security-reviewer/publish-workflow-security-model.md
+  s_9b8500adb1b171::t_7b60e66480f830 1-17
+packages/core/src/statuspage-webhook.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-112
+sonar-project.properties
+  s_9b8500adb1b171::t_7b60e66480f830 29-36
+.claude/agent-memory/review-review-documentation-analyzer/MEMORY.md
+  s_9b8500adb1b171::t_7b60e66480f830 4
+apps/worker/src/env.ts
+  s_9b8500adb1b171::t_7b60e66480f830 15-27
+apps/worker/package.json
+  s_9b8500adb1b171::t_7b60e66480f830 5-27
+apps/worker/src/webhook.ts
+  s_9b8500adb1b171::t_7b60e66480f830 1-118
+status.config.example.yml
+  s_9b8500adb1b171::t_7b60e66480f830 28-30
+docs/adr/0001-tech-stack.md
+  s_9b8500adb1b171::t_7b60e66480f830 7-12
+packages/create-statusbeam/tsconfig.json
+  s_9b8500adb1b171::t_7b60e66480f830 1-9
+.claude/agent-memory/review-review-silent-failure-hunter/MEMORY.md
+  s_9b8500adb1b171::t_7b60e66480f830 8-9
+packages/core/src/check.ts
+  s_9b8500adb1b171::t_7b60e66480f830 79-84,93
+docs/adr/0002-package-based-distribution.md
+  s_9b8500adb1b171::t_7b60e66480f830 3,129-152
+  s_9b8500adb1b171::t_9b1853fd7c4d70 153
+README.md
+  s_9b8500adb1b171::t_7b60e66480f830 289-293,296-298,300,303-305,324-325,342
+DEPLOYMENT.md
+  s_9b8500adb1b171::t_7b60e66480f830 3-6,8-10,12,14,16-17,19-22,24,27-30,33-39,41-43,45,47-51,53-54,56,58-59,62-63,66-68,70-76,78,80-86,88,90-91,94-95,98-99,101,104-105,108-109,115-138
+packages/cli/package.json
+  s_9b8500adb1b171::t_7b60e66480f830 1-35
+bun.lock
+  s_9b8500adb1b171::t_a94d72f1b26d96 35-36,39,44-45,48,50,69-83,92-101,538-539,650,832-833,1722,1908-1909,1924-1925,1992-1993,1996-1997
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b37e950ef51ca5acc7081f26f1883c2c402f5386",
+  "prompts": {},
+  "sessions": {
+    "s_9b8500adb1b171": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12907e56-a839-44bf-aefa-c83c91f461e6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
