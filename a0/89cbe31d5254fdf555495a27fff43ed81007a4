@@ -1,0 +1,46 @@
+apps/worker/src/env.ts
+  s_3ddd8e8777c597::t_c8ee62e4017b0c 1-2,8-15
+packages/core/src/config.ts
+  s_3ddd8e8777c597::t_a9a3f9fdc6652f 63-74,77-78,81
+  s_3ddd8e8777c597::t_eda1c703818013 62
+apps/worker/src/notify.test.ts
+  s_3ddd8e8777c597::t_950c5dc1e3d5bc 5
+  s_3ddd8e8777c597::t_179d4ca1dbff96 1-4,6-131,135-178
+  s_3ddd8e8777c597::t_8b322397a213ae 132-134
+apps/worker/wrangler.jsonc
+  s_3ddd8e8777c597::t_2c47dac571cf0f 43-66
+packages/core/src/config.test.ts
+  s_3ddd8e8777c597::t_89c19cc331e3c6 89-98
+apps/worker/src/notify.ts
+  s_3ddd8e8777c597::t_f71372a3c4f4f5 2,6-9,11-21,24,26,28,30,33-128,142-143,145,148-150
+status.config.example.yml
+  s_3ddd8e8777c597::t_484b15a4dc9a95 41-44
+apps/worker/src/ingest.ts
+  s_3ddd8e8777c597::t_c2e639a9f32c91 66-68
+  s_3ddd8e8777c597::t_c7738534781f2a 6
+packages/create-statusbeam/templates/status.config.yml
+  s_3ddd8e8777c597::t_f96bb3dde300f4 26-32
+packages/create-statusbeam/templates/wrangler.worker.jsonc
+  s_3ddd8e8777c597::t_8b08fd96447a43 39-58
+apps/worker/src/index.ts
+  s_3ddd8e8777c597::t_1137a12f54b214 2,5,19-25,37-39
+  s_3ddd8e8777c597::t_8d06280126526d 40
+packages/create-statusbeam/templates/README.md
+  s_3ddd8e8777c597::t_7ccad5dca89a2f 33-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a089cbe31d5254fdf555495a27fff43ed81007a4",
+  "prompts": {},
+  "sessions": {
+    "s_3ddd8e8777c597": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fd456b48-a21d-4549-b0c9-bff0e1f5036b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
