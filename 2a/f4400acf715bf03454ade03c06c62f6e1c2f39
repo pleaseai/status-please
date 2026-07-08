@@ -1,0 +1,23 @@
+.github/workflows/deploy-docs.yml
+  s_3f4d649463b253::t_e21e73958a6e64 12
+apps/docs/.claude/skills/run-docs/driver.mjs
+  s_3f4d649463b253::t_17589ec2110e24 64-75
+apps/docs/src/content/docs/reference/ai-and-llms.mdx
+  s_3f4d649463b253::t_92d5030f363746 11,17-18,22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2af4400acf715bf03454ade03c06c62f6e1c2f39",
+  "prompts": {},
+  "sessions": {
+    "s_3f4d649463b253": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98646425-ab3b-49b5-a4e4-3a62286d0042",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
