@@ -69,12 +69,16 @@ export async function handleStatuspageWebhook(
   // fails closed — the endpoint is never open.
   const token = url.searchParams.get('token') ?? ''
   if (!env.WEBHOOK_SECRET || !timingSafeEqual(token, env.WEBHOOK_SECRET)) {
+    // Log for operator visibility (brute-force attempts) — never the token/secret.
+    console.warn(`webhook: rejected unauthenticated request for slug "${route.slug}"`)
     return new Response('Unauthorized', { status: 401 })
   }
 
   const config = await loadConfig(env)
   const site = config.sites.find(s => s.slug === route.slug)
   if (!site || site.check !== 'statuspage') {
+    // Usually a misregistered webhook URL — surface it so the operator can fix it.
+    console.warn(`webhook: unknown or non-statuspage slug "${route.slug}"`)
     return new Response('Unknown site', { status: 404 })
   }
 
@@ -83,10 +87,13 @@ export async function handleStatuspageWebhook(
     body = await request.json()
   }
   catch {
+    console.warn(`webhook: invalid JSON body for slug "${route.slug}"`)
     return new Response('Invalid JSON', { status: 400 })
   }
   const parsed = statuspageWebhookSchema.safeParse(body)
   if (!parsed.success) {
+    // Payload-shape drift (a Statuspage API change) shows up here, not as an outage.
+    console.warn(`webhook: payload failed validation for slug "${route.slug}": ${parsed.error.message}`)
     return new Response('Invalid payload', { status: 400 })
   }
 
