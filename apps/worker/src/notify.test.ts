@@ -248,6 +248,20 @@ describe('consumeNotificationBatch (queue consumer)', () => {
     expect(retried).toBe(false)
   })
 
+  it('fails the batch when retry() throws, so the message is redelivered (not silently acked)', async () => {
+    const { impl } = fakeFetch(() => ({ ok: false, status: 503 }))
+    const batch = {
+      messages: [{
+        body: { url: 'https://example.com/bad', body: payload },
+        ack: () => {},
+        retry: () => { throw new Error('retry unavailable') },
+      }],
+    } as unknown as MessageBatch<NotificationMessage>
+    // Delivery failed and retry() couldn't be recorded — the handler must reject
+    // rather than return (a return would let Queues implicitly ack = drop it).
+    await expect(consumeNotificationBatch(batch, impl)).rejects.toThrow('retry unavailable')
+  })
+
   it('settles each message independently within a batch', async () => {
     const { impl } = fakeFetch(url =>
       url.includes('/bad') ? { ok: false, status: 500 } : { ok: true, status: 200 },

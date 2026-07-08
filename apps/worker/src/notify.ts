@@ -141,15 +141,13 @@ export async function consumeNotificationBatch(
         // dead-letters. Keep `ack()` out of this try so a post-success ack
         // failure isn't misread as a delivery failure and spuriously retried.
         console.error(`notify: queue delivery failed, retrying`, err)
-        try {
-          message.retry()
-        }
-        catch (retryErr) {
-          // A thrown retry() would escape Promise.all and abort the whole
-          // batch (re-delivering already-settled messages). Contain it — Queues
-          // re-delivers an unsettled message on its own.
-          console.error(`notify: retry() failed`, retryErr)
-        }
+        // Do NOT swallow a retry() failure: an unsettled message is implicitly
+        // acked when the handler returns, so swallowing here would silently drop
+        // a notification that failed to deliver. Let it propagate — the batch
+        // fails and Queues redelivers the message. (A settle call throwing is a
+        // near-impossible runtime edge; when it does, redelivering — duplicates
+        // and all — beats dropping an alert.)
+        message.retry()
         return
       }
       try {
