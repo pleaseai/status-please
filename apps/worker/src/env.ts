@@ -1,8 +1,18 @@
+import type { NotificationMessage } from './notify'
+
 export interface Env {
   /** Time-series checks + incident history. */
   DB: D1Database
   /** Current snapshot the status page reads, plus the `config` YAML document. */
   STATUS_KV: KVNamespace
+  /**
+   * Optional Cloudflare Queue for reliable notification delivery. Bound only
+   * when the operator opts into `notifications.delivery: queue` and wires the
+   * `queues.producers` binding in wrangler.jsonc (Workers Paid plan). When
+   * unset, dispatch falls back to inline `fetch` (see {@link notify} in
+   * notify.ts). The `queue()` consumer in index.ts drains it with retries + DLQ.
+   */
+  NOTIFY_QUEUE?: Queue<NotificationMessage>
   /**
    * Cloudflare API token with the "Cache Purge" permission. Used by
    * {@link purgeStatusCache} to purge the edge cache by Cache-Tag on a status

@@ -3,7 +3,7 @@ import type { Env } from './env'
 import { buildStatusChangePayload, formatUptime, parseConfig, windowUptime } from '@statusbeam/core'
 import { purgeStatusCache } from './cache'
 import { KV_KEYS } from './env'
-import { dispatchNotifications } from './notify'
+import { notify } from './notify'
 
 const HISTORY_DAYS = 90
 
@@ -63,8 +63,9 @@ export async function ingest(
     const payload = buildStatusChangePayload(changes, new Date().toISOString())
 
     // Notify subscribers and purge the edge cache by tag so the page reflects
-    // the new state immediately instead of waiting for its TTL.
-    ctx.waitUntil(dispatchNotifications(config.notifications, payload))
+    // the new state immediately instead of waiting for its TTL. `notify` picks
+    // inline `fetch` or the opt-in Cloudflare Queue from `notifications.delivery`.
+    ctx.waitUntil(notify(env, config.notifications, payload))
     ctx.waitUntil(purgeStatusCache(env, changes.map(c => c.slug)))
   }
 }

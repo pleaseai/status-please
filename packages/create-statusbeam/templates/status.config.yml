@@ -23,6 +23,13 @@ sites:
 # All optional. Keep the real Slack URL out of version control (it's a secret) —
 # upload a private copy, or use a repo secret, rather than committing it here.
 notifications:
+  # How alerts are delivered on a status change:
+  #   inline (default) — POST each target directly. Best-effort, no retries.
+  #                       Works on the free Workers plan.
+  #   queue           — enqueue to a Cloudflare Queue with automatic retries +
+  #                     dead-lettering. Requires the Workers PAID plan and the
+  #                     `queues` bindings in wrangler.worker.jsonc.
+  delivery: inline
   slack:
     webhookUrl: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX
   webhooks:

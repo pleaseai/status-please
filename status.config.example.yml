@@ -38,6 +38,10 @@ sites:
 # All optional. Keep the real Slack URL in the private config you upload to KV,
 # not in this committed example (the webhook URL is a secret).
 notifications:
+  # inline (default): POST each target directly — best-effort, no retries, free
+  # plan. queue: enqueue to a Cloudflare Queue with automatic retries +
+  # dead-lettering (Workers Paid plan; see the queues bindings in wrangler.jsonc).
+  delivery: inline
   slack:
     webhookUrl: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX
   webhooks:

@@ -40,11 +40,30 @@
 
   // Notifications (src/notify.ts): dispatched inline via `ctx.waitUntil(fetch)`
   // on a status change — Slack + generic webhook targets come from the
-  // `notifications` block in status.config.yml, so no binding is required here.
-  // Follow-up: to add retries/backpressure, put a Workers Queue between the
-  // `scheduled` producer and a `queue` consumer that does the HTTP dispatch —
-  // add a `queues.producers`/`queues.consumers` binding here and a `queue`
-  // handler in src/index.ts.
+  // `notifications` block in status.config.yml, so no binding is required for
+  // the default (free-plan) inline path.
+  //
+  // Reliable delivery (opt-in, Workers Paid plan): set `notifications.delivery:
+  // queue` in status.config.yml and uncomment the block below. The `scheduled`
+  // producer then enqueues one message per target onto NOTIFY_QUEUE and the
+  // `queue` consumer (src/index.ts) does the HTTP dispatch — gaining automatic
+  // retries + backoff and dead-lettering. Create the queues first:
+  //   wrangler queues create statusbeam-notifications
+  //   wrangler queues create statusbeam-notifications-dlq
+  // then add a comma after the `kv_namespaces` `]` above and uncomment:
+  //
+  // "queues": {
+  //   "producers": [
+  //     { "queue": "statusbeam-notifications", "binding": "NOTIFY_QUEUE" }
+  //   ],
+  //   "consumers": [
+  //     {
+  //       "queue": "statusbeam-notifications",
+  //       "max_retries": 5,
+  //       "dead_letter_queue": "statusbeam-notifications-dlq"
+  //     }
+  //   ]
+  // }
   //
   // Cache purge (src/cache.ts): purge-by-Cache-Tag is a REST API feature (on all
   // Cloudflare plans since Apr 2025), not a Worker binding. Provide these as

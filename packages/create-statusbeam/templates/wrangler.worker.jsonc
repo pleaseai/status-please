@@ -36,4 +36,24 @@
   //   wrangler secret put CF_API_TOKEN --config wrangler.worker.jsonc
   //   wrangler secret put CF_ZONE_ID   --config wrangler.worker.jsonc
   // When unset, a status change still shows within the 60s edge TTL.
+
+  // Reliable notification delivery (opt-in, Workers PAID plan). Default delivery
+  // is inline `fetch` (no binding needed). To gain retries + dead-lettering, set
+  // `notifications.delivery: queue` in status.config.yml, create the queues:
+  //   wrangler queues create statusbeam-notifications --config wrangler.worker.jsonc
+  //   wrangler queues create statusbeam-notifications-dlq --config wrangler.worker.jsonc
+  // then add a comma after the `kv_namespaces` `]` above and uncomment:
+  //
+  // "queues": {
+  //   "producers": [
+  //     { "queue": "statusbeam-notifications", "binding": "NOTIFY_QUEUE" }
+  //   ],
+  //   "consumers": [
+  //     {
+  //       "queue": "statusbeam-notifications",
+  //       "max_retries": 5,
+  //       "dead_letter_queue": "statusbeam-notifications-dlq"
+  //     }
+  //   ]
+  // }
 }
