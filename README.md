@@ -4,6 +4,8 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pleaseai_statusbeam&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pleaseai_statusbeam)
 [![codecov](https://codecov.io/gh/pleaseai/statusbeam/graph/badge.svg)](https://codecov.io/gh/pleaseai/statusbeam)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Reviewed by Greptile](https://img.shields.io/badge/code%20review-Greptile-2ea44f)](https://www.greptile.com/open-source)
+[![Reviewed by cubic](https://img.shields.io/badge/code%20review-cubic-14b8a6)](https://www.cubic.dev)
 [![Live demo](https://img.shields.io/badge/live%20demo-demo.statusbeam.dev-brightgreen)](https://demo.statusbeam.dev)
 [![Deploy on Cloudflare](https://img.shields.io/badge/deploy%20on-Cloudflare-F38020?logo=cloudflare&logoColor=white)](./DEPLOYMENT.md)
 
@@ -362,6 +364,20 @@ deploy — is in **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
   status pages, with a globally distributed checker for latency-aware probing.
 - [CachetHQ/Cachet](https://cachethq.io) — a long-standing open-source status page
   system (PHP/Laravel) centered on incident and component management.
+
+---
+
+## Code review
+
+Pull requests to StatusBeam are reviewed by two AI code reviewers, both free for
+open source:
+
+- **[Greptile](https://www.greptile.com/open-source)** — free for non-commercial
+  MIT/Apache projects under its OSS program.
+- **[cubic](https://www.cubic.dev)** — free for public repositories.
+
+[![Reviewed by Greptile](https://img.shields.io/badge/code%20review-Greptile-2ea44f)](https://www.greptile.com/open-source)
+[![Reviewed by cubic](https://img.shields.io/badge/code%20review-cubic-14b8a6)](https://www.cubic.dev)
 
 ---
 
