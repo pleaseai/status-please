@@ -1,0 +1,24 @@
+docs/adapters/incidentio.md
+  s_9b8500adb1b171::t_24e58835e8c20b 70-72
+packages/core/src/check.test.ts
+  s_9b8500adb1b171::t_aef6c4efebb1a5 277-298
+packages/core/src/check.ts
+  s_9b8500adb1b171::t_c34f9ab98c6222 222
+  s_9b8500adb1b171::t_0be7b74a9447d8 151-153,155,163
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "dd91438440811c86ea74e242665d496872669621",
+  "prompts": {},
+  "sessions": {
+    "s_9b8500adb1b171": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12907e56-a839-44bf-aefa-c83c91f461e6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
