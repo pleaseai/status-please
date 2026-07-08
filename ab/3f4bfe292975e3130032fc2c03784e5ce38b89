@@ -1,0 +1,31 @@
+packages/cli/src/cli.ts
+  s_4e4d323763b7b6::t_33319e6f0c7954 43-48,50,52
+packages/create-statusbeam/src/index.ts
+  s_4e4d323763b7b6::t_207ae79e43c162 60-62
+packages/cli/src/lib/apply-config.ts
+  s_82a4f99827bc1e::t_dda5c0574a7fa8 35-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ab3f4bfe292975e3130032fc2c03784e5ce38b89",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    },
+    "s_82a4f99827bc1e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "589de132-93c7-4dbc-8346-c347c913a535",
+        "model": "unknown"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
