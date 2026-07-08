@@ -1,0 +1,21 @@
+.claude/agent-memory/review-review-silent-failure-hunter/MEMORY.md
+  s_4e4d323763b7b6::t_ce97ee90e08725 8
+.claude/agent-memory/review-review-silent-failure-hunter/cli_scaffolder_error_handling_pr30.md
+  s_4e4d323763b7b6::t_e135f56c15f2a0 1-70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "96a14e27c554cd991a492c0327210d47b7c6d52d",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
