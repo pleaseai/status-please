@@ -1,0 +1,49 @@
+packages/core/src/check.ts
+  s_189e1eba66b0cd::t_407d4e7384c8f3 77-82,91
+packages/core/src/statuspage-webhook.ts
+  s_189e1eba66b0cd::t_051afefa90113e 1-112
+apps/worker/wrangler.jsonc
+  s_189e1eba66b0cd::t_88fca8c5d22a16 14-23
+docs/adapters/statuspage.md
+  s_189e1eba66b0cd::t_e1e5165c04ae86 219-225
+  s_189e1eba66b0cd::t_96d5ce6f3d374e 109-166
+  s_189e1eba66b0cd::t_5cf0c2e53bccca 203-205
+apps/worker/src/ingest.ts
+  s_189e1eba66b0cd::t_3820eab9e8e217 1-2,4-8,18-167
+  s_189e1eba66b0cd::t_de045fe6aeb78b 3,9-17
+packages/core/src/index.ts
+  s_189e1eba66b0cd::t_dda3cfb00be625 8
+packages/core/src/statuspage-webhook.test.ts
+  s_189e1eba66b0cd::t_e479a7f535a943 1-116
+apps/worker/tsconfig.json
+  s_189e1eba66b0cd::t_c37b1e1d439e42 5
+apps/worker/src/webhook.ts
+  s_189e1eba66b0cd::t_ee2e428aa7d4cb 95-96
+  s_189e1eba66b0cd::t_cf7b220607c42d 1-94,97-111
+apps/worker/src/index.ts
+  s_189e1eba66b0cd::t_9cf473315058c7 2-4,7-16,22,25-27
+status.config.example.yml
+  s_189e1eba66b0cd::t_f676e968228c82 28-30
+apps/worker/src/env.ts
+  s_189e1eba66b0cd::t_8327025d953f10 15-21
+apps/worker/src/webhook.test.ts
+  s_189e1eba66b0cd::t_805a460a4cdd89 1-43
+README.md
+  s_189e1eba66b0cd::t_92da14f2721d32 342
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "01190fa04beb2343483b4d74addfca88174ce271",
+  "prompts": {},
+  "sessions": {
+    "s_189e1eba66b0cd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ce6ea7ae-22a6-4106-a72b-0f5c0a7914e9",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
