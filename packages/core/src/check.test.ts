@@ -231,3 +231,69 @@ describe('checkSite (statuspage)', () => {
     expect(result.error).toBe('network')
   })
 })
+
+describe('checkSite (incidentio)', () => {
+  // incident.io serves a Statuspage-compatible summary.json, so the payload,
+  // URL derivation, and grading are shared; only the error label differs.
+  const pageSite = siteSchema.parse({ name: 'incident.io', url: 'https://status.incident.io', check: 'incidentio' })
+
+  it('grades the same Statuspage-format payload via the shared path', async () => {
+    const result = await checkSite(pageSite, { fetchImpl: statuspageResponse(claudeSummary), now: () => 0 })
+    expect(result.status).toBe('up')
+    expect(result.code).toBe(200)
+  })
+
+  it('grades a single configured component', async () => {
+    const componentSite = siteSchema.parse({
+      name: 'incident.io API',
+      url: 'https://status.incident.io',
+      check: 'incidentio',
+      component: 'claude.ai',
+    })
+    const result = await checkSite(componentSite, { fetchImpl: statuspageResponse(claudeSummary), now: () => 0 })
+    expect(result.status).toBe('degraded')
+  })
+
+  it('derives the summary.json endpoint the same way', async () => {
+    let requested = ''
+    await checkSite(pageSite, {
+      fetchImpl: (url) => {
+        requested = url
+        return statuspageResponse(claudeSummary)()
+      },
+      now: () => 0,
+    })
+    expect(requested).toBe('https://status.incident.io/api/v2/summary.json')
+  })
+
+  it('labels the API error with the incident.io provider', async () => {
+    const result = await checkSite(pageSite, {
+      fetchImpl: () => Promise.resolve(new Response('nope', { status: 503 })),
+      now: () => 0,
+    })
+    expect(result.status).toBe('down')
+    expect(result.error).toBe('incident.io API returned 503')
+  })
+
+  it('labels a missing component with the incident.io provider', async () => {
+    const missing = siteSchema.parse({
+      name: 'incident.io API',
+      url: 'https://status.incident.io',
+      check: 'incidentio',
+      component: 'Nonexistent Service',
+    })
+    const result = await checkSite(missing, { fetchImpl: statuspageResponse(claudeSummary), now: () => 0 })
+    expect(result.status).toBe('down')
+    expect(result.code).toBe(200)
+    expect(result.error).toBe('incident.io component not found: Nonexistent Service')
+  })
+
+  it('labels a validation failure with the incident.io provider', async () => {
+    const result = await checkSite(pageSite, {
+      fetchImpl: statuspageResponse({ status: 'oops', components: 'nope' }),
+      now: () => 0,
+    })
+    expect(result.status).toBe('down')
+    expect(result.error).toMatch(/^incident\.io summary\.json failed validation:/)
+  })
+})
