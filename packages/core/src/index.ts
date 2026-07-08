@@ -1,6 +1,7 @@
 export * from './cache'
 export * from './check'
 export * from './config'
+export * from './i18n'
 export * from './incidents'
 export * from './notify'
 export * from './types'

@@ -181,7 +181,27 @@ notifications: # all optional; keep the real Slack URL (a secret) in your KV con
 theme:
   logoUrl: /logo.svg
   darkMode: true
+  locale: en # fallback UI language: en | zh | ja | ko (default en)
 ```
+
+### Internationalization
+
+The status page UI is translated into English (`en`), Simplified Chinese (`zh`),
+Japanese (`ja`), and Korean (`ko`); dates and relative times localize
+automatically.
+
+Each language is a URL prefix — `/en/`, `/ja/`, `/ko/`, `/zh/` — so every
+language is cached independently at the edge (no cache fragmentation). Visiting
+the bare `/` redirects to the visitor's language, chosen in this order:
+
+1. their remembered choice (a `locale` cookie, set when they pick a language),
+2. their browser's `Accept-Language`,
+3. the deployment's `theme.locale` (used only when the above don't match a
+   supported language),
+4. English.
+
+A language switcher in the footer lets visitors change and remember their
+choice.
 
 ---
 

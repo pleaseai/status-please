@@ -1,4 +1,6 @@
+import type { Locale } from './i18n'
 import type { Severity } from './types'
+import { DEFAULT_LOCALE } from './i18n'
 
 /** Lifecycle state of an incident, mirrored by `incident_updates.state` in D1. */
 export type IncidentState = 'investigating' | 'identified' | 'monitoring' | 'resolved'
@@ -68,26 +70,49 @@ export function isActive(incident: Incident): boolean {
 }
 
 /**
- * Format an ISO timestamp as a short relative string (e.g. "5m ago", "3h ago").
- * `now` is injectable so callers and tests stay deterministic.
+ * Format an ISO timestamp as a short relative string. English keeps the compact
+ * "5m ago" / "3h ago" form; other locales delegate to `Intl.RelativeTimeFormat`
+ * (e.g. ko "5분 전", ja "5分前", zh "5分钟前"). `now` is injectable so callers
+ * and tests stay deterministic.
  */
-export function relativeTime(iso: string, now: number = Date.now()): string {
+export function relativeTime(iso: string, now: number = Date.now(), locale: Locale = DEFAULT_LOCALE): string {
   const ts = new Date(iso).getTime()
   if (Number.isNaN(ts)) {
     return iso
   }
   const diffSec = Math.floor((now - ts) / 1000)
+  if (locale === 'en') {
+    if (diffSec < 60) {
+      return 'just now'
+    }
+    const min = Math.floor(diffSec / 60)
+    if (min < 60) {
+      return `${min}m ago`
+    }
+    const hr = Math.floor(min / 60)
+    if (hr < 24) {
+      return `${hr}h ago`
+    }
+    const day = Math.floor(hr / 24)
+    return `${day}d ago`
+  }
+  return intlRelative(diffSec, locale)
+}
+
+/** Locale-aware relative time via `Intl.RelativeTimeFormat` (past only). */
+function intlRelative(diffSec: number, locale: Locale): string {
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto', style: 'narrow' })
   if (diffSec < 60) {
-    return 'just now'
+    return rtf.format(0, 'second')
   }
   const min = Math.floor(diffSec / 60)
   if (min < 60) {
-    return `${min}m ago`
+    return rtf.format(-min, 'minute')
   }
   const hr = Math.floor(min / 60)
   if (hr < 24) {
-    return `${hr}h ago`
+    return rtf.format(-hr, 'hour')
   }
   const day = Math.floor(hr / 24)
-  return `${day}d ago`
+  return rtf.format(-day, 'day')
 }

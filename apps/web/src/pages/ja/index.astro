@@ -1,0 +1,8 @@
+---
+import StatusPage from '../../components/StatusPage.astro'
+import { loadStatusPage } from '../../lib/page'
+
+const data = await loadStatusPage(Astro)
+---
+
+<StatusPage locale="ja" summary={data.summary} incidents={data.incidents} overall={data.overall} />
