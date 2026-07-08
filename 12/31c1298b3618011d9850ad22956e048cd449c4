@@ -1,0 +1,73 @@
+apps/worker/src/env.ts
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 15-27
+.claude/agent-memory/review-review-silent-failure-hunter/MEMORY.md
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 9
+apps/worker/src/webhook.test.ts
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 1-43
+docs/adapters/statuspage.md
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 109-169,206-208,222-228
+apps/docs/.claude/skills/run-docs/SKILL.md
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 10-12,81,84-87
+apps/docs/wrangler.jsonc
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 6-12,14-19
+.claude/settings.json
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 3-14,23-26,30
+apps/docs/public/_headers
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 1-9
+apps/worker/src/webhook.handler.test.ts
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 1-168
+.github/workflows/deploy-docs.yml
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 3-7
+packages/core/src/statuspage-webhook.ts
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 1-112
+status.config.example.yml
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 28-30
+apps/docs/package.json
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 9-11
+apps/worker/tsconfig.json
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 5
+apps/worker/src/webhook.ts
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 1-118
+.claude/agent-memory/review-review-silent-failure-hunter/statuspage_webhook_ingest_2026_07.md
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 1-49
+apps/docs/astro.config.ts
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 17-25,30,71
+README.md
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 12,331
+packages/core/src/index.ts
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 8
+apps/docs/src/content/docs/index.mdx
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 3,6
+packages/core/src/check.ts
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 77-82,91
+apps/worker/wrangler.jsonc
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 14-23
+packages/core/src/statuspage-webhook.test.ts
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 1-136
+apps/worker/src/ingest.ts
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 1-167
+docs/adr/0001-tech-stack.md
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 16
+apps/docs/src/content/docs/guides/deployment.mdx
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 52-53,59-65,67-71
+package.json
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 7
+apps/worker/src/index.ts
+  s_4e4d323763b7b6::t_bb6a01d53ca8c3 2-4,7-16,22,25-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1231c1298b3618011d9850ad22956e048cd449c4",
+  "prompts": {},
+  "sessions": {
+    "s_4e4d323763b7b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c89276-acd8-4a6d-a8cf-c2794503f501",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
