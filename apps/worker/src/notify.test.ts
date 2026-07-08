@@ -91,20 +91,25 @@ describe('dispatchNotifications (inline)', () => {
   })
 })
 
-/** A minimal Env whose NOTIFY_QUEUE records the batches it is sent. */
-function queueEnv(withBinding: boolean) {
+/**
+ * A minimal Env whose NOTIFY_QUEUE records the batches it is sent. `binding`:
+ * 'record' captures the enqueued batches, 'throw' simulates an enqueue failure
+ * (quota/throttle/transient API error), 'none' omits the binding entirely.
+ */
+function queueEnv(binding: 'record' | 'throw' | 'none') {
   const sent: { body: NotificationMessage }[][] = []
-  const env = {
-    NOTIFY_QUEUE: withBinding
-      ? { sendBatch: async (msgs: { body: NotificationMessage }[]) => { sent.push([...msgs]) } }
-      : undefined,
-  } as unknown as Env
+  const queue = {
+    record: { sendBatch: async (msgs: { body: NotificationMessage }[]) => { sent.push([...msgs]) } },
+    throw: { sendBatch: async () => { throw new Error('queue backlog full') } },
+    none: undefined,
+  }[binding]
+  const env = { NOTIFY_QUEUE: queue } as unknown as Env
   return { env, sent }
 }
 
 describe('notify (transport selection)', () => {
   it('enqueues one message per target when delivery is queue', async () => {
-    const { env, sent } = queueEnv(true)
+    const { env, sent } = queueEnv('record')
     await notify(
       env,
       {
@@ -119,20 +124,41 @@ describe('notify (transport selection)', () => {
       'https://hooks.slack.com/services/T/B/X',
       'https://example.com/a',
     ])
+    // The enqueued body content survives the { body } wrap: Slack gets its
+    // formatted message, the generic webhook gets the raw payload.
+    expect((sent[0]?.[0]?.body.body as { blocks: unknown[] }).blocks.length).toBeGreaterThan(0)
+    expect(sent[0]?.[1]?.body.body).toEqual(payload)
   })
 
   it('does not enqueue when there are no targets', async () => {
-    const { env, sent } = queueEnv(true)
+    const { env, sent } = queueEnv('record')
     await notify(env, { delivery: 'queue' }, payload)
     expect(sent).toHaveLength(0)
   })
 
-  it('falls back to inline when delivery is queue but the binding is missing', async () => {
-    const { env } = queueEnv(false)
-    // No targets → the inline fallback builds zero messages and makes no network
-    // call; we only need the missing-binding branch to resolve (not throw or
-    // silently require a queue). The inline dispatch itself is covered above.
-    await expect(notify(env, { delivery: 'queue' }, payload)).resolves.toBeUndefined()
+  it('routes to inline dispatch for the default (inline) delivery mode', async () => {
+    const { env, sent } = queueEnv('record')
+    const { impl, calls } = fakeFetch(() => ({ ok: true, status: 200 }))
+    await notify(env, { delivery: 'inline', webhooks: [{ url: 'https://example.com/a' }] }, payload, impl)
+    // Never touched the queue; POSTed the target directly.
+    expect(sent).toHaveLength(0)
+    expect(calls.map(c => c.url)).toEqual(['https://example.com/a'])
+  })
+
+  it('falls back to inline (with a real POST) when delivery is queue but the binding is missing', async () => {
+    const { env } = queueEnv('none')
+    const { impl, calls } = fakeFetch(() => ({ ok: true, status: 200 }))
+    await notify(env, { delivery: 'queue', webhooks: [{ url: 'https://example.com/a' }] }, payload, impl)
+    // The fallback actually dispatched the target rather than silently no-oping.
+    expect(calls.map(c => c.url)).toEqual(['https://example.com/a'])
+  })
+
+  it('falls back to inline (with a real POST) when the enqueue itself fails', async () => {
+    const { env } = queueEnv('throw')
+    const { impl, calls } = fakeFetch(() => ({ ok: true, status: 200 }))
+    await notify(env, { delivery: 'queue', webhooks: [{ url: 'https://example.com/a' }] }, payload, impl)
+    // sendBatch threw → the alert is not dropped; it is delivered inline.
+    expect(calls.map(c => c.url)).toEqual(['https://example.com/a'])
   })
 })
 
@@ -159,6 +185,13 @@ describe('consumeNotificationBatch (queue consumer)', () => {
 
   it('retries a message whose target fails (so Queues re-delivers / dead-letters)', async () => {
     const { impl } = fakeFetch(() => ({ ok: false, status: 503 }))
+    const { batch, outcomes } = batchOf([{ url: 'https://example.com/bad', body: payload }])
+    await consumeNotificationBatch(batch, impl)
+    expect(outcomes).toEqual(['retry'])
+  })
+
+  it('retries a message whose delivery throws (network failure)', async () => {
+    const { impl } = fakeFetch(() => new Error('network down'))
     const { batch, outcomes } = batchOf([{ url: 'https://example.com/bad', body: payload }])
     await consumeNotificationBatch(batch, impl)
     expect(outcomes).toEqual(['retry'])

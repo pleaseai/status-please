@@ -43,37 +43,54 @@ export function buildNotificationMessages(
  *   consumer dispatches them with the queue's retries + dead-lettering.
  * - `inline` (default): POST each target directly here.
  *
- * If `delivery: queue` is set but the queue binding is absent (misconfiguration,
- * or the free plan where Queues is unavailable), it falls back to inline so a
- * status change is never silently dropped — and warns the operator.
+ * Falls back to inline dispatch — so a status change is never silently dropped —
+ * whenever the queue path can't be taken:
+ * - the queue binding is absent (misconfiguration, or the free plan where Queues
+ *   is unavailable), or
+ * - the enqueue itself fails (`sendBatch` throws on a quota/throttle/transient
+ *   API error).
+ * Both cases warn the operator so the misconfiguration or outage is visible.
  */
 export async function notify(
   env: Env,
   notifications: Notifications | undefined,
   payload: StatusChangePayload,
+  fetchImpl: typeof fetch = fetch,
 ): Promise<void> {
   if (notifications?.delivery === 'queue') {
     if (env.NOTIFY_QUEUE) {
       const messages = buildNotificationMessages(notifications, payload)
-      if (messages.length > 0) {
-        await env.NOTIFY_QUEUE.sendBatch(messages.map(body => ({ body })))
+      if (messages.length === 0) {
+        return
       }
-      return
+      try {
+        await env.NOTIFY_QUEUE.sendBatch(messages.map(body => ({ body })))
+        return
+      }
+      catch (err) {
+        // Enqueue failed — don't drop the alert. Log with the same `notify:`
+        // style as the rest of the file (target count, never payload contents)
+        // and fall through to inline so delivery is still attempted.
+        console.error(`notify: enqueue of ${messages.length} message(s) failed; falling back to inline dispatch`, err)
+      }
     }
-    console.warn(
-      'notify: notifications.delivery is "queue" but the NOTIFY_QUEUE binding is missing; '
-      + 'add the queues.producers binding in wrangler.jsonc. Falling back to inline dispatch.',
-    )
+    else {
+      console.warn(
+        'notify: notifications.delivery is "queue" but the NOTIFY_QUEUE binding is missing; '
+        + 'add the queues.producers binding in wrangler.jsonc. Falling back to inline dispatch.',
+      )
+    }
   }
-  await dispatchNotifications(notifications, payload)
+  await dispatchNotifications(notifications, payload, fetchImpl)
 }
 
 /**
- * Inline dispatch: POST every target directly (called from `ctx.waitUntil`).
- * Failures are logged, never thrown, so one bad target cannot wedge the run and
- * a status change still reaches the healthy targets. Best-effort — no retries;
- * the {@link notify} queue path is the opt-in reliable alternative. Resolves
- * once every dispatch settles.
+ * Inline dispatch: POST every target directly (the default transport {@link notify}
+ * selects, and its fallback when the queue path is unavailable). Failures are
+ * logged, never thrown, so one bad target cannot wedge the run and a status
+ * change still reaches the healthy targets. Best-effort — no retries; the
+ * {@link notify} queue path is the opt-in reliable alternative. Resolves once
+ * every dispatch settles.
  */
 export async function dispatchNotifications(
   notifications: Notifications | undefined,
@@ -100,12 +117,16 @@ export async function consumeNotificationBatch(
     batch.messages.map(async (message) => {
       try {
         await deliverNotification(message.body, fetchImpl)
-        message.ack()
       }
       catch (err) {
+        // Delivery failed — retry so Queues re-delivers and eventually
+        // dead-letters. Keep `ack()` out of this try so a post-success ack
+        // failure isn't misread as a delivery failure and spuriously retried.
         console.error(`notify: queue delivery failed, retrying`, err)
         message.retry()
+        return
       }
+      message.ack()
     }),
   )
 }
