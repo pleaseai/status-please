@@ -81,7 +81,9 @@ wr() { bunx wrangler "$@"; }  # workspace-local wrangler, no global install need
 step "Checking prerequisites"
 command -v bun >/dev/null 2>&1 || die "bun is not installed — see https://bun.sh"
 if [ ! -d node_modules ]; then
-  info "Installing workspace dependencies…"; bun install
+  # --ignore-scripts: don't run dependency lifecycle scripts on install (matches
+  # the CI deploy). The build + wrangler bundling don't need them.
+  info "Installing workspace dependencies…"; bun install --ignore-scripts
 fi
 if ! wr whoami >/dev/null 2>&1; then
   die "Not authenticated with Cloudflare. Run 'bunx wrangler login' (or export CLOUDFLARE_API_TOKEN) and re-run."
@@ -92,17 +94,29 @@ ok "bun + Cloudflare auth ready"
 step "Provisioning D1 + KV"
 
 lookup_d1() {
+  # Guard the JSON parse: a failed/empty `wr d1 list` yields "" here, and an
+  # unguarded JSON.parse("") would dump a Bun stack trace to stderr. Treat any
+  # parse/empty case as "not found" (empty stdout) — the caller's `-n` check
+  # then drives the create-or-die path.
   wr d1 list --json 2>/dev/null | DB_NAME="$DB_NAME" bun -e '
-    const a = JSON.parse(await Bun.stdin.text());
-    const d = Array.isArray(a) ? a.find(x => x.name === process.env.DB_NAME) : null;
-    process.stdout.write(d ? String(d.uuid || d.id || "") : "");
+    try {
+      const text = (await Bun.stdin.text()).trim();
+      if (!text) process.exit(0);
+      const a = JSON.parse(text);
+      const d = Array.isArray(a) ? a.find(x => x.name === process.env.DB_NAME) : null;
+      process.stdout.write(d ? String(d.uuid || d.id || "") : "");
+    } catch { process.exit(0); }
   '
 }
 lookup_kv() {
   wr kv namespace list --json 2>/dev/null | bun -e '
-    const a = JSON.parse(await Bun.stdin.text());
-    const k = Array.isArray(a) ? a.find(x => String(x.title || "").endsWith("STATUS_KV")) : null;
-    process.stdout.write(k ? String(k.id) : "");
+    try {
+      const text = (await Bun.stdin.text()).trim();
+      if (!text) process.exit(0);
+      const a = JSON.parse(text);
+      const k = Array.isArray(a) ? a.find(x => String(x.title || "").endsWith("STATUS_KV")) : null;
+      process.stdout.write(k ? String(k.id) : "");
+    } catch { process.exit(0); }
   '
 }
 
@@ -154,7 +168,9 @@ else
   if [ -n "$PAGE_NAME" ]; then
     PAGE_NAME="$PAGE_NAME" bun -e '
       let s = await Bun.file("status.config.yml").text();
-      s = s.replace(/^name:.*$/m, "name: " + process.env.PAGE_NAME);
+      // Replacer function, not a string: a "$" in the name (e.g. "A$AP Status")
+      // would otherwise be read as a $-pattern by String.replace.
+      s = s.replace(/^name:.*$/m, () => "name: " + process.env.PAGE_NAME);
       await Bun.write("status.config.yml", s);
     '
   fi
