@@ -1,0 +1,138 @@
+---
+title: Private & internal pages
+description: Restrict a status page to your team with Cloudflare Access — an edge identity gate that needs no app code.
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+Not every status page is public. To restrict one to employees or a specific
+audience, gate it at the **edge** with [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/)
+(part of Cloudflare Zero Trust) instead of adding a login to the app.
+
+## Why at the edge, not in the app
+
+Cloudflare Access is an identity gate you configure in the Zero Trust dashboard —
+an Access **application** bound to a hostname (or path) plus a **policy** that
+decides who may enter. It runs **ahead of** the StatusBeam Worker and the edge
+cache in Cloudflare's request pipeline, which gives it three properties that make
+it the right layer for this:
+
+- **No app code.** StatusBeam ships no login, session, or authorization logic.
+  Identity, MFA, and session lifetime are handled by Access, wired to your own
+  identity provider (Google, Okta, GitHub, Microsoft Entra, or a one-time PIN).
+- **Cache-safe.** Because Access authenticates *before* the request reaches the
+  cache, private content is never served from cache to an unauthenticated
+  visitor — and the near-instant cache-purge-on-status-change still works.
+- **Composable.** "Fully internal" and "public + internal" are the same
+  primitive — an Access application on a hostname — applied once or twice.
+
+<Aside type="note">
+  This is a deliberate design decision. See [ADR-0003: Private/internal pages via
+  Cloudflare Access](https://github.com/pleaseai/statusbeam/blob/main/docs/adr/0003-private-pages-via-cloudflare-access.md)
+  for the full rationale and the alternatives that were rejected (app-level login,
+  per-service visibility flags).
+</Aside>
+
+## Prerequisite: a custom domain
+
+Access can only protect a hostname on a Cloudflare zone in your account — it
+**cannot** protect a bare `*.workers.dev` URL. So a private page needs a
+[custom domain](/guides/deployment/), and you should also close the unguarded
+fallback URL:
+
+```jsonc
+// wrangler.web.jsonc
+{
+  "workers_dev": false, // don't expose the unauthenticated *.workers.dev URL
+  "routes": [{ "pattern": "status.internal.example.com", "custom_domain": true }],
+}
+```
+
+Without `workers_dev: false`, the page stays reachable — ungated — at its
+`*.workers.dev` address even after you add Access to the custom domain.
+
+<Aside type="caution">
+  `statusbeam setup` manages the networking block (between its generated markers)
+  and writes `workers_dev: true` there. Set it to `false` **inside that block**, and
+  re-apply after any `setup` re-run (e.g. to change the domain) — a re-run rewrites
+  the block back to `true`, reopening the ungated URL.
+</Aside>
+
+## Gate the whole page
+
+<Steps>
+
+1. In the Cloudflare dashboard, go to **Zero Trust → Access → Applications →
+   Add an application → Self-hosted**.
+
+2. Set the application domain to your status page hostname
+   (e.g. `status.internal.example.com`).
+
+3. Add a policy with **Action: Allow**, scoped to your audience — *Emails ending
+   in* `@yourco.com`, an identity-provider group, or a one-time PIN. Save.
+
+4. Visit the page in a fresh browser session: you should be redirected to the
+   Access login before the status page renders.
+
+</Steps>
+
+Everything served on that hostname — the pages, badges, feeds, and JSON API — now
+requires sign-in.
+
+## Keep badges, feeds & JSON public (optional)
+
+A whole-hostname gate also blocks the cookie-less machine endpoints, which are
+meant to be fetched without a browser session:
+
+- **Badges** — `/api/badge/[slug]/uptime.json`, `.../response-time.json`
+  (embedded in READMEs and fetched by GitHub's image proxy)
+- **Feeds** — `/feed.rss`, `/feed.atom`, `/history.rss`, `/history.atom`
+- **JSON** — `/api/status.json`, `/api/status/[slug].json`
+
+For a fully internal page, gating these too is usually what you want. But if you
+need some to stay reachable while the page itself is private, choose per consumer:
+
+- **Public machine endpoints** — add a *second, more-specific* Access application
+  with a **Bypass** policy (*Everyone*) for each public path; a more-specific path
+  application takes precedence over the hostname-wide one. Badges and JSON both live
+  under `/api`, so one bypass app on `status.internal.example.com/api` opens both —
+  but the **feeds do not**: `/feed.rss`, `/feed.atom`, `/history.rss`, and
+  `/history.atom` sit at the root, so add a bypass app for each or they stay gated.
+- **Trusted CI / monitors** — issue an Access
+  [service token](https://developers.cloudflare.com/cloudflare-one/identity/service-tokens/)
+  and send its `CF-Access-Client-Id` / `CF-Access-Client-Secret` headers on each
+  request, instead of opening the path to everyone.
+
+## Public page + a separate internal page
+
+Access is all-or-nothing per hostname — it cannot show some services publicly and
+others only to staff *within one page*. To run both, **deploy a second copy**
+rather than adding visibility rules to the app:
+
+<Steps>
+
+1. Copy `wrangler.web.jsonc` to `wrangler.internal.jsonc`. Give it a different
+   Worker `name` and an internal `routes` hostname. Point it at its own D1/KV — or
+   reuse the same bindings with a separate `status.config.yml` if only the service
+   list differs.
+
+2. Deploy it alongside the public one:
+
+   ```bash
+   bunx wrangler deploy --config wrangler.internal.jsonc
+   ```
+
+3. Add an Access application (see [above](#gate-the-whole-page)) on the **internal**
+   hostname only. Leave the public hostname open.
+
+</Steps>
+
+You now have `status.example.com` (public) and `status.internal.example.com`
+(gated) running as two independent Workers, with no per-viewer logic anywhere.
+
+<Aside type="tip">
+  Want defense-in-depth? Access forwards a signed `Cf-Access-Jwt-Assertion` JWT to
+  the Worker on every authenticated request. Verifying it inside the Worker is an
+  optional extra layer — but it is not required, since Access already blocks
+  unauthenticated requests at the edge.
+</Aside>

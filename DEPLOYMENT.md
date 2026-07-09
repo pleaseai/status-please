@@ -85,6 +85,61 @@ a fallback (`workers_dev: true`); (2) the deploy token needs **Zone → Workers 
 and **Zone → DNS: Edit** for that zone, otherwise the deploy fails on
 `/zones/.../workers/routes` with `code: 10000`.
 
+## Private / internal pages (Cloudflare Access)
+
+To restrict a status page to employees or a specific audience, gate it at the **edge**
+with [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/)
+(Zero Trust) rather than adding a login to the app. Access sits **ahead of** the Worker and
+the edge cache, so it needs **no code change** and never serves private content from cache
+to an unauthenticated visitor ([ADR-0003](docs/adr/0003-private-pages-via-cloudflare-access.md)).
+
+**Prerequisite:** a [custom domain](#custom-domain) on a Cloudflare zone in your account.
+Access cannot protect a bare `*.workers.dev` URL, so a private page must close that unguarded
+fallback by setting `workers_dev: false` in `wrangler.web.jsonc`. Note that `statusbeam setup`
+**manages the networking block** (between its generated markers) and writes `workers_dev: true`
+there — so change it to `false` inside that block, and re-apply after any `setup` re-run (e.g.
+to change the domain), which rewrites the block back to `true`.
+
+### Gate the whole page
+
+1. Cloudflare dashboard → **Zero Trust → Access → Applications → Add an application →
+   Self-hosted**.
+2. Set the application domain to your status page hostname (e.g. `status.internal.example.com`).
+3. Add a policy — **Action: Allow**, e.g. *Emails ending in* `@yourco.com`, or an IdP group
+   (Google, Okta, GitHub, Entra, …) / a one-time PIN. Save.
+
+Everything on the hostname — pages, badges, feeds, and JSON — now requires sign-in.
+
+### Keep badges / feeds / JSON public on a private page (optional)
+
+A blanket gate also blocks the cookie-less machine endpoints — badges
+(`/api/badge/…`, embedded in READMEs), feeds (`/feed.rss`, `/feed.atom`, `/history.*`), and
+JSON (`/api/status.json`). If you want those to stay reachable while the page itself is
+gated, choose per consumer:
+
+- **Public machine endpoints:** add a *second, more-specific* Access application with a
+  **Bypass** policy (*Everyone*) for each public path — a more-specific path application takes
+  precedence over the hostname one. Badges and JSON both live under `/api`, so one bypass app
+  on `status.internal.example.com/api` covers them; the **feeds do not** — `/feed.rss`,
+  `/feed.atom`, `/history.rss`, and `/history.atom` sit at the root, so add a bypass app for
+  each (or they stay gated).
+- **Trusted CI / monitors:** issue an Access **service token** and send its
+  `CF-Access-Client-Id` / `CF-Access-Client-Secret` headers, instead of opening the path.
+
+### Public page + separate internal page
+
+Access is all-or-nothing per hostname — it can't show some services publicly and others only
+to staff on one page. To run both, **deploy a second copy** rather than adding visibility
+rules to the app:
+
+1. Copy `wrangler.web.jsonc` to `wrangler.internal.jsonc`; give it a different Worker `name`
+   and an internal `routes` hostname (its own D1/KV, or the same bindings with a separate
+   `status.config.yml` if the service lists differ).
+2. Deploy it alongside the public one:
+   `bunx wrangler deploy --config wrangler.internal.jsonc`.
+3. Put an Access application (above) on the internal hostname only; leave the public
+   hostname open.
+
 ## Optional: instant cache invalidation
 
 On a status change the check Worker purges the edge cache by tag, so updates are
