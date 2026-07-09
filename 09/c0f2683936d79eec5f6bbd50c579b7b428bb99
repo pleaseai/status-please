@@ -1,0 +1,28 @@
+docs/adr/0003-private-pages-via-cloudflare-access.md
+  s_104c71ffaf26b0::t_bea8e0bc1a4688 1-113
+apps/docs/astro.config.ts
+  s_104c71ffaf26b0::t_5a4afe3ed9cf84 56
+apps/docs/src/content/docs/guides/private-pages.mdx
+  s_104c71ffaf26b0::t_6840d11a0d9ed8 1-7,28-29,34-35,37,42,54-57,60-62,66,69-71,74,76,79,84,87,96,103-104,109-115,118-119
+  s_104c71ffaf26b0::t_4d9c61a84f7874 8-27,30-33,36,38-41,43-53,58-59,63-65,67-68,72-73,75,77-78,80-83,85-86,88-95,97-102,105-108,116-117,120-129
+docs/adr/index.md
+  s_104c71ffaf26b0::t_8d63842297f84b 9
+DEPLOYMENT.md
+  s_104c71ffaf26b0::t_5c32b42adec956 88-136
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "09c0f2683936d79eec5f6bbd50c579b7b428bb99",
+  "prompts": {},
+  "sessions": {
+    "s_104c71ffaf26b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "eb906faa-cd6b-49f6-912d-3911e426f74c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
