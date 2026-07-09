@@ -53,6 +53,7 @@ export default defineConfig({
           items: [
             { label: 'Configuration', slug: 'guides/configuration' },
             { label: 'Deploy to Cloudflare', slug: 'guides/deployment' },
+            { label: 'Private & internal pages', slug: 'guides/private-pages' },
           ],
         },
         {
