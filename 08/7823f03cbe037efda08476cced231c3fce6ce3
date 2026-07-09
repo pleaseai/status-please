@@ -1,0 +1,23 @@
+DEPLOYMENT.md
+  s_104c71ffaf26b0::t_1b89b2a6167aaf 120-125
+  s_104c71ffaf26b0::t_e6d7b323cffe30 97-101
+apps/docs/src/content/docs/guides/private-pages.mdx
+  s_104c71ffaf26b0::t_d9fe1edddc9905 54-60
+  s_104c71ffaf26b0::t_51bf2c3eeaf54d 96-100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "087823f03cbe037efda08476cced231c3fce6ce3",
+  "prompts": {},
+  "sessions": {
+    "s_104c71ffaf26b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "eb906faa-cd6b-49f6-912d-3911e426f74c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
