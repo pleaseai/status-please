@@ -94,8 +94,11 @@ the edge cache, so it needs **no code change** and never serves private content 
 to an unauthenticated visitor ([ADR-0003](docs/adr/0003-private-pages-via-cloudflare-access.md)).
 
 **Prerequisite:** a [custom domain](#custom-domain) on a Cloudflare zone in your account.
-Access cannot protect a bare `*.workers.dev` URL — so if you serve a private page, also set
-`workers_dev: false` in `wrangler.web.jsonc` to close the unguarded fallback URL.
+Access cannot protect a bare `*.workers.dev` URL, so a private page must close that unguarded
+fallback by setting `workers_dev: false` in `wrangler.web.jsonc`. Note that `statusbeam setup`
+**manages the networking block** (between its generated markers) and writes `workers_dev: true`
+there — so change it to `false` inside that block, and re-apply after any `setup` re-run (e.g.
+to change the domain), which rewrites the block back to `true`.
 
 ### Gate the whole page
 
@@ -114,9 +117,12 @@ A blanket gate also blocks the cookie-less machine endpoints — badges
 JSON (`/api/status.json`). If you want those to stay reachable while the page itself is
 gated, choose per consumer:
 
-- **Public machine endpoints:** add a *second, more-specific* Access application on the
-  sub-path (e.g. `status.internal.example.com/api`) with a **Bypass** policy (*Everyone*).
-  A more-specific path application takes precedence over the hostname one.
+- **Public machine endpoints:** add a *second, more-specific* Access application with a
+  **Bypass** policy (*Everyone*) for each public path — a more-specific path application takes
+  precedence over the hostname one. Badges and JSON both live under `/api`, so one bypass app
+  on `status.internal.example.com/api` covers them; the **feeds do not** — `/feed.rss`,
+  `/feed.atom`, `/history.rss`, and `/history.atom` sit at the root, so add a bypass app for
+  each (or they stay gated).
 - **Trusted CI / monitors:** issue an Access **service token** and send its
   `CF-Access-Client-Id` / `CF-Access-Client-Secret` headers, instead of opening the path.
 

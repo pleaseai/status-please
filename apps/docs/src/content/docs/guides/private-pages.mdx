@@ -51,6 +51,13 @@ fallback URL:
 Without `workers_dev: false`, the page stays reachable — ungated — at its
 `*.workers.dev` address even after you add Access to the custom domain.
 
+<Aside type="caution">
+  `statusbeam setup` manages the networking block (between its generated markers)
+  and writes `workers_dev: true` there. Set it to `false` **inside that block**, and
+  re-apply after any `setup` re-run (e.g. to change the domain) — a re-run rewrites
+  the block back to `true`, reopening the ungated URL.
+</Aside>
+
 ## Gate the whole page
 
 <Steps>
@@ -86,9 +93,11 @@ For a fully internal page, gating these too is usually what you want. But if you
 need some to stay reachable while the page itself is private, choose per consumer:
 
 - **Public machine endpoints** — add a *second, more-specific* Access application
-  on the sub-path (e.g. `status.internal.example.com/api`) with a **Bypass**
-  policy (*Everyone*). A more-specific path application takes precedence over the
-  hostname-wide one, so `/api/*` opens while everything else stays gated.
+  with a **Bypass** policy (*Everyone*) for each public path; a more-specific path
+  application takes precedence over the hostname-wide one. Badges and JSON both live
+  under `/api`, so one bypass app on `status.internal.example.com/api` opens both —
+  but the **feeds do not**: `/feed.rss`, `/feed.atom`, `/history.rss`, and
+  `/history.atom` sit at the root, so add a bypass app for each or they stay gated.
 - **Trusted CI / monitors** — issue an Access
   [service token](https://developers.cloudflare.com/cloudflare-one/identity/service-tokens/)
   and send its `CF-Access-Client-Id` / `CF-Access-Client-Secret` headers on each
