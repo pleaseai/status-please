@@ -33,9 +33,19 @@ export default {
     // poll block, or no SENTRY_AUTH_TOKEN to authenticate the poll). Polling them
     // would record a false `down` every tick and clobber the webhook-driven
     // status; ingest preserves a skipped site's previous status instead.
-    const sites = config.sites.filter(
-      site => site.check !== 'sentry' || (site.sentry !== undefined && !!env.SENTRY_AUTH_TOKEN),
-    )
+    const sites = config.sites.filter((site) => {
+      if (site.check !== 'sentry') {
+        return true
+      }
+      // A `sentry:` block declares intent to poll; a missing token then is a
+      // deploy/config mistake worth surfacing rather than skipping silently. A
+      // site with no `sentry:` block is webhook-only by design — skip it quietly.
+      if (site.sentry !== undefined && !env.SENTRY_AUTH_TOKEN) {
+        console.warn(`scheduled: sentry poll configured for "${site.slug}" but SENTRY_AUTH_TOKEN is missing; skipping poll`)
+        return false
+      }
+      return site.sentry !== undefined
+    })
     const results = await Promise.all(
       sites.map(site => checkSite(site, { sentryToken: env.SENTRY_AUTH_TOKEN })),
     )

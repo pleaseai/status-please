@@ -51,17 +51,17 @@ export function timingSafeEqual(a: string, b: string): boolean {
  */
 function gradePayload(provider: WebhookProvider, body: unknown, site: { component?: string }):
   | { status: CheckStatus | null }
-  | { error: 'invalid-payload' } {
+  | { error: 'invalid-payload', reason: string } {
   if (provider === 'sentry') {
     const parsed = sentryWebhookSchema.safeParse(body)
     if (!parsed.success) {
-      return { error: 'invalid-payload' }
+      return { error: 'invalid-payload', reason: parsed.error.message }
     }
     return { status: deriveSentryWebhookStatus(parsed.data) }
   }
   const parsed = statuspageWebhookSchema.safeParse(body)
   if (!parsed.success) {
-    return { error: 'invalid-payload' }
+    return { error: 'invalid-payload', reason: parsed.error.message }
   }
   return { status: deriveStatuspageWebhookStatus(parsed.data, site) }
 }
@@ -128,7 +128,8 @@ export async function handleWebhook(
   const graded = gradePayload(route.provider, body, site)
   if ('error' in graded) {
     // Payload-shape drift (a provider API change) shows up here, not as an outage.
-    console.warn(`webhook: payload failed validation for slug "${route.slug}"`)
+    // Include the Zod reason so an operator can see exactly which field drifted.
+    console.warn(`webhook: payload failed validation for slug "${route.slug}": ${graded.reason}`)
     return new Response('Invalid payload', { status: 400 })
   }
 

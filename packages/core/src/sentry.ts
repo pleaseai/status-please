@@ -102,6 +102,10 @@ export async function checkSentry(
       method: 'GET',
       headers: { Authorization: `Bearer ${deps.token}` },
       redirect: 'follow',
+      // Cap the round-trip so a slow/hung Sentry API can't stall the cron tick
+      // (or a Queues consumer) indefinitely; a timeout throws and is caught below
+      // as `code: 0` down, the same as any other network failure.
+      signal: AbortSignal.timeout(10000),
     })
   }
   catch (err) {
