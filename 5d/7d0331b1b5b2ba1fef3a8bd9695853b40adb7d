@@ -1,0 +1,243 @@
+apps/docs/src/components/ui/tabs/TabItem.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-30
+apps/docs/.claude/skills/run-docs/driver.mjs
+  s_ae0c6a916c21b4::t_fe8d35bd6b96fa 31
+  s_ae0c6a916c21b4::t_008669694ecd55 4-7,28,32-36,43-44,46,48,64-66,79
+apps/docs/src/components/ui/tabs/tabs.client.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-72
+apps/docs/src/components/ui/dialog/DialogClose.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-36
+apps/docs/src/components/ui/tabs/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-5
+apps/docs/src/pages/[...slug]/index.md.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-78
+apps/docs/src/components/AgentDirective.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-16
+.gitignore
+  s_ae0c6a916c21b4::t_9b6768791549de 11
+apps/docs/src/pages/og.png.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-17
+apps/docs/src/components/ui/collapsible/Collapsible.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-25
+apps/docs/src/components/ui/dialog/DialogContent.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-21
+apps/docs/src/components/ui/sidebar/SidebarFilter.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-20
+apps/docs/src/pages/index.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1,7-9,18,71-73
+  s_ae0c6a916c21b4::t_7416d95af3c90c 2-6,10-17,19-70
+eslint.config.ts
+  s_ae0c6a916c21b4::t_e0dfa3ed06d496 4-16
+apps/docs/src/components/ui/dialog/Dialog.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-54
+apps/docs/src/components/ui/breadcrumbs/Breadcrumbs.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-84
+apps/docs/src/components/ui/steps/Steps.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-115
+apps/docs/src/content/partials/example.mdx
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-4
+apps/docs/AGENT.md
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-2,4-19,23,25-32,34-62,65-67,69-86,89-100
+  s_ae0c6a916c21b4::t_3cfdf5fa13b671 33
+  s_ae0c6a916c21b4::t_be65c6164ca33e 63-64
+  s_ae0c6a916c21b4::t_52ec4ba653d247 20-22,24
+  s_ae0c6a916c21b4::t_dcb5f7706c428f 3
+  s_ae0c6a916c21b4::t_8b69188428dd0b 87
+  s_ae0c6a916c21b4::t_ed76f09bb26dd8 88
+  s_ae0c6a916c21b4::t_a669e08f3cfa22 68
+apps/docs/src/components/ui/collapsible/collapsible.client.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-22
+apps/docs/src/components/ui/tabs/TabsTrigger.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-31
+apps/docs/src/pages/llms-full.txt.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-12
+apps/docs/src/components/ui/tabs/Tabs.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-36
+apps/docs/src/pages/[...slug].astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-79
+apps/docs/src/components/ui/card/Card.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-21
+apps/docs/src/components/ui/collapsible/CollapsibleContent.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-27
+apps/docs/src/components/ui/dialog/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-3
+apps/docs/src/components/ui/package-managers/PackageManagers.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-123
+apps/docs/src/components/ui/card/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1
+apps/docs/src/components/ui/banner/banner.client.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-49
+apps/docs/src/components/ui/code/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1
+apps/docs/src/components/ui/layer-card/LayerCardHeader.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-16
+apps/docs/src/components/ui/search/providers/pagefind.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-80
+apps/docs/src/lib/cn.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-7
+apps/docs/src/components/ui/sidebar/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-4
+apps/docs/src/pages/404.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-29
+apps/docs/src/pages/llms.txt.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-50
+apps/docs/src/components/ui/sidebar/SidebarLink.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-37
+apps/docs/src/components/ui/card-grid/CardGrid.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-15
+apps/docs/astro.config.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 7,53,65-74,76,78-86,89-93
+  s_ae0c6a916c21b4::t_abf3b549db717c 1-4,8-9,11-52,55,75,87-88
+  s_ae0c6a916c21b4::t_d8fb188753d64a 54
+apps/docs/src/components/ui/sidebar/Sidebar.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-64
+apps/docs/src/components/ui/search/search.client.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-201
+apps/docs/src/components/ui/tabs/TabsList.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-26
+apps/docs/src/components/ui/pagination/Pagination.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-36
+apps/docs/src/components/ui/link-button/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1
+apps/docs/src/components/ui/search/SearchTrigger.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-42
+apps/docs/wrangler.jsonc
+  s_ae0c6a916c21b4::t_9bc9281cc0a378 6-10
+apps/docs/src/components/ui/toc/TOC.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-95
+apps/docs/src/components/ui/package-managers/package-managers.client.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-55
+apps/docs/src/components/ui/page-actions/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1
+apps/docs/src/components/ui/search/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-2
+apps/docs/src/components/Render.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-106
+apps/docs/src/components/ui/collapsible/CollapsibleTrigger.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-21
+apps/docs/src/components/ui/sidebar/SidebarGroup.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-192
+apps/docs/src/components/ui/theme-toggle/ThemeToggle.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-32
+apps/docs/src/components/ui/tabs/TabsContent.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-24
+apps/docs/src/components/ui/steps/steps.client.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-20
+apps/docs/src/components/ui/toc/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1
+apps/docs/src/styles/globals.css
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-491
+apps/docs/src/content/docs/guides/deployment.mdx
+  s_ae0c6a916c21b4::t_4d247e8e776531 50
+apps/docs/src/components/ui/toc/toc.client.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-328
+apps/docs/src/components/ui/banner/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1
+apps/docs/.claude/skills/run-docs/SKILL.md
+  s_ae0c6a916c21b4::t_4ce873d41fb636 3,9,12-14,21-23,26-27,37-39,41-42,44,67-68,91-104,109-111
+apps/docs/src/components/ui/layer-card/LayerCardContent.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-16
+apps/docs/src/layouts/BaseLayout.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-118
+apps/docs/src/layouts/DocsLayout.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-333
+apps/docs/src/components/ui/button/variants.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-82
+apps/docs/src/content/docs/reference/ai-and-llms.mdx
+  s_ae0c6a916c21b4::t_662177ad2b1b9f 36-37
+  s_ae0c6a916c21b4::t_772cf95dbfd5a3 14
+  s_ae0c6a916c21b4::t_fb4573def82cfe 19
+  s_ae0c6a916c21b4::t_79ca88e97eafe0 62
+  s_ae0c6a916c21b4::t_5e1a2cb223d2c2 16
+  s_ae0c6a916c21b4::t_ad09e83595b1e3 3,7-8,10,15,17-18,20-25,27-28,30-33,35,39-40,42,44,46-47,49-51,53,55-56,58-61,65-67
+apps/docs/src/components/ui/collapsible/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-3
+apps/docs/src/components/ui/theme-toggle/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1
+apps/docs/public/favicon.svg
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-6
+apps/docs/src/components/ui/aside/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1
+apps/docs/src/pages/og/_og-card-config.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-39
+apps/docs/src/components/ui/search/SearchDialog.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-118
+apps/docs/src/pages/robots.txt.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-17
+apps/docs/tsconfig.json
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 6,9
+apps/docs/src/pages/[...slug]/index.mdx.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-69
+apps/docs/package.json
+  s_ae0c6a916c21b4::t_6483c19cf07599 12-14,17-26,29-34
+apps/docs/src/components/ui/theme-toggle/theme-toggle.client.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-31
+apps/docs/src/components/ui/page-actions/page-actions.client.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-54
+apps/docs/src/components.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-25
+apps/docs/src/components/ui/card-grid/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1
+apps/docs/src/components/ui/breadcrumbs/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1
+apps/docs/src/components/ui/page-actions/PageActions.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-65
+apps/docs/src/content.config.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-5,8-18
+apps/docs/src/components/ui/badge/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1
+apps/docs/src/components/ui/aside/Aside.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-75
+apps/docs/src/components/ui/link-button/LinkButton.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-76
+apps/docs/src/components/ui/sidebar/sidebar.client.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-209
+apps/docs/src/components/ui/package-managers/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1
+apps/docs/src/components/ui/button/Button.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-69
+apps/docs/src/components/ui/steps/Step.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-26
+apps/docs/src/components/ui/button/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-13
+apps/docs/src/pages/[section]/llms.txt.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-64
+apps/docs/src/components/Header.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-94
+apps/docs/src/components/ui/banner/Banner.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-82
+apps/docs/src/components/ui/pagination/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1
+apps/docs/src/pages/og/[...slug].ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-24
+apps/docs/src/styles/prose.css
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-307
+apps/docs/src/components/ui/steps/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-2
+apps/docs/src/components/ui/badge/Badge.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-43
+apps/docs/src/components/ui/code/Code.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-36
+apps/docs/src/components/ui/layer-card/index.ts
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-3
+apps/docs/src/components/ui/layer-card/LayerCard.astro
+  s_ae0c6a916c21b4::t_24f28a7eb35e88 1-23
+bun.lock
+  s_ae0c6a916c21b4::t_857f8c5058edf4 19-28,31-36,41,68,79,94,102,118-119,154,156,234,236,240-241,366-369,380-387,442-443,452,536-537,670-671,696-697,728-729,764-766,774,776,786-787,796-797,810-813,816-817,912-913,940-943,946,1038,1048-1049,1066-1067,1094-1095,1144,1148,1218,1384-1387,1392-1393,1430-1431,1464-1467,1478-1479,1508-1509,1514-1515,1558-1560,1562,1564,1566,1568,1570,1572,1574,1576,1578,1580,1614-1615,1684-1685,1734-1735,1822-1825,1838-1839,1848,1860-1861,1872,1874,1880-1881,1890-1893,1900,1902,1922-1923,1934-1937,1956-1959,1976,2002-2009,2016-2017,2020-2021,2082
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "5d7d0331b1b5b2ba1fef3a8bd9695853b40adb7d",
+  "prompts": {},
+  "sessions": {
+    "s_ae0c6a916c21b4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8f4f179c-892d-42c5-ad93-103e9e878f9d",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
