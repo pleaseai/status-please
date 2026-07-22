@@ -23,11 +23,13 @@
     "astro-og-canvas": "^0.13.0",
     "canvaskit-wasm": "^0.41.1",
     "clsx": "^2.1.1",
+    "sanitize-html": "^2.17.6",
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
     "@tailwindcss/vite": "^4.1.4",
+    "@types/sanitize-html": "^2.16.1",
     "pagefind": "^1.5.2",
     "tailwindcss": "^4.1.4",
     "typescript": "^5.8.3",

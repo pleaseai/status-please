@@ -4,6 +4,7 @@
  * show a close button that persists to localStorage.
  */
 import { Icon } from "astro-icon/components";
+import sanitizeHtml from "sanitize-html";
 import { cn } from "@/lib/cn";
 import type { HTMLAttributes } from "astro/types";
 
@@ -15,11 +16,16 @@ interface Props extends HTMLAttributes<"div"> {
 
 const { content, type = "note", dismissible, class: className, ...attrs } = Astro.props;
 
+// Parser-based allowlist sanitizer (runs at build time — the docs site is SSG).
+// Regex-based HTML sanitization is bypassable; restrict to the inline formatting
+// banners actually use and drop everything else, including scripts, event
+// handlers, and unsafe URL schemes.
 function sanitizeBannerHtml(value: string): string {
-  return value
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-    .replace(/\s+on[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
-    .replace(/\s+(href|src)\s*=\s*(["'])\s*javascript:[\s\S]*?\2/gi, "");
+  return sanitizeHtml(value, {
+    allowedTags: ["p", "br", "strong", "b", "em", "i", "code", "a"],
+    allowedAttributes: { a: ["href"] },
+    allowedSchemes: ["http", "https", "mailto"],
+  });
 }
 
 const config: Record<string, { color: string; tint: string }> = {

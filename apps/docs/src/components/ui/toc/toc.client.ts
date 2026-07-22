@@ -10,6 +10,43 @@ const READING_BAND = 0.25;
 const BOTTOM_EPSILON = 2;
 const REVEAL_PADDING = 12;
 
+// Arc length of a straight segment.
+function lineLength(ax: number, ay: number, bx: number, by: number): number {
+  return Math.hypot(bx - ax, by - ay);
+}
+
+// Arc length of a cubic Bézier, approximated by summing chords between sampled
+// points. 24 samples is sub-pixel accurate for the gentle S-curves the rail uses.
+function cubicLength(
+  ax: number,
+  ay: number,
+  c1x: number,
+  c1y: number,
+  c2x: number,
+  c2y: number,
+  bx: number,
+  by: number,
+): number {
+  const STEPS = 24;
+  let prevX = ax;
+  let prevY = ay;
+  let len = 0;
+  for (let i = 1; i <= STEPS; i++) {
+    const t = i / STEPS;
+    const mt = 1 - t;
+    const a = mt * mt * mt;
+    const b = 3 * mt * mt * t;
+    const c = 3 * mt * t * t;
+    const e = t * t * t;
+    const x = a * ax + b * c1x + c * c2x + e * bx;
+    const y = a * ay + b * c1y + c * c2y + e * by;
+    len += Math.hypot(x - prevX, y - prevY);
+    prevX = x;
+    prevY = y;
+  }
+  return len;
+}
+
 function initToc(root: HTMLElement): () => void {
   const nav = root.querySelector<HTMLElement>("nav");
   const activePath = root.querySelector<SVGPathElement>("[data-nb-toc-rail-active]");
@@ -46,18 +83,12 @@ function initToc(root: HTMLElement): () => void {
     let d = "";
     const newSegments: { start: number; length: number }[] = [];
 
-    // Measure each command in isolation (O(1)) and accumulate, rather than
-    // re-measuring the whole cumulatively-growing path with getTotalLength()
-    // on every iteration — the latter is O(n^2) and blocks the main thread on
-    // pages with hundreds of headings. Arc length is additive across
-    // contiguous commands, so summing isolated sub-paths matches the total.
-    // activePath doubles as the scratch measurer here; the full `d` is written
-    // back once at the end.
-    const measure = (subPath: string) => {
-      activePath!.setAttribute("d", subPath);
-      return activePath!.getTotalLength();
-    };
-
+    // Lengths are computed analytically (line = Euclidean distance, cubic =
+    // sampled chord sum) rather than by writing each sub-path to the DOM and
+    // reading getTotalLength(). That old approach interleaved a live-element
+    // write with a geometry read on every iteration — a forced synchronous
+    // reflow per heading. Arc length is additive across contiguous commands, so
+    // summing the isolated pieces matches the total; `d` is written back once.
     let cumulative = 0;
     let prevX = 0;
     let prevYBot = 0;
@@ -70,22 +101,25 @@ function initToc(root: HTMLElement): () => void {
       } else {
         const prev = m[i - 1];
         let connector: string;
+        let connectorLength: number;
         if (Math.abs(cur.x - prev.x) < 0.5) {
           connector = `L ${cur.x} ${cur.yTop} `;
+          connectorLength = lineLength(prevX, prevYBot, cur.x, cur.yTop);
         } else {
           // Indent change → S-curve matching the static gap SVG.
           const midY = (prev.yBot + cur.yTop) / 2;
           connector = `C ${prev.x} ${midY}, ${cur.x} ${midY}, ${cur.x} ${cur.yTop} `;
+          connectorLength = cubicLength(prevX, prevYBot, prev.x, midY, cur.x, midY, cur.x, cur.yTop);
         }
         d += connector;
-        cumulative += measure(`M ${prevX} ${prevYBot} ${connector}`);
+        cumulative += connectorLength;
       }
 
       const start = cumulative;
 
       const seg = `L ${cur.x} ${cur.yBot} `;
       d += seg;
-      cumulative += measure(`M ${cur.x} ${cur.yTop} ${seg}`);
+      cumulative += lineLength(cur.x, cur.yTop, cur.x, cur.yBot);
 
       newSegments.push({ start, length: cumulative - start });
 
