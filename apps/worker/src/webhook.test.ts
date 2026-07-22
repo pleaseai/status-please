@@ -2,20 +2,25 @@ import { describe, expect, it } from 'bun:test'
 import { parseWebhookPath, timingSafeEqual } from './webhook'
 
 describe('parseWebhookPath', () => {
-  it('extracts the slug from the webhook route', () => {
-    expect(parseWebhookPath('/webhooks/statuspage/claude-api')).toEqual({ slug: 'claude-api' })
+  it('extracts the provider + slug from a statuspage route', () => {
+    expect(parseWebhookPath('/webhooks/statuspage/claude-api')).toEqual({ provider: 'statuspage', slug: 'claude-api' })
+  })
+
+  it('extracts the provider + slug from a sentry route', () => {
+    expect(parseWebhookPath('/webhooks/sentry/api')).toEqual({ provider: 'sentry', slug: 'api' })
   })
 
   it('ignores a trailing slash', () => {
-    expect(parseWebhookPath('/webhooks/statuspage/claude/')).toEqual({ slug: 'claude' })
+    expect(parseWebhookPath('/webhooks/statuspage/claude/')).toEqual({ provider: 'statuspage', slug: 'claude' })
   })
 
   it('returns null for a missing slug', () => {
     expect(parseWebhookPath('/webhooks/statuspage')).toBeNull()
     expect(parseWebhookPath('/webhooks/statuspage/')).toBeNull()
+    expect(parseWebhookPath('/webhooks/sentry/')).toBeNull()
   })
 
-  it('returns null for an unrelated path', () => {
+  it('returns null for an unrelated path or unknown provider', () => {
     expect(parseWebhookPath('/')).toBeNull()
     expect(parseWebhookPath('/webhooks/other/claude')).toBeNull()
     expect(parseWebhookPath('/webhooks/statuspage/claude/extra')).toBeNull()

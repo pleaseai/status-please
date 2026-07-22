@@ -6,7 +6,7 @@ name: Acme Status
 sites:
   - name: Website
     url: https://example.com
-    check: http # http | tcp | ssl | statuspage | incidentio
+    check: http # http | tcp | ssl | statuspage | incidentio | sentry
     expectedStatusCodes: [200]
     maxResponseTime: 2000 # ms; slower responses are marked "degraded"
   - name: API
@@ -34,6 +34,23 @@ sites:
   - name: OpenAI
     url: https://status.openai.com
     check: incidentio
+
+  # Mirror a Sentry Uptime monitor. Sentry runs the checks; StatusBeam ingests
+  # the verdict in real time from a Sentry issue webhook
+  # (POST /webhooks/sentry/<slug>, set WEBHOOK_SECRET on the Worker). Binary
+  # up/down. Webhook-only by default — the cron loop skips it. See
+  # docs/adapters/sentry.md.
+  - name: Internal API
+    url: https://api.example.com
+    check: sentry
+  # Add a `sentry:` block AND set SENTRY_AUTH_TOKEN on the Worker to also poll
+  # Sentry's Issues API as a cron backstop (org required; project/query/host
+  # optional). The token is a secret — keep it out of this file.
+  - name: Internal Web
+    url: https://web.example.com
+    check: sentry
+    sentry:
+      org: my-org
 
 # All optional. Keep the real Slack URL in the private config you upload to KV,
 # not in this committed example (the webhook URL is a secret).

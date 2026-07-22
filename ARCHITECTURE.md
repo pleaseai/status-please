@@ -61,7 +61,9 @@ For understanding **the check pipeline** (how data is produced):
 
 - `apps/worker/src/index.ts` — `export default { scheduled() }`, the cron entry.
   Reads config from KV, runs checks, writes D1 + KV snapshot, triggers
-  notify/purge. No `fetch()` handler — this Worker is pure cron.
+  notify/purge. Also exports a `fetch()` handler for inbound provider webhooks at
+  `POST /webhooks/:provider/:slug` (Statuspage + Sentry), which feed the same
+  ingest pipeline as cron.
 - `apps/worker/wrangler.jsonc` — cron schedule (`*/5 * * * *`), D1 (`DB`) and KV
   (`STATUS_KV`) bindings, and the documented Queue upgrade path.
 - `apps/worker/schema.sql` — the D1 schema: `checks`, `incidents`,
@@ -104,8 +106,8 @@ Root config: `package.json` (Bun `1.3.14` workspaces `apps/*`, `packages/*`),
 1. Cron fires → `scheduled()` in `apps/worker/src/index.ts`.
 2. `loadConfig()` reads YAML from KV key `config`, validates via `parseConfig()`
    (`packages/core/src/config.ts`).
-3. `checkSite(site)` probes each service — HTTP or Atlassian Statuspage
-   (`packages/core/src/check.ts`).
+3. `checkSite(site)` probes each service — HTTP, Atlassian Statuspage, or a
+   Sentry Uptime monitor's issue state (`packages/core/src/check.ts`).
 4. Results are batch-inserted into the D1 `checks` table (`apps/worker/schema.sql`).
 5. `writeSummary()` aggregates D1 history (GROUP BY slug/day) into a
    `SiteSummary[]` snapshot and writes KV key `summary`.

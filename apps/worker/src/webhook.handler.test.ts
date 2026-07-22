@@ -1,6 +1,6 @@
 import type { Env } from './env'
 import { describe, expect, it } from 'bun:test'
-import { handleStatuspageWebhook } from './webhook'
+import { handleWebhook } from './webhook'
 
 /**
  * A minimal in-memory {@link Env} + {@link ExecutionContext} so the webhook
@@ -18,6 +18,11 @@ sites:
   - name: Claude API
     url: https://status.claude.com
     check: statuspage
+    component: Claude API (api.anthropic.com)
+  - name: Incident IO
+    slug: incidentio-svc
+    url: https://status.incidentio.example
+    check: incidentio
     component: Claude API (api.anthropic.com)
   - name: Website
     url: https://example.com
@@ -73,55 +78,65 @@ function post(path: string, body?: unknown): Request {
   })
 }
 
-describe('handleStatuspageWebhook — routing', () => {
+describe('handleWebhook — routing', () => {
   it('404s an unrelated path', async () => {
     const { env, ctx } = makeEnv('s3cret')
-    const res = await handleStatuspageWebhook(new Request('https://worker.example/'), env, ctx)
+    const res = await handleWebhook(new Request('https://worker.example/'), env, ctx)
     expect(res.status).toBe(404)
   })
 
   it('405s a non-POST method on the webhook route', async () => {
     const { env, ctx } = makeEnv('s3cret')
-    const res = await handleStatuspageWebhook(new Request('https://worker.example/webhooks/statuspage/claude-api?token=s3cret'), env, ctx)
+    const res = await handleWebhook(new Request('https://worker.example/webhooks/statuspage/claude-api?token=s3cret'), env, ctx)
     expect(res.status).toBe(405)
   })
 })
 
-describe('handleStatuspageWebhook — auth', () => {
+describe('handleWebhook — auth', () => {
   it('401s when WEBHOOK_SECRET is unset (fails closed)', async () => {
     const { env, ctx } = makeEnv(undefined)
-    const res = await handleStatuspageWebhook(post('/webhooks/statuspage/claude-api?token=anything', majorOutage), env, ctx)
+    const res = await handleWebhook(post('/webhooks/statuspage/claude-api?token=anything', majorOutage), env, ctx)
     expect(res.status).toBe(401)
   })
 
   it('401s on a wrong token', async () => {
     const { env, ctx } = makeEnv('s3cret')
-    const res = await handleStatuspageWebhook(post('/webhooks/statuspage/claude-api?token=WRONG', majorOutage), env, ctx)
+    const res = await handleWebhook(post('/webhooks/statuspage/claude-api?token=WRONG', majorOutage), env, ctx)
     expect(res.status).toBe(401)
   })
 
   it('401s on a missing token', async () => {
     const { env, ctx } = makeEnv('s3cret')
-    const res = await handleStatuspageWebhook(post('/webhooks/statuspage/claude-api', majorOutage), env, ctx)
+    const res = await handleWebhook(post('/webhooks/statuspage/claude-api', majorOutage), env, ctx)
     expect(res.status).toBe(401)
   })
 })
 
-describe('handleStatuspageWebhook — site lookup', () => {
+describe('handleWebhook — site lookup', () => {
   it('404s an unknown slug', async () => {
     const { env, ctx } = makeEnv('s3cret')
-    const res = await handleStatuspageWebhook(post('/webhooks/statuspage/nope?token=s3cret', majorOutage), env, ctx)
+    const res = await handleWebhook(post('/webhooks/statuspage/nope?token=s3cret', majorOutage), env, ctx)
     expect(res.status).toBe(404)
   })
 
   it('404s a slug that is not a statuspage check', async () => {
     const { env, ctx } = makeEnv('s3cret')
-    const res = await handleStatuspageWebhook(post('/webhooks/statuspage/website?token=s3cret', majorOutage), env, ctx)
+    const res = await handleWebhook(post('/webhooks/statuspage/website?token=s3cret', majorOutage), env, ctx)
     expect(res.status).toBe(404)
+  })
+
+  it('accepts an incidentio site on the statuspage route (Statuspage-compatible)', async () => {
+    const { env, ctx, inserted } = makeEnv('s3cret')
+    const res = await handleWebhook(post('/webhooks/statuspage/incidentio-svc?token=s3cret', majorOutage), env, ctx)
+    expect(res.status).toBe(200)
+    // The incident.io site is graded by the shared statuspage mapper and ingested.
+    const [slug, status] = inserted[0] as [string, string]
+    expect(slug).toBe('incidentio-svc')
+    expect(status).toBe('down')
   })
 })
 
-describe('handleStatuspageWebhook — payload', () => {
+describe('handleWebhook — payload', () => {
   it('400s on a malformed JSON body', async () => {
     const { env, ctx } = makeEnv('s3cret')
     const req = new Request('https://worker.example/webhooks/statuspage/claude-api?token=s3cret', {
@@ -129,30 +144,30 @@ describe('handleStatuspageWebhook — payload', () => {
       headers: { 'content-type': 'application/json' },
       body: 'not-json',
     })
-    const res = await handleStatuspageWebhook(req, env, ctx)
+    const res = await handleWebhook(req, env, ctx)
     expect(res.status).toBe(400)
   })
 
   it('400s on a wrong-shaped payload', async () => {
     const { env, ctx } = makeEnv('s3cret')
-    const res = await handleStatuspageWebhook(post('/webhooks/statuspage/claude-api?token=s3cret', { page: 'oops' }), env, ctx)
+    const res = await handleWebhook(post('/webhooks/statuspage/claude-api?token=s3cret', { page: 'oops' }), env, ctx)
     expect(res.status).toBe(400)
   })
 
   it('204s a valid event about a different component (ignored)', async () => {
     const { env, ctx, inserted } = makeEnv('s3cret')
     const other = { component: { id: 'def', name: 'claude.ai', status: 'operational' } }
-    const res = await handleStatuspageWebhook(post('/webhooks/statuspage/claude-api?token=s3cret', other), env, ctx)
+    const res = await handleWebhook(post('/webhooks/statuspage/claude-api?token=s3cret', other), env, ctx)
     expect(res.status).toBe(204)
     // Ignored events must not write a check row.
     expect(inserted.length).toBe(0)
   })
 })
 
-describe('handleStatuspageWebhook — ingest', () => {
+describe('handleWebhook — ingest', () => {
   it('200s a matching event and records the mapped check row + summary', async () => {
     const { env, ctx, inserted, kv } = makeEnv('s3cret')
-    const res = await handleStatuspageWebhook(post('/webhooks/statuspage/claude-api?token=s3cret', majorOutage), env, ctx)
+    const res = await handleWebhook(post('/webhooks/statuspage/claude-api?token=s3cret', majorOutage), env, ctx)
     expect(res.status).toBe(200)
 
     // One check row for this slug, with the mapped status.

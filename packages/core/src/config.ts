@@ -5,10 +5,42 @@ import { DEFAULT_LOCALE, LOCALES } from './i18n'
 /**
  * How a single service is checked. `incidentio` reads an incident.io status
  * page, which serves a Statuspage-compatible `summary.json`, so it shares the
- * `statuspage` code path (see check.ts).
+ * `statuspage` code path (see check.ts). `sentry` mirrors a Sentry Uptime
+ * monitor: the primary path is an inbound issue webhook (`POST /webhooks/sentry/:slug`),
+ * with an optional poll backstop that reads Sentry's Issues API (see sentry.ts).
  */
-export const checkKindSchema = z.enum(['http', 'tcp', 'ssl', 'statuspage', 'incidentio'])
+export const checkKindSchema = z.enum(['http', 'tcp', 'ssl', 'statuspage', 'incidentio', 'sentry'])
 export type CheckKind = z.infer<typeof checkKindSchema>
+
+/**
+ * Poll-backstop settings for a `check: sentry` site. Optional: when omitted the
+ * site is **webhook-only** (the cron loop skips it and status comes purely from
+ * `POST /webhooks/sentry/:slug`). When present it enables the poll backstop,
+ * which reads Sentry's Issues API — a `SENTRY_AUTH_TOKEN` must also be set on the
+ * Worker (the token is a secret and never lives in this config). Sentry exposes
+ * no dedicated "current uptime status" endpoint, so the backstop reads whether an
+ * unresolved outage issue exists for the monitor.
+ */
+export const sentryConfigSchema = z.object({
+  /** Sentry organization slug (the `…/organizations/<org>/…` path segment). */
+  org: z.string().min(1),
+  /** Optional project id or slug to scope the issue query to one project. */
+  project: z.string().min(1).optional(),
+  /**
+   * Optional override for the issue search query used to decide up/down. Defaults
+   * to `is:unresolved issue.category:outage`. Narrow it (e.g. add the monitored
+   * host) when a project has more than one uptime monitor, so the backstop grades
+   * the right one. The webhook path is precise; the poll query is best-effort.
+   */
+  query: z.string().min(1).optional(),
+  /**
+   * Optional API host override for a Sentry region or self-hosted install
+   * (e.g. `https://us.sentry.io`, `https://de.sentry.io`, or your own domain).
+   * Defaults to `https://sentry.io`.
+   */
+  host: z.string().url().optional(),
+})
+export type SentryConfig = z.infer<typeof sentryConfigSchema>
 
 /** Turn a human name into a stable, URL-safe slug. */
 export function slugify(input: string): string {
@@ -37,6 +69,12 @@ export const siteSchema = z
      */
     component: z.string().min(1).optional(),
     /**
+     * For `check: sentry` only — enables the poll backstop (see
+     * {@link sentryConfigSchema}). Omit for a webhook-only Sentry site. Rejected
+     * at parse time for other check kinds (see superRefine below).
+     */
+    sentry: sentryConfigSchema.optional(),
+    /**
      * Optional explicit slug; defaults to slugify(name). Constrained to the
      * same charset slugify emits so it's safe to embed in a `Cache-Tag` (no
      * commas/whitespace, which would corrupt the header — see cache.ts).
@@ -52,6 +90,16 @@ export const siteSchema = z
         code: z.ZodIssueCode.custom,
         path: ['component'],
         message: `component is only valid with check: statuspage or incidentio (got check: ${site.check})`,
+      })
+    }
+    // `sentry` config only means something for a `check: sentry` site; surface a
+    // mistyped `check` (or a stray `sentry:` block) as a parse error rather than
+    // quietly ignoring the poll-backstop settings at runtime.
+    if (site.sentry !== undefined && site.check !== 'sentry') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['sentry'],
+        message: `sentry config is only valid with check: sentry (got check: ${site.check})`,
       })
     }
   })

@@ -36,6 +36,21 @@ export interface Env {
    * search space astronomically large regardless.
    */
   WEBHOOK_SECRET?: string
+  /**
+   * Sentry auth token for the `check: sentry` poll backstop. When set, the cron
+   * loop polls Sentry's Issues API for each `check: sentry` site that has a
+   * `sentry:` block (org/project/query) and grades the monitor from its outage
+   * issues (see {@link checkSentry} in @statusbeam/core). When unset, `check:
+   * sentry` sites are **webhook-only** — the cron loop skips them (so it never
+   * clobbers a webhook-driven status with a false `down`) and status comes purely
+   * from `POST /webhooks/sentry/:slug`.
+   *
+   * The token is a secret — set it with `wrangler secret put SENTRY_AUTH_TOKEN`.
+   * It never lives in the KV `config` document, keeping the secret out of the
+   * bundle and core framework-free. Create one in Sentry under Settings → Auth
+   * Tokens (or an internal integration) with read access to issues.
+   */
+  SENTRY_AUTH_TOKEN?: string
 }
 
 /** KV keys used by statusbeam. */
