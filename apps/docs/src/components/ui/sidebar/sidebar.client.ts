@@ -162,10 +162,14 @@ function initPersistence(root: HTMLElement): (() => void) | null {
   document.addEventListener("visibilitychange", handleVisibility);
   window.addEventListener("pagehide", save);
 
-  let raf = 0;
+  // Debounce scroll persistence: writing to sessionStorage on every frame janks
+  // scrolling on low-end devices. Only persist once scrolling settles; the
+  // teardown, visibilitychange, and pagehide handlers flush the latest position,
+  // so a still-pending debounce never loses the final scrollTop.
+  let scrollTimer: ReturnType<typeof setTimeout> | undefined;
   function handleScroll() {
-    cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(save);
+    if (scrollTimer) clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(save, 150);
   }
   scrollHost.addEventListener("scroll", handleScroll);
 
@@ -174,7 +178,10 @@ function initPersistence(root: HTMLElement): (() => void) | null {
     document.removeEventListener("visibilitychange", handleVisibility);
     window.removeEventListener("pagehide", save);
     scrollHost.removeEventListener("scroll", handleScroll);
-    cancelAnimationFrame(raf);
+    if (scrollTimer) {
+      clearTimeout(scrollTimer);
+      save(); // flush the final scroll position before unmount
+    }
   };
 }
 
