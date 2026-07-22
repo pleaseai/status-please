@@ -1,0 +1,22 @@
+apps/worker/src/webhook.ts
+  s_d12565f0fcd8e3::t_1270fe9db25b49 113-120
+apps/worker/src/webhook.handler.test.ts
+  s_d12565f0fcd8e3::t_5617edc40b56ea 22-26
+  s_d12565f0fcd8e3::t_d9d0a914929e61 127-136
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "a58c429a9e55ecbc942a3bb29ef2a76a6dc6b3e0",
+  "prompts": {},
+  "sessions": {
+    "s_d12565f0fcd8e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e02324de-4ec4-4de5-831a-6ec7c853264c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
