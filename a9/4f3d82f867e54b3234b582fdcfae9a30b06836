@@ -1,0 +1,26 @@
+apps/docs/src/components/ui/toc/toc.client.ts
+  s_82bbdae0448eb4::t_778bacdf3dcf76 13-49
+  s_82bbdae0448eb4::t_7721dae3327b52 86-91,104,107,112,115,122
+apps/docs/package.json
+  s_82bbdae0448eb4::t_f54aae1353a8f2 26,32
+apps/docs/src/components/ui/banner/Banner.astro
+  s_82bbdae0448eb4::t_bcf809b1bcb9bb 7,19-22,24-28
+bun.lock
+  s_82bbdae0448eb4::t_f23a1ec84386f2 28,34,666-667,896-897,906-907,1194-1195,1230-1231,1472-1473,1630-1631,1996-1997,2094-2099,2107-2108
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "a94f3d82f867e54b3234b582fdcfae9a30b06836",
+  "prompts": {},
+  "sessions": {
+    "s_82bbdae0448eb4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "104ba5c1-b282-4ae5-8966-0fdfdca83ac4",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
