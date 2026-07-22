@@ -1,0 +1,19 @@
+apps/docs/src/layouts/DocsLayout.astro
+  s_82bbdae0448eb4::t_df60a3bc6b64a8 276-282
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "a218cbfd4eb26213582dfaf480f4d20767ddd3cc",
+  "prompts": {},
+  "sessions": {
+    "s_82bbdae0448eb4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "104ba5c1-b282-4ae5-8966-0fdfdca83ac4",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
