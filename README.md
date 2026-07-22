@@ -208,6 +208,7 @@ Each site sets a `check` kind:
 | `ssl`        | Reserved — currently falls through to `http` ([roadmap](#roadmap)).          |
 | `statuspage` | Mirrors an Atlassian Statuspage's own verdict. See the [Statuspage adapter guide](./docs/adapters/statuspage.md).|
 | `incidentio` | Mirrors an [incident.io](https://incident.io) status page (Statuspage-compatible). See the [incident.io adapter guide](./docs/adapters/incidentio.md).|
+| `sentry`     | Mirrors a [Sentry Uptime](https://docs.sentry.io/product/uptime-monitoring/) monitor via issue webhook (real-time) + optional poll backstop. See the [Sentry adapter guide](./docs/adapters/sentry.md).|
 
 The **Statuspage adapter** reads a vendor's `/api/v2/summary.json` (Claude,
 Vercel, `*.statuspage.io`, …) and maps their overall indicator — or a single
@@ -219,6 +220,13 @@ The **incident.io adapter** reads the same Statuspage-compatible
 `status.incident.io`, …) serve — so `incidentio` and `statuspage` behave
 identically; use whichever names your vendor:
 [`docs/adapters/incidentio.md`](./docs/adapters/incidentio.md).
+
+The **Sentry adapter** presents a [Sentry Uptime](https://docs.sentry.io/product/uptime-monitoring/)
+monitor on your status page. Sentry runs the checks; StatusBeam ingests the
+verdict in real time from a Sentry issue webhook (`POST /webhooks/sentry/:slug`),
+with an optional cron poll of Sentry's Issues API as the backstop. Binary
+(`up`/`down`). Setup, status mapping, and the webhook-only vs. poll modes:
+[`docs/adapters/sentry.md`](./docs/adapters/sentry.md).
 
 ### Internationalization
 
@@ -340,6 +348,7 @@ fork-from-source appendix — is in **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 - [x] **Statuspage adapter** — mirror any Atlassian Statuspage by page or component ([guide](./docs/adapters/statuspage.md)).
 - [x] **incident.io adapter** — mirror any incident.io status page by page or component ([guide](./docs/adapters/incidentio.md)).
 - [x] **Statuspage webhooks** — real-time ingest via `POST /webhooks/statuspage/:slug`, cron as the backstop ([guide](./docs/adapters/statuspage.md#real-time-updates-via-webhooks)).
+- [x] **Sentry Uptime adapter** — mirror a [Sentry Uptime](https://docs.sentry.io/product/uptime-monitoring/) monitor via issue webhook (`POST /webhooks/sentry/:slug`) + optional Issues-API poll backstop ([guide](./docs/adapters/sentry.md)).
 
 **In progress / planned**
 

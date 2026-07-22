@@ -54,6 +54,34 @@ describe('parseConfig', () => {
     // the component.
     expect(() => parseConfig(`${baseYaml}    check: http\n    component: Some Service\n`)).toThrow()
   })
+
+  it('accepts a webhook-only sentry check (no sentry block)', () => {
+    const config = parseConfig(`${baseYaml}    check: sentry\n`)
+    expect(config.sites[0]?.check).toBe('sentry')
+    expect(config.sites[0]?.sentry).toBeUndefined()
+  })
+
+  it('accepts a sentry check with a poll-backstop block', () => {
+    const config = parseConfig(
+      `${baseYaml}    check: sentry\n    sentry:\n      org: acme\n      project: api\n      host: https://us.sentry.io\n`,
+    )
+    expect(config.sites[0]?.check).toBe('sentry')
+    expect(config.sites[0]?.sentry?.org).toBe('acme')
+    expect(config.sites[0]?.sentry?.project).toBe('api')
+    expect(config.sites[0]?.sentry?.host).toBe('https://us.sentry.io')
+  })
+
+  it('rejects a sentry block missing the required org', () => {
+    expect(() => parseConfig(`${baseYaml}    check: sentry\n    sentry:\n      project: api\n`)).toThrow()
+  })
+
+  it('rejects a sentry block on a non-sentry check kind', () => {
+    expect(() => parseConfig(`${baseYaml}    check: http\n    sentry:\n      org: acme\n`)).toThrow()
+  })
+
+  it('rejects an invalid sentry host URL', () => {
+    expect(() => parseConfig(`${baseYaml}    check: sentry\n    sentry:\n      org: acme\n      host: not-a-url\n`)).toThrow()
+  })
 })
 
 describe('theme.locale', () => {

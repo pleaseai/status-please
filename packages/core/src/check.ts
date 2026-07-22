@@ -1,6 +1,7 @@
 import type { Site } from './config'
 import type { CheckResult, CheckStatus } from './types'
 import { z } from 'zod'
+import { checkSentry } from './sentry'
 
 /** Minimal fetch signature so callers (and tests) can pass any compatible impl. */
 export type FetchLike = (url: string, init?: RequestInit) => Promise<Response>
@@ -30,18 +31,23 @@ export function deriveStatus(
  *
  * Dispatches on `site.check`: `statuspage` reads an Atlassian Statuspage JSON
  * API, and `incidentio` reads an incident.io status page — which serves a
- * Statuspage-compatible `summary.json`, so it shares the same code path. Every
- * other kind (`http`/`tcp`/`ssl`) currently falls through to a plain HTTP
- * fetch. `tcp`/`ssl` runtime probing is tracked in the roadmap.
+ * Statuspage-compatible `summary.json`, so it shares the same code path. `sentry`
+ * reads a Sentry Uptime monitor's issue state via the Issues API (needs the
+ * injected `sentryToken`; see sentry.ts). Every other kind (`http`/`tcp`/`ssl`)
+ * currently falls through to a plain HTTP fetch. `tcp`/`ssl` runtime probing is
+ * tracked in the roadmap.
  */
 export async function checkSite(
   site: Site,
-  deps: { fetchImpl?: FetchLike, now?: () => number } = {},
+  deps: { fetchImpl?: FetchLike, now?: () => number, sentryToken?: string } = {},
 ): Promise<CheckResult> {
   const fetchImpl = deps.fetchImpl ?? fetch
   const now = deps.now ?? Date.now
   if (site.check === 'statuspage' || site.check === 'incidentio') {
     return checkStatuspage(site, fetchImpl, now)
+  }
+  if (site.check === 'sentry') {
+    return checkSentry(site, { fetchImpl, now, token: deps.sentryToken })
   }
   return checkHttp(site, fetchImpl, now)
 }

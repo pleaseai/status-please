@@ -1,19 +1,25 @@
-import type { CheckResult } from '@statusbeam/core'
+import type { CheckResult, CheckStatus } from '@statusbeam/core'
 import type { Env } from './env'
-import { deriveStatuspageWebhookStatus, statuspageWebhookSchema } from '@statusbeam/core'
+import { deriveSentryWebhookStatus, deriveStatuspageWebhookStatus, sentryWebhookSchema, statuspageWebhookSchema } from '@statusbeam/core'
 import { ingest, loadConfig } from './ingest'
 
+/** Webhook providers StatusBeam accepts inbound pushes from. */
+export type WebhookProvider = 'statuspage' | 'sentry'
+
+const PROVIDERS: readonly WebhookProvider[] = ['statuspage', 'sentry']
+
 /**
- * Match the inbound Statuspage webhook route `/webhooks/statuspage/:slug` and
- * return the site slug, or `null` for any other path. Pure so it's unit-tested
+ * Match an inbound webhook route `/webhooks/:provider/:slug` and return the
+ * provider + site slug, or `null` for any other path. Pure so it's unit-tested
  * without a running Worker. Empty segments (leading/trailing slashes) are
- * ignored, so both `/webhooks/statuspage/claude` and a trailing-slash variant
- * resolve to the same slug.
+ * ignored, so both `/webhooks/sentry/api` and a trailing-slash variant resolve to
+ * the same route. `:provider` must be one we support (`statuspage`/`sentry`),
+ * otherwise the path doesn't match.
  */
-export function parseWebhookPath(pathname: string): { slug: string } | null {
+export function parseWebhookPath(pathname: string): { provider: WebhookProvider, slug: string } | null {
   const parts = pathname.split('/').filter(Boolean)
-  if (parts.length === 3 && parts[0] === 'webhooks' && parts[1] === 'statuspage' && parts[2]) {
-    return { slug: parts[2] }
+  if (parts.length === 3 && parts[0] === 'webhooks' && parts[2] && (PROVIDERS as readonly string[]).includes(parts[1]!)) {
+    return { provider: parts[1] as WebhookProvider, slug: parts[2] }
   }
   return null
 }
@@ -36,21 +42,48 @@ export function timingSafeEqual(a: string, b: string): boolean {
 }
 
 /**
- * Handle an inbound Atlassian Statuspage subscriber webhook and, when it carries
- * a status for the addressed site, run it through the same {@link ingest}
- * pipeline as the cron loop — giving near-real-time updates while cron remains
- * the backstop.
+ * Grade a provider's inbound payload for one site: parse it against the
+ * provider's schema and map it to a `CheckStatus`. Returns `{ status }` on a
+ * gradeable event, `{ status: null }` when the event doesn't concern this site
+ * (caller acks with 204), or `{ error }` when the payload is the wrong shape
+ * (caller returns 400). The site's `check` kind is assumed to match `provider`
+ * (checked by the caller).
+ */
+function gradePayload(provider: WebhookProvider, body: unknown, site: { component?: string }):
+  | { status: CheckStatus | null }
+  | { error: 'invalid-payload' } {
+  if (provider === 'sentry') {
+    const parsed = sentryWebhookSchema.safeParse(body)
+    if (!parsed.success) {
+      return { error: 'invalid-payload' }
+    }
+    return { status: deriveSentryWebhookStatus(parsed.data) }
+  }
+  const parsed = statuspageWebhookSchema.safeParse(body)
+  if (!parsed.success) {
+    return { error: 'invalid-payload' }
+  }
+  return { status: deriveStatuspageWebhookStatus(parsed.data, site) }
+}
+
+/**
+ * Handle an inbound provider webhook (Atlassian Statuspage or Sentry) and, when
+ * it carries a status for the addressed site, run it through the same
+ * {@link ingest} pipeline as the cron loop — giving near-real-time updates while
+ * cron remains the backstop (for Sentry, cron is the backstop only when a
+ * `sentry:` block + `SENTRY_AUTH_TOKEN` enable polling; otherwise the webhook is
+ * the sole source).
  *
  * Owns all routing so the Worker's `fetch` can delegate unconditionally:
  * - non-webhook path → 404, non-POST → 405
  * - bad/absent `?token=` (vs `WEBHOOK_SECRET`) → 401
- * - unknown slug or a site that isn't a `statuspage` check → 404
+ * - unknown slug, or a site whose `check` kind doesn't match the route provider → 404
  * - malformed JSON / wrong-shaped payload → 400
- * - a valid event that isn't about this site (a different component) → 204 (ack,
- *   so Statuspage doesn't retry)
+ * - a valid event that isn't about this site (a different component, an ignored
+ *   issue) → 204 (ack, so the sender doesn't retry)
  * - otherwise ingest and return 200
  */
-export async function handleStatuspageWebhook(
+export async function handleWebhook(
   request: Request,
   env: Env,
   ctx: ExecutionContext,
@@ -64,9 +97,10 @@ export async function handleStatuspageWebhook(
     return new Response('Method not allowed', { status: 405 })
   }
 
-  // Authenticate on the URL's `?token=` (Statuspage subscriber webhooks can't
-  // set custom headers, but you control the URL you register). An unset secret
-  // fails closed — the endpoint is never open.
+  // Authenticate on the URL's `?token=` (Statuspage subscriber webhooks can't set
+  // custom headers, but you control the URL you register; Sentry webhooks can, but
+  // sharing one scheme keeps both providers on the same fail-closed path). An
+  // unset secret fails closed — the endpoint is never open.
   const token = url.searchParams.get('token') ?? ''
   if (!env.WEBHOOK_SECRET || !timingSafeEqual(token, env.WEBHOOK_SECRET)) {
     // Log for operator visibility (brute-force attempts) — never the token/secret.
@@ -76,9 +110,10 @@ export async function handleStatuspageWebhook(
 
   const config = await loadConfig(env)
   const site = config.sites.find(s => s.slug === route.slug)
-  if (!site || site.check !== 'statuspage') {
-    // Usually a misregistered webhook URL — surface it so the operator can fix it.
-    console.warn(`webhook: unknown or non-statuspage slug "${route.slug}"`)
+  if (!site || site.check !== route.provider) {
+    // Usually a misregistered webhook URL (wrong slug, or the provider doesn't
+    // match the site's check kind) — surface it so the operator can fix it.
+    console.warn(`webhook: unknown or non-${route.provider} slug "${route.slug}"`)
     return new Response('Unknown site', { status: 404 })
   }
 
@@ -90,15 +125,14 @@ export async function handleStatuspageWebhook(
     console.warn(`webhook: invalid JSON body for slug "${route.slug}"`)
     return new Response('Invalid JSON', { status: 400 })
   }
-  const parsed = statuspageWebhookSchema.safeParse(body)
-  if (!parsed.success) {
-    // Payload-shape drift (a Statuspage API change) shows up here, not as an outage.
-    console.warn(`webhook: payload failed validation for slug "${route.slug}": ${parsed.error.message}`)
+  const graded = gradePayload(route.provider, body, site)
+  if ('error' in graded) {
+    // Payload-shape drift (a provider API change) shows up here, not as an outage.
+    console.warn(`webhook: payload failed validation for slug "${route.slug}"`)
     return new Response('Invalid payload', { status: 400 })
   }
 
-  const status = deriveStatuspageWebhookStatus(parsed.data, site)
-  if (status === null) {
+  if (graded.status === null) {
     // 204 must have a null body (a body would throw at construction).
     return new Response(null, { status: 204 })
   }
@@ -108,7 +142,7 @@ export async function handleStatuspageWebhook(
   // graded (distinct from the cron path's `code: 0` network failures).
   const result: CheckResult = {
     slug: site.slug,
-    status,
+    status: graded.status,
     code: 200,
     responseTime: 0,
     checkedAt: new Date().toISOString(),
