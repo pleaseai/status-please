@@ -273,7 +273,13 @@ const hasPagination = Astro.slots.has("pagination");
       const menuBtn = document.querySelector<HTMLElement>("[data-menu-btn]");
       const CLOSE_DURATION_MS = 250;
 
-      if (dialog && menuBtn) {
+      // `astro:page-load` also fires for the initial page, and we call init
+      // directly too (in case the listener registers after that first event
+      // fires). Bind exactly once per dialog element via a flag so listeners
+      // don't attach twice; the ClientRouter swaps in a fresh dialog on
+      // navigation, so that new instance re-initializes.
+      if (dialog && menuBtn && dialog.dataset.initialized !== "true") {
+        dialog.dataset.initialized = "true";
         let closeTimer: ReturnType<typeof setTimeout> | undefined;
 
         const openSidebar = () => {
