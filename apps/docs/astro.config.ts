@@ -1,19 +1,58 @@
-import mdx from '@astrojs/mdx'
-import starlight from '@astrojs/starlight'
+import nimbus, { defineConfig as defineNimbusConfig } from '@cloudflare/nimbus-docs'
+import { tableScroll } from '@cloudflare/nimbus-docs/markdown'
+import tailwindcss from '@tailwindcss/vite'
+import icon from 'astro-icon'
 import { defineConfig } from 'astro/config'
-import starlightLlmsTxt from 'starlight-llms-txt'
-import starlightMdTxt from 'starlight-md-txt'
-import starlightPageActions from 'starlight-page-actions'
 
-// StatusBeam documentation — static Astro + Starlight site.
-// Deployed to Cloudflare via Workers Static Assets (see wrangler.jsonc): the
-// build is fully static, so no server adapter is needed.
-// https://starlight.astro.build/
-export default defineConfig({
-  // Absolute base URL. Required so the AI-friendly outputs emit absolute links:
-  // starlight-llms-txt (llms.txt / llms-full.txt), the sitemap, and the
-  // "Open in ChatGPT/Claude" page actions (which pass `Astro.url.href`).
+const nimbusConfig = defineNimbusConfig({
+  // Absolute base URL. Required so canonical URLs, OG images, robots.txt,
+  // the sitemap, and the AI-friendly outputs all emit absolute links.
   site: 'https://docs.statusbeam.dev',
+  title: 'StatusBeam',
+  description:
+    'Open-source, CDN-native status page generator — a modern take on upptime.',
+  locale: 'en',
+  github: 'https://github.com/pleaseai/statusbeam',
+  editPattern:
+    'https://github.com/pleaseai/statusbeam/edit/main/apps/docs/{path}',
+  socialImageAlt: 'StatusBeam documentation preview',
+  head: [
+    {
+      tag: 'link',
+      attrs: {
+        rel: 'icon',
+        type: 'image/svg+xml',
+        href: '/favicon.svg',
+      },
+    },
+  ],
+  sidebar: {
+    items: [
+      {
+        label: 'Getting Started',
+        items: [
+          'getting-started/introduction',
+          'getting-started/quick-start',
+        ],
+      },
+      {
+        label: 'Guides',
+        items: [
+          'guides/configuration',
+          'guides/deployment',
+          'guides/private-pages',
+        ],
+      },
+      {
+        label: 'Reference',
+        items: ['reference/ai-and-llms'],
+      },
+    ],
+  },
+})
+
+export default defineConfig({
+  output: 'static',
   // Serve bundled assets (`_astro/*` JS, CSS, fonts, images) from the Cloudflare
   // Pages project origin, decoupled from the page host. Pages are reached at `site`
   // (docs.statusbeam.dev — a custom domain on the same Pages project); their bundled
@@ -23,79 +62,36 @@ export default defineConfig({
   build: {
     assetsPrefix: 'https://statusbeam-docs.pages.dev',
   },
+  // Tailwind v4 via its Vite plugin (the integration Astro recommends for
+  // Tailwind v4 — replaces the PostCSS plugin, which doesn't build under
+  // Astro 7's Vite 8 bundler).
+  vite: {
+    plugins: [tailwindcss()],
+  },
+  // Hover-prefetch link targets so full-page navigations feel instant without
+  // a client-side router.
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'hover',
+  },
   integrations: [
-    starlight({
-      title: 'StatusBeam',
-      description:
-        'Open-source, CDN-native status page generator — a modern take on upptime.',
-      logo: { src: './src/assets/logo.svg', alt: 'StatusBeam' },
-      social: [
-        {
-          icon: 'github',
-          label: 'GitHub',
-          href: 'https://github.com/pleaseai/statusbeam',
-        },
-      ],
-      editLink: {
-        baseUrl:
-          'https://github.com/pleaseai/statusbeam/edit/main/apps/docs/',
+    icon(),
+    nimbus(nimbusConfig, {
+      // Authoring rules are opt-in by design — your repo, your taste. The
+      // two below are the load-bearing pair: frontmatter has to validate
+      // against the content schema for the page to render properly, and
+      // broken internal links are 404s for your readers. Add the others
+      // (heading hierarchy, code-block language, style, etc.) when you're
+      // ready to enforce them — see `nimbus-docs lint --help`.
+      rules: {
+        'nimbus/frontmatter-shape': 'error',
+        'nimbus/internal-link': 'error',
       },
-      sidebar: [
-        {
-          label: 'Getting Started',
-          items: [
-            { label: 'Introduction', slug: 'getting-started/introduction' },
-            { label: 'Quick Start', slug: 'getting-started/quick-start' },
-          ],
-        },
-        {
-          label: 'Guides',
-          items: [
-            { label: 'Configuration', slug: 'guides/configuration' },
-            { label: 'Deploy to Cloudflare', slug: 'guides/deployment' },
-            { label: 'Private & internal pages', slug: 'guides/private-pages' },
-          ],
-        },
-        {
-          label: 'Reference',
-          items: [
-            { label: 'AI & LLM endpoints', slug: 'reference/ai-and-llms' },
-          ],
-        },
-      ],
-      plugins: [
-        // Emits /llms.txt (structured overview) and /llms-full.txt (the whole
-        // site concatenated) for LLM ingestion. https://github.com/delucis/starlight-llms-txt
-        starlightLlmsTxt({
-          projectName: 'StatusBeam',
-          description:
-            'Open-source, CDN-native status page generator — a modern take on upptime. Runs on Cloudflare (Workers, Cron Triggers, D1, KV).',
-        }),
-        // Exposes every page as clean, AST-transformed raw Markdown for agents
-        // and crawlers. Pinned to `.md.txt` so it owns a namespace distinct from
-        // the `.md` files that starlight-page-actions copies for its Copy button
-        // (the plugin's own default is `.md`, which would collide).
-        // https://github.com/max-ostapenko/starlight-md-txt
-        starlightMdTxt({ format: '.md.txt' }),
-        // Adds a "Copy Markdown" button and an "Open in ChatGPT / Claude / …"
-        // dropdown to each page. We intentionally do NOT set `baseUrl` here:
-        // that keeps the plugin from also writing its own llms.txt (which would
-        // collide with starlight-llms-txt above). The AI actions use the page's
-        // absolute URL from `site`, so they still work.
-        // https://github.com/dlcastillop/starlight-page-actions
-        starlightPageActions({
-          actions: {
-            chatgpt: true,
-            claude: true,
-            cursor: true,
-            markdown: true,
-          },
-        }),
-      ],
+      // Wrap wide tables so they scroll instead of overflowing the page
+      // (styled by `.nb-table-scroll` in src/styles/prose.css).
+      markdown: {
+        hastPlugins: [tableScroll()],
+      },
     }),
-    // Enables `.mdx` pages (import + JSX components like <Aside>, <Steps>,
-    // <Card>). Must come AFTER starlight(). Without it Astro renders `.mdx`
-    // as plain Markdown and shows the `import` line as literal text.
-    mdx(),
   ],
 })

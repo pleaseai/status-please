@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 // Smoke driver for the StatusBeam docs site (apps/docs).
 //
-// It serves the already-built ./dist with `astro preview`, then hits the real
-// HTTP surface a future agent (or PR) actually changes: the rendered HTML, the
-// llms.txt family, a `.md.txt` raw-markdown endpoint, the `.md` copy source, and
-// the per-page AI action buttons in the HTML. Exits 0 if every check passes,
-// non-zero on the first failure (with the reason), so it is CI-usable.
+// It serves the already-built ./dist with `astro preview`, then checks the real
+// Nimbus surface: rendered HTML, site and section llms.txt indexes, per-page
+// Markdown/MDX twins, rendered MDX components, and Nimbus page actions. Exits 0
+// only when every check passes, so it is CI-usable.
 //
 // Prereq: `bunx astro build` has been run (./dist exists). See SKILL.md.
 // Usage:  node .claude/skills/run-docs/driver.mjs [--port 4321]
@@ -26,29 +25,27 @@ if (!existsSync('dist')) {
 
 /** Each check: [label, path, assert(status, body) => true | string(error)] */
 const checks = [
-  ['home renders', '/', (s, b) => (s === 200 && b.includes('StatusBeam')) || `status=${s} hasTitle=${b.includes('StatusBeam')}`],
+  ['home renders', '/', (s, b) => (s === 200 && b.includes('StatusBeam') && b.includes('Why StatusBeam')) || `status=${s} hasTitle=${b.includes('StatusBeam')} hasCards=${b.includes('Why StatusBeam')}`],
   ['llms.txt', '/llms.txt', (s, b) => (s === 200 && b.startsWith('# StatusBeam')) || `status=${s} head=${JSON.stringify(b.slice(0, 20))}`],
   ['llms-full.txt', '/llms-full.txt', (s, b) => (s === 200 && b.length > 1000) || `status=${s} len=${b.length}`],
-  ['md.txt endpoint', '/guides/configuration.md.txt', (s, b) => (s === 200 && b.includes('title:')) || `status=${s} hasFrontmatter=${b.includes('title:')}`],
-  ['md copy source', '/guides/configuration.md', (s) => s === 200 || `status=${s}`],
-  ['copy-markdown button', '/guides/configuration/', (s, b) => (s === 200 && b.includes('copy-markdown')) || `status=${s} hasButton=${b.includes('copy-markdown')}`],
-  // Guards the MDX-rendering bug: a `.mdx` page with the integration missing
-  // renders its `import {...}` line as literal text and never expands <Aside>.
-  ['mdx components render', '/guides/configuration/', (s, b) => (!b.includes('import {') && b.includes('starlight-aside')) || `leakedImport=${b.includes('import {')} hasAside=${b.includes('starlight-aside')}`],
-  ['open-in-Claude action', '/guides/configuration/', (s, b) => b.includes('claude.ai/new') || 'missing claude.ai/new link'],
-  ['open-in-ChatGPT action', '/guides/configuration/', (s, b) => b.includes('chatgpt.com') || 'missing chatgpt.com link'],
+  ['section llms.txt', '/guides/llms.txt', (s, b) => (s === 200 && b.includes('## Pages') && b.includes('Configuration')) || `status=${s} hasPages=${b.includes('## Pages')} hasPage=${b.includes('Configuration')}`],
+  ['markdown twin', '/guides/configuration/index.md', (s, b) => (s === 200 && b.includes('# Configuration') && b.includes('Start from')) || `status=${s} hasTitle=${b.includes('# Configuration')} hasContent=${b.includes('Start from')}`],
+  ['mdx twin', '/guides/configuration/index.mdx', (s, b) => (s === 200 && b.includes('<Aside type="tip">')) || `status=${s} hasAsideSource=${b.includes('<Aside type="tip">')}`],
+  ['mdx components render', '/guides/configuration/', (s, b) => (s === 200 && !b.includes('<Aside type=') && b.includes('aside-card')) || `status=${s} leakedComponent=${b.includes('<Aside type=')} hasAside=${b.includes('aside-card')}`],
+  ['page actions render', '/guides/configuration/', (s, b) => (s === 200 && b.includes('data-nb-page-actions') && b.includes('data-nb-page-actions-copy')) || `status=${s} hasActions=${b.includes('data-nb-page-actions')} hasCopy=${b.includes('data-nb-page-actions-copy')}`],
+  ['markdown action link', '/guides/configuration/', (s, b) => (s === 200 && b.includes('View as Markdown') && b.includes('/guides/configuration/index.md')) || `status=${s} hasLabel=${b.includes('View as Markdown')} hasTarget=${b.includes('/guides/configuration/index.md')}`],
 ]
 
 async function waitForServer(timeoutMs = 20000) {
   const deadline = Date.now() + timeoutMs
   while (Date.now() < deadline) {
     try {
-      const r = await fetch(BASE + '/', { redirect: 'manual' })
-      if (r.status > 0) return true
+      const response = await fetch(BASE + '/', { redirect: 'manual' })
+      if (response.status > 0) return true
     } catch {
-      // not up yet
+      // The preview server is still starting.
     }
-    await new Promise((r) => setTimeout(r, 300))
+    await new Promise((resolve) => setTimeout(resolve, 300))
   }
   return false
 }
@@ -64,9 +61,9 @@ try {
     failed = true
   } else {
     for (const [label, path, assert] of checks) {
-      const res = await fetch(BASE + path, { redirect: 'follow' })
-      const body = await res.text()
-      const verdict = assert(res.status, body)
+      const response = await fetch(BASE + path, { redirect: 'follow' })
+      const body = await response.text()
+      const verdict = assert(response.status, body)
       if (verdict === true) {
         console.log(`✓ ${label}  (${path})`)
       } else {
@@ -79,5 +76,5 @@ try {
   server.kill('SIGTERM')
 }
 
-console.log(failed ? '\nFAIL' : '\nPASS — docs site serves and all AI endpoints are live.')
+console.log(failed ? '\nFAIL' : '\nPASS — docs site serves and all Nimbus endpoints are live.')
 process.exit(failed ? 1 : 0)

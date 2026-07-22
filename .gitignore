@@ -8,6 +8,7 @@ dist/
 build/
 .output/
 .astro/
+.nimbus/
 *.tsbuildinfo
 
 # Cloudflare / Wrangler

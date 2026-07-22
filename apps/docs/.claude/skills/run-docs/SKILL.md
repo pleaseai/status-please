@@ -1,30 +1,30 @@
 ---
 name: run-docs
-description: Build, serve, smoke-test, and screenshot the StatusBeam docs site (apps/docs — Astro + Starlight). Use when asked to run, preview, build, verify, or screenshot the documentation site, or to check its llms.txt / markdown / AI endpoints.
+description: Build, serve, smoke-test, and screenshot the StatusBeam docs site (apps/docs — Astro + Nimbus). Use when asked to run, preview, build, verify, or screenshot the documentation site, or to check its llms.txt / Markdown / AI endpoints.
 allowed-tools: Bash, Read
 ---
 
 # Run the StatusBeam docs site (`apps/docs`)
 
-Static **Astro + Starlight** documentation site. It builds to `./dist` and is
+Static **Astro + Nimbus** documentation site. It builds to `./dist` and is
 deployed to a Cloudflare **Pages** project (no server, no D1/KV) — served at
 `docs.statusbeam.dev`, with bundled assets loaded from `statusbeam-docs.pages.dev`
-(`build.assetsPrefix`). The AI
-surface — `/llms.txt`, `/llms-full.txt`, per-page `.md.txt` raw Markdown, and the
-"Copy Markdown" / "Open in ChatGPT·Claude" buttons — is what most edits touch.
+(`build.assetsPrefix`). The agent surface — `/llms.txt`, `/llms-full.txt`,
+per-section `/<section>/llms.txt`, per-page `index.md` and `index.mdx` twins, and
+the "Copy page" / "View as Markdown" actions — is what most edits touch.
 
 All paths below are relative to `apps/docs/`. Run commands from there.
 
 ## Agent path — build, then drive
 
 The driver is [`.claude/skills/run-docs/driver.mjs`](./driver.mjs). It serves the
-built `./dist` with `astro preview` and asserts the real HTTP surface (HTML,
-llms.txt family, a `.md.txt` endpoint, the `.md` copy source, the AI buttons, and
-that MDX components actually rendered). Exit 0 = all green.
+built `./dist` with `astro preview` and asserts the real HTTP surface: HTML,
+site and section llms.txt files, a Markdown twin, an MDX source twin, rendered
+MDX components, and the Nimbus page-action markup. Exit 0 = all green.
 
 ```bash
-bun install            # once, from the repo root or here
-bunx astro build       # produces ./dist  (required before the driver)
+bun install            # once, from the repo root
+bunx astro build       # produces ./dist (required before the driver)
 node .claude/skills/run-docs/driver.mjs --port 4325
 ```
 
@@ -34,14 +34,14 @@ Expected tail:
 ✓ home renders  (/)
 ✓ llms.txt  (/llms.txt)
 ✓ llms-full.txt  (/llms-full.txt)
-✓ md.txt endpoint  (/guides/configuration.md.txt)
-✓ md copy source  (/guides/configuration.md)
-✓ copy-markdown button  (/guides/configuration/)
+✓ section llms.txt  (/guides/llms.txt)
+✓ markdown twin  (/guides/configuration/index.md)
+✓ mdx twin  (/guides/configuration/index.mdx)
 ✓ mdx components render  (/guides/configuration/)
-✓ open-in-Claude action  (/guides/configuration/)
-✓ open-in-ChatGPT action  (/guides/configuration/)
+✓ page actions render  (/guides/configuration/)
+✓ markdown action link  (/guides/configuration/)
 
-PASS — docs site serves and all AI endpoints are live.
+PASS — docs site serves and all Nimbus endpoints are live.
 ```
 
 Pick any free `--port` (default 4321). The driver starts and stops its own
@@ -64,8 +64,8 @@ agent-browser close
 pkill -f "astro preview"
 ```
 
-Then `Read` the PNG to confirm it rendered. Reference shots the run-skill author
-captured live in this directory: `screenshot-home.png`, `screenshot-page.png`.
+Then `Read` the PNG to confirm it rendered. Reference shots in this directory may
+show an earlier framework version; capture fresh images when visual proof matters.
 
 ## Human path
 
@@ -88,30 +88,24 @@ does this via `.github/workflows/deploy-docs.yml` on merge to `main`.
 
 ## Gotchas
 
-- **`.mdx` needs `@astrojs/mdx` — and it's easy to miss.** A page that uses
-  `import {...}` + `<Aside>`/`<Steps>`/`<Card>` must be `.mdx` AND
-  `@astrojs/mdx` must be installed and added (after `starlight()`) in
-  `astro.config.ts`. If it isn't, the build still succeeds but the page renders
-  the `import` line as literal text and never expands the components. The
-  `mdx components render` driver check exists specifically to catch this — it
-  fails if the HTML contains `import {` or lacks `starlight-aside`. Plain `.md`
-  files with no components (e.g. `introduction.md`) are fine without any of this.
-- **Two Markdown namespaces, on purpose.** `starlight-md-txt` owns `.md.txt`
-  (clean agent endpoints); `starlight-page-actions` copies `.md` (source for its
-  Copy button). `starlight-md-txt`'s default format is `.md`, which collides with
-  that — it's pinned to `format: '.md.txt'` in `astro.config.ts`. Don't remove
-  the pin.
-- **Only `starlight-llms-txt` emits `llms.txt`.** `starlight-page-actions` would
-  also emit one if given a `baseUrl`; it's intentionally configured without one.
-- **`agent-browser screenshot <name>` output path varies.** It printed
-  `Screenshot saved to page.png` (cwd) in one run and a path under
-  `~/.agent-browser/tmp/screenshots/` in another. Grab the path from the command
-  output (or `ls -t ~/.agent-browser/tmp/screenshots/*.png | head -1`) instead of
-  assuming.
+- **MDX components are global but registered.** Pages do not import `Aside`,
+  `Steps`, `Card`, or the other Nimbus components. Every PascalCase component
+  used in MDX must instead exist in `src/components.ts`; Nimbus's pre-build
+  validator fails on unknown tags. The driver's rendered-component check catches
+  a page that leaks MDX source instead of producing the Nimbus aside markup.
+- **Two per-page twins serve different readers.** `/<page>/index.md` is clean,
+  downleveled Markdown for ingestion. `/<page>/index.mdx` preserves the authored
+  source. Nimbus page actions fetch and link to the Markdown twin.
+- **Nimbus owns the agent index family.** `/llms.txt` is the overview,
+  `/llms-full.txt` is the entire corpus, and `/<section>/llms.txt` narrows the
+  index. Do not restore the removed Starlight plugins or `.md.txt` namespace.
+- **`agent-browser screenshot <name>` output path varies.** Grab the path from the
+  command output (or find the newest image under its screenshots directory)
+  instead of assuming the destination.
 
 ## Troubleshooting
 
 - `✗ ./dist not found` from the driver → run `bunx astro build` first.
-- `✗ preview server never came up` → the port is busy; pass a different
-  `--port`, or `pkill -f "astro preview"` to clear a stale server.
-- Driver hangs / stale content → clear caches: `rm -rf dist .astro` then rebuild.
+- `✗ preview server never came up` → the port is busy; pass a different `--port`,
+  or stop the stale `astro preview` process.
+- Driver hangs / stale content → clear `dist` and `.astro`, then rebuild.
