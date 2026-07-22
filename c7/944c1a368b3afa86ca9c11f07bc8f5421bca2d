@@ -1,0 +1,21 @@
+apps/docs/src/components/ui/breadcrumbs/Breadcrumbs.astro
+  s_82bbdae0448eb4::t_0d4f1985965932 17-20
+apps/docs/src/components/ui/page-actions/PageActions.astro
+  s_82bbdae0448eb4::t_544e7b93df0b7b 17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "c7944c1a368b3afa86ca9c11f07bc8f5421bca2d",
+  "prompts": {},
+  "sessions": {
+    "s_82bbdae0448eb4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "104ba5c1-b282-4ae5-8966-0fdfdca83ac4",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
