@@ -19,6 +19,11 @@ sites:
     url: https://status.claude.com
     check: statuspage
     component: Claude API (api.anthropic.com)
+  - name: Incident IO
+    slug: incidentio-svc
+    url: https://status.incidentio.example
+    check: incidentio
+    component: Claude API (api.anthropic.com)
   - name: Website
     url: https://example.com
     check: http
@@ -118,6 +123,16 @@ describe('handleWebhook — site lookup', () => {
     const { env, ctx } = makeEnv('s3cret')
     const res = await handleWebhook(post('/webhooks/statuspage/website?token=s3cret', majorOutage), env, ctx)
     expect(res.status).toBe(404)
+  })
+
+  it('accepts an incidentio site on the statuspage route (Statuspage-compatible)', async () => {
+    const { env, ctx, inserted } = makeEnv('s3cret')
+    const res = await handleWebhook(post('/webhooks/statuspage/incidentio-svc?token=s3cret', majorOutage), env, ctx)
+    expect(res.status).toBe(200)
+    // The incident.io site is graded by the shared statuspage mapper and ingested.
+    const [slug, status] = inserted[0] as [string, string]
+    expect(slug).toBe('incidentio-svc')
+    expect(status).toBe('down')
   })
 })
 

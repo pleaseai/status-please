@@ -110,7 +110,14 @@ export async function handleWebhook(
 
   const config = await loadConfig(env)
   const site = config.sites.find(s => s.slug === route.slug)
-  if (!site || site.check !== route.provider) {
+  // incident.io status pages are Statuspage-compatible — same payload, graded by
+  // the same {@link deriveStatuspageWebhookStatus} — so a `check: incidentio` site
+  // is a valid target for the `statuspage` webhook route. Any other provider must
+  // match its check kind exactly.
+  const checkMatchesProvider = route.provider === 'statuspage'
+    ? site?.check === 'statuspage' || site?.check === 'incidentio'
+    : site?.check === route.provider
+  if (!site || !checkMatchesProvider) {
     // Usually a misregistered webhook URL (wrong slug, or the provider doesn't
     // match the site's check kind) — surface it so the operator can fix it.
     console.warn(`webhook: unknown or non-${route.provider} slug "${route.slug}"`)
