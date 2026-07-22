@@ -1,0 +1,19 @@
+apps/docs/src/components/ui/sidebar/sidebar.client.ts
+  s_82bbdae0448eb4::t_747fdf51ce977e 165-169,171-172,181-184
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "306e16976c12bff9429db5ce5cffa5a9a4cc6921",
+  "prompts": {},
+  "sessions": {
+    "s_82bbdae0448eb4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "104ba5c1-b282-4ae5-8966-0fdfdca83ac4",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Minsu Lee <minsu.lee@pleaseai.dev>"
+    }
+  }
+}
