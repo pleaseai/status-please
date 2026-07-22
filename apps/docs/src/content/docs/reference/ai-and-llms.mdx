@@ -1,55 +1,68 @@
 ---
 title: AI & LLM endpoints
-description: How this documentation is made consumable by LLMs and AI agents — llms.txt, raw Markdown endpoints, and per-page AI actions.
+description: How this documentation is made consumable by LLMs and AI agents — indexes, Markdown twins, metadata, and per-page actions.
 ---
 
-import { Aside } from '@astrojs/starlight/components';
-
 This site is built to be consumed by LLMs and coding agents, not just humans.
-Three mechanisms are always available.
+Nimbus generates its agent-facing surface alongside the static documentation at
+build time.
 
-## `/llms.txt`, `/llms-small.txt`, and `/llms-full.txt`
+## Site and section indexes
 
 Following the [llms.txt standard](https://llmstxt.org/), the site publishes:
 
-- **[`/llms.txt`](/llms.txt)** — a structured overview: title, description, and a
-  curated list of links to every page.
-- **[`/llms-small.txt`](/llms-small.txt)** — a compact variant of the overview,
-  trimmed for smaller context windows.
-- **[`/llms-full.txt`](/llms-full.txt)** — the entire documentation concatenated
-  into one Markdown file, ready to paste into a model's context.
+- **[`/llms.txt`](https://docs.statusbeam.dev/llms.txt)** — the overview index. It links to standalone pages
+  and to the more focused section indexes.
+- **[`/llms-full.txt`](https://docs.statusbeam.dev/llms-full.txt)** — the complete documentation corpus in
+  one Markdown document, ready to place in a model's context.
+- **`/<section>/llms.txt`** — an index for one documentation section. For
+  example, [`/guides/llms.txt`](https://docs.statusbeam.dev/guides/llms.txt) lists the guide pages without
+  requiring an agent to scan the whole site.
 
-Point an assistant at any of these URLs to give it the whole product's docs at once.
+Point an assistant at `/llms.txt` when it should discover only the material it
+needs, or at `/llms-full.txt` when the full corpus fits its context window.
 
-_Generated at build time by [`starlight-llms-txt`](https://github.com/delucis/starlight-llms-txt)._
+## Per-page Markdown and MDX twins
 
-## Raw Markdown endpoints (`.md.txt`)
+Every documentation page is published in two agent-readable forms under its
+page directory:
 
-Every page is also served as clean, navigation-free Markdown by appending
-`.md.txt` to its path. For example, this page is available at:
+- **`/<page>/index.md`** — clean Markdown with Nimbus components downleveled for
+  readers that do not process MDX.
+- **`/<page>/index.mdx`** — the authored MDX source, preserving component tags
+  and other source-level structure.
 
-```
-/reference/ai-and-llms.md.txt
-```
+For example, the Configuration guide is available as
+[`/guides/configuration/index.md`](https://docs.statusbeam.dev/guides/configuration/index.md) and
+[`/guides/configuration/index.mdx`](https://docs.statusbeam.dev/guides/configuration/index.mdx).
 
-Custom components (asides, cards, tabs) are converted to plain Markdown, so an
-agent or crawler gets structured content without HTML, CSS, or scripts.
+Use the Markdown twin for ingestion and copying. Use the MDX twin when an agent
+needs to inspect how the page was authored.
 
-_Provided by [`starlight-md-txt`](https://www.npmjs.com/package/starlight-md-txt)._
+## Per-page actions
 
-## Per-page AI actions
+Every documentation page displays these actions under its title:
 
-Every page has, under its title:
+- **Copy page** — fetches the clean Markdown twin and copies it to the clipboard.
+- **View as Markdown** — opens that Markdown twin directly.
 
-- **Copy Markdown** — copies the page's raw Markdown to your clipboard.
-- **Open in …** — a dropdown that opens the current page in **ChatGPT**,
-  **Claude**, or **Cursor** with a prompt referencing the page URL.
+Nimbus does not add provider-specific “Open in ChatGPT” or “Open in Claude”
+actions. Agents can instead follow the page's Markdown alternate or start from
+`/llms.txt`.
 
-_Provided by [`starlight-page-actions`](https://github.com/dlcastillop/starlight-page-actions)._
+## Discovery and metadata
+
+The static build also publishes the conventional discovery and structured-data
+surface:
+
+- **Per-page Open Graph images** at `/og/<page>.png`, plus the site-level
+  `/og.png` image.
+- **JSON-LD** metadata embedded in each documentation page.
+- **`/sitemap-index.xml`** for search engines and crawlers.
+- **[`/robots.txt`](https://docs.statusbeam.dev/robots.txt)** with the sitemap location.
 
 <Aside type="note">
-  These three plugins are configured in `apps/docs/astro.config.ts`. `llms.txt`
-  is owned solely by `starlight-llms-txt`; `starlight-page-actions` is
-  intentionally configured without a `baseUrl` so it does not emit a competing
-  `llms.txt`.
+  These files and routes are owned by the documentation app under
+  `apps/docs/src/pages/` and emitted as plain static files in `dist`. The
+  Cloudflare Pages deployment serves them without a Worker runtime.
 </Aside>

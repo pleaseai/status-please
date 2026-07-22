@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Header from '../components/Header.astro'
+import { Card } from '../components/ui/card'
+import { CardGrid } from '../components/ui/card-grid'
+import { config } from 'virtual:nimbus/config'
+---
+
+<BaseLayout title={config.title} description={config.description}>
+  <div class="flex min-h-screen flex-col">
+    <Header showSidebar={false} />
+    <main id="main-content" class="mx-auto w-full max-w-4xl flex-1 px-6 py-20 sm:py-24">
+      <section aria-labelledby="hero-title">
+        <h1
+          id="hero-title"
+          class="text-foreground leading-tight"
+          style="font-size: var(--nb-h1-size); font-weight: var(--nb-h1-weight); letter-spacing: var(--nb-h1-tracking);"
+        >
+          StatusBeam
+        </h1>
+        <p class="mt-3 max-w-3xl text-[1.0625rem] leading-relaxed text-muted-foreground">
+          An open-source, CDN-native status page generator — a modern take on upptime. Renders every byte at the edge from its own store, so your page never hits third-party rate limits.
+        </p>
+
+        <nav aria-label="StatusBeam resources" class="mt-8 flex flex-wrap gap-3">
+          <a
+            href="/getting-started/introduction/"
+            class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground no-underline transition-colors hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            Get started
+          </a>
+          <a
+            href="https://demo.statusbeam.dev"
+            class="rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground no-underline transition-colors hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            Live demo
+          </a>
+          <a
+            href="https://github.com/pleaseai/statusbeam"
+            class="rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground no-underline transition-colors hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            View on GitHub
+          </a>
+        </nav>
+      </section>
+
+      <section aria-labelledby="why-statusbeam" class="mt-20">
+        <h2 id="why-statusbeam" class="text-2xl font-semibold tracking-tight text-foreground">Why StatusBeam</h2>
+        <CardGrid class="mt-6">
+          <Card title="No client-side rate limits" icon="ph:rocket-launch">
+            Upptime calls the GitHub API from the visitor's browser (60 req/h/IP), so popular pages break with a "rate limit exceeded" screen. StatusBeam renders every byte at the edge from its own store — the browser never talks to a third-party API.
+          </Card>
+          <Card title="Reliable scheduling" icon="ph:check-circle">
+            Upptime rides best-effort GitHub Actions cron (an "every 5 min" job can slip to 15–60 min). StatusBeam uses Cloudflare Cron Triggers, which fire on time.
+          </Card>
+          <Card title="A store that scales" icon="ph:gear">
+            Instead of walking git commit history through a rate-limited API, StatusBeam uses Cloudflare D1 + KV, purpose-built for time-series reads.
+          </Card>
+          <Card title="A current frontend" icon="ph:star">
+            Upptime's page is built on end-of-life Svelte 3 + Sapper. StatusBeam is Astro + shadcn/ui, shipping ~0 JS for everything but the interactive charts.
+          </Card>
+        </CardGrid>
+      </section>
+
+      <section aria-labelledby="ai-friendly" class="mt-16 max-w-3xl">
+        <h2 id="ai-friendly" class="text-2xl font-semibold tracking-tight text-foreground">AI-friendly by default</h2>
+        <p class="mt-3 leading-relaxed text-muted-foreground">
+          Every documentation page has a clean Markdown twin at <code>&lt;page&gt;/index.md</code>, and the site publishes both <a href="/llms.txt">/llms.txt</a> and <a href="/llms-full.txt">/llms-full.txt</a>. See <a href="/reference/ai-and-llms/">AI &amp; LLM endpoints</a> for the complete agent-facing surface.
+        </p>
+      </section>
+    </main>
+  </div>
+</BaseLayout>

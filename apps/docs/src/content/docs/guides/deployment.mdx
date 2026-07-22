@@ -3,8 +3,6 @@ title: Deploy to Cloudflare
 description: Provision D1 + KV, wire the resource IDs, and deploy the Worker and status page to Cloudflare.
 ---
 
-import { Steps, Aside } from '@astrojs/starlight/components';
-
 StatusBeam runs entirely on Cloudflare: a Cron Worker for checks and an Astro
 site for the page, backed by D1 (time-series) and KV (current snapshot). The repo
 ships a scripted path and a manual one — the outline below mirrors the repo's
@@ -49,7 +47,7 @@ ships a scripted path and a manual one — the outline below mirrors the repo's
 ## Deploying these docs
 
 This documentation site is a separate app (`apps/docs`). It is a fully static
-Starlight build deployed to a **Cloudflare Pages** project (`statusbeam-docs`) —
+Nimbus (Astro) build deployed to a **Cloudflare Pages** project (`statusbeam-docs`) —
 no D1/KV, no server adapter:
 
 ```bash

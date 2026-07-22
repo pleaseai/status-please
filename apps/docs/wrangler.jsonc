@@ -3,11 +3,11 @@
   "name": "statusbeam-docs",
   "compatibility_date": "2026-07-01",
 
-  // Cloudflare Pages project. The Starlight build in ./dist is uploaded and served
-  // from Cloudflare's edge. Pages resolves extensionless URLs to the prerendered
-  // .html and falls back to the generated 404.html automatically — no asset-routing
-  // config needed (unlike Workers Static Assets). llms.txt, the `.md.txt` endpoints,
-  // and the copied `.md` files are plain static files in dist, served as-is.
+  // Cloudflare Pages project. The Nimbus (Astro) static build in ./dist is uploaded
+  // and served from Cloudflare's edge. Pages resolves extensionless URLs to the
+  // prerendered .html and falls back to the generated 404.html automatically — no
+  // asset-routing config is needed. llms.txt, llms-full.txt, per-page index.md and
+  // index.mdx twins, and per-section llms.txt files are plain static files in dist.
   // https://developers.cloudflare.com/pages/configuration/
   "pages_build_output_dir": "./dist"
 
