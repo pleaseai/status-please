@@ -32,7 +32,7 @@
     "@types/sanitize-html": "^2.16.1",
     "pagefind": "^1.5.2",
     "tailwindcss": "^4.1.4",
-    "typescript": "^5.8.3",
+    "typescript": "^7.0.2",
     "wrangler": "^4.95.0"
   }
 }
