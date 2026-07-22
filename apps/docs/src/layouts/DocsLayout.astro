@@ -264,70 +264,80 @@ const hasPagination = Astro.slots.has("pagination");
   <script>
     import { lockScroll, unlockScroll } from "@cloudflare/nimbus-docs/client";
 
-    const dialog = document.querySelector<HTMLDialogElement>("[data-mobile-sidebar]");
-    const menuBtn = document.querySelector<HTMLElement>("[data-menu-btn]");
-    const CLOSE_DURATION_MS = 250;
+    // Astro's ClientRouter swaps the DOM on navigation, so listeners bound once
+    // at module load are lost after the first client-side page change. Re-run
+    // init on every `astro:page-load` — same pattern as the Dialog / SearchDialog
+    // components in this repo.
+    function initMobileSidebar() {
+      const dialog = document.querySelector<HTMLDialogElement>("[data-mobile-sidebar]");
+      const menuBtn = document.querySelector<HTMLElement>("[data-menu-btn]");
+      const CLOSE_DURATION_MS = 250;
 
-    if (dialog && menuBtn) {
-      let closeTimer: ReturnType<typeof setTimeout> | undefined;
+      if (dialog && menuBtn) {
+        let closeTimer: ReturnType<typeof setTimeout> | undefined;
 
-      const openSidebar = () => {
-        if (closeTimer) {
-          clearTimeout(closeTimer);
-          closeTimer = undefined;
-        }
-        if (dialog.open) return;
+        const openSidebar = () => {
+          if (closeTimer) {
+            clearTimeout(closeTimer);
+            closeTimer = undefined;
+          }
+          if (dialog.open) return;
 
-        dialog.showModal();
-        dialog.dataset.state = "closed";
-        lockScroll();
+          dialog.showModal();
+          dialog.dataset.state = "closed";
+          lockScroll();
 
-        requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            dialog.dataset.state = "open";
+            requestAnimationFrame(() => {
+              dialog.dataset.state = "open";
+            });
           });
+
+          dialog.querySelector<HTMLElement>("[data-close-sidebar]")?.focus();
+        };
+
+        const closeSidebar = () => {
+          if (!dialog.open || dialog.dataset.state === "closing") return;
+
+          dialog.dataset.state = "closing";
+          closeTimer = setTimeout(() => {
+            dialog.close();
+          }, CLOSE_DURATION_MS);
+        };
+
+        menuBtn.addEventListener("click", openSidebar);
+
+        dialog.addEventListener("cancel", (event) => {
+          event.preventDefault();
+          closeSidebar();
         });
 
-        dialog.querySelector<HTMLElement>("[data-close-sidebar]")?.focus();
-      };
+        // Cleanup on close — fires for Escape, close button, backdrop click
+        dialog.addEventListener("close", () => {
+          if (closeTimer) {
+            clearTimeout(closeTimer);
+            closeTimer = undefined;
+          }
 
-      const closeSidebar = () => {
-        if (!dialog.open || dialog.dataset.state === "closing") return;
+          dialog.dataset.state = "closed";
+          unlockScroll();
+          menuBtn.focus();
+        });
 
-        dialog.dataset.state = "closing";
-        closeTimer = setTimeout(() => {
-          dialog.close();
-        }, CLOSE_DURATION_MS);
-      };
+        // Close button
+        dialog.querySelector("[data-close-sidebar]")
+          ?.addEventListener("click", closeSidebar);
 
-      menuBtn.addEventListener("click", openSidebar);
-
-      dialog.addEventListener("cancel", (event) => {
-        event.preventDefault();
-        closeSidebar();
-      });
-
-      // Cleanup on close — fires for Escape, close button, backdrop click
-      dialog.addEventListener("close", () => {
-        if (closeTimer) {
-          clearTimeout(closeTimer);
-          closeTimer = undefined;
-        }
-
-        dialog.dataset.state = "closed";
-        unlockScroll();
-        menuBtn.focus();
-      });
-
-      // Close button
-      dialog.querySelector("[data-close-sidebar]")
-        ?.addEventListener("click", closeSidebar);
-
-      // Backdrop click (clicks on <dialog> itself, outside the panel)
-      dialog.addEventListener("click", (e) => {
-        if (e.target === dialog) closeSidebar();
-      });
+        // Backdrop click (clicks on <dialog> itself, outside the panel)
+        dialog.addEventListener("click", (e) => {
+          if (e.target === dialog) closeSidebar();
+        });
+      }
     }
+
+    initMobileSidebar();
+    document.addEventListener("astro:page-load", initMobileSidebar);
   </script>
+
 
 </BaseLayout>
