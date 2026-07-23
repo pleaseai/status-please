@@ -24,12 +24,12 @@ jobs:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # job-level so the guard `if:` can read it
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0 # SonarQube needs full history for blame/new-code
 
       - name: Set up mise (node + bun)
-        uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
+        uses: jdx/mise-action@dad1bfd3df957f44999b559dd69dc1671cb4e9ea # v4.2.1
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -62,7 +62,7 @@ jobs:
 
       - name: SonarQube Cloud scan
         if: ${{ !cancelled() && env.SONAR_TOKEN != '' }}
-        uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
+        uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
 
   zizmor:
     name: Zizmor workflow lint
@@ -72,7 +72,7 @@ jobs:
       security-events: write # upload SARIF to code scanning
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Run zizmor
-        uses: zizmorcore/zizmor-action@192e21d79ab29983730a13d1382995c2307fbcaa # v0.5.7
+        uses: zizmorcore/zizmor-action@6599ee8b7a49aef6a770f63d261d214911a7ce02 # v0.6.0
